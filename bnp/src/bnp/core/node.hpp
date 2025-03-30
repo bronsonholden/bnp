@@ -1,10 +1,13 @@
 #pragma once
 
-#include <entt/entt.hpp>
 #include <bnp/components.h>
 #include <bnp/serializers/transform.hpp>
 
+#include <entt/entt.hpp>
+#include <iostream>
+
 namespace bnp {
+
 	class Node {
 	public:
 		Node(const Node& other);
@@ -12,19 +15,30 @@ namespace bnp {
 		Node(entt::registry& registry, entt::entity entity);
 		~Node();
 
+		bool valid() {
+			return registry.valid(entity);
+		}
+
 		template<typename T, typename... Args>
 		const T& add_component(Args&&... args) {
 			const T& component = registry.emplace<T>(entity, std::forward<Args>(args)...);
-			num_components += 1;
 			return component;
+		}
+
+		template<typename T>
+		bool has_component() const {
+			return registry.all_of<T>(entity);
+		}
+
+		template<typename T>
+		T& get_component() const {
+			return registry.get<T>(entity);
 		}
 
 		template<typename T>
 		void remove_component() {
 			registry.remove<T>(entity);
-			num_components -= 1;
 		}
-
 
 		unsigned int get_num_components() const;
 
@@ -40,8 +54,6 @@ namespace bnp {
 	protected:
 		entt::registry& registry;
 		entt::entity entity;
-
-		unsigned int num_components;
-		bool valid;
 	};
+
 }

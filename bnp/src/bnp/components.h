@@ -1,6 +1,11 @@
 // node_ref is excluded because we'll emplace it
 // upon instantiation
 
+#define ALL_COMPONENTS           \
+       bnp::Position,            \
+       bnp::Scale,               \
+       bnp::Rotation             \
+
 #define REGISTERED_COMPONENTS     \
         X(bnp::Position)          \
         X(bnp::Scale)             \

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <bnp/core/node.hpp>
-#include <bnp/core/node.hpp>
+#include <bnp/serializers/transform.hpp>
 
 #include <iostream>
 #include <type_traits>
@@ -11,14 +11,21 @@ using namespace std;
 
 namespace bnp {
 
+	template<typename... Components>
+	void collect_component_ids(entt::registry& registry, entt::entity entity, std::vector<uint32_t>& out_ids) {
+		((registry.all_of<Components>(entity) ? out_ids.push_back(entt::type_hash<Components>::value()) : void()), ...);
+	}
+
 	template <typename S>
 	void serialize(S& s, bnp::Node& n) {
 		std::vector<uint32_t> component_ids;
 
 		collect_component_ids<bnp::Position>(n.registry, n.entity, component_ids);
+		uint32_t num_components = component_ids.size();
 
-		s.value4b(n.num_components);
-		s.container(component_ids, n.num_components, [](auto& s, uint32_t& id) {
+		s.value4b(num_components);
+
+		s.container(component_ids, num_components, [](auto& s, uint32_t& id) {
 			s.value4b(id);
 			});
 
@@ -44,7 +51,3 @@ namespace bnp {
 	}
 }
 
-template<typename... Components>
-void collect_component_ids(entt::registry& registry, entt::entity entity, std::vector<uint32_t>& out_ids) {
-	((registry.all_of<Components>(entity) ? out_ids.push_back(entt::type_hash<Components>::value()) : void()), ...);
-}
