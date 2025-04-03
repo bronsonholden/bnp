@@ -6,7 +6,7 @@ file(GLOB_RECURSE
     "*.h"
 )
 
-add_library(bnplib STATIC ${BNP_SRC}  )
+add_library(bnplib STATIC ${BNP_SRC})
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET bnplib PROPERTY CXX_STANDARD 20)

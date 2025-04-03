@@ -1,5 +1,5 @@
 #include <bnp/core/scene.h>
-#include <bnp/resources/resource_archive.hpp>
+#include <bnp/resources/scene_archive.hpp>
 
 #include <entt/entt.hpp>
 #include <catch2/catch_test_macros.hpp>
