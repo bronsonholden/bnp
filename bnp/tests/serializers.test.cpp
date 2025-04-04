@@ -18,18 +18,18 @@
 #include <vector>
 #include <iostream>
 
-TEST_CASE("position serialization") {
+TEST_CASE("transform serialization") {
 	namespace fs = std::filesystem;
 
 	// Create a temporary file
 	const fs::path path = fs::temp_directory_path() / "test_position.bin";
 
 	// Original component
-	bnp::Position original{ { 1.0f, 2.0f, 3.0f } };
+	bnp::Transform original{ { 1.0f, 2.0f, 3.0f } };
 
-	CHECK(original.value.x == Catch::Approx(1.0f));
-	CHECK(original.value.y == Catch::Approx(2.0f));
-	CHECK(original.value.z == Catch::Approx(3.0f));
+	CHECK(original.position.x == Catch::Approx(1.0f));
+	CHECK(original.position.y == Catch::Approx(2.0f));
+	CHECK(original.position.z == Catch::Approx(3.0f));
 
 	// Serialize to file
 	{
@@ -42,7 +42,7 @@ TEST_CASE("position serialization") {
 	}
 
 	// Deserialize from file
-	bnp::Position loaded{};
+	bnp::Transform loaded{};
 	{
 		std::ifstream is(path, std::ios::binary);
 		REQUIRE(is.is_open());
@@ -54,9 +54,9 @@ TEST_CASE("position serialization") {
 	}
 
 	// Compare
-	CHECK(loaded.value.x == Catch::Approx(1.0f));
-	CHECK(loaded.value.y == Catch::Approx(2.0f));
-	CHECK(loaded.value.z == Catch::Approx(3.0f));
+	CHECK(loaded.position.x == Catch::Approx(1.0f));
+	CHECK(loaded.position.y == Catch::Approx(2.0f));
+	CHECK(loaded.position.z == Catch::Approx(3.0f));
 
 	// Cleanup
 	fs::remove(path);
@@ -72,7 +72,7 @@ TEST_CASE("node serialization") {
 	entt::registry registry;
 	bnp::Node original_node(registry);
 
-	original_node.add_component<bnp::Position>(bnp::Position{ { 1.0f, 1.0f, 1.0f } });
+	original_node.add_component<bnp::Transform>(bnp::Transform{ { 1.0f, 1.0f, 1.0f } });
 
 	// Serialize to file
 	{
@@ -97,12 +97,12 @@ TEST_CASE("node serialization") {
 	}
 
 	// Validate that the loaded node has the correct position
-	REQUIRE(registry.all_of<bnp::Position>(loaded_node.get_entity_id()));
-	const auto& pos = registry.get<bnp::Position>(loaded_node.get_entity_id());
+	REQUIRE(registry.all_of<bnp::Transform>(loaded_node.get_entity_id()));
+	const auto& transform = registry.get<bnp::Transform>(loaded_node.get_entity_id());
 
-	CHECK(pos.value.x == Catch::Approx(1.0f));
-	CHECK(pos.value.y == Catch::Approx(1.0f));
-	CHECK(pos.value.z == Catch::Approx(1.0f));
+	CHECK(transform.position.x == Catch::Approx(1.0f));
+	CHECK(transform.position.y == Catch::Approx(1.0f));
+	CHECK(transform.position.z == Catch::Approx(1.0f));
 
 	// Cleanup
 	fs::remove(path);
@@ -117,9 +117,7 @@ TEST_CASE("instances serialization") {
 	bnp::Instances instances;
 	bnp::Window window;
 
-	instances.positions.push_back(bnp::Position{ glm::vec3(1.0f, 2.0f, 3.0f) });
-	instances.rotations.push_back(bnp::Rotation{ glm::quat() });
-	instances.scales.push_back(bnp::Scale{ glm::vec3(1.0f, 2.0f, 3.0f) });
+	instances.transforms.push_back(bnp::Transform{ glm::vec3(1.0f, 2.0f, 3.0f), glm::quat(), glm::vec3(1.0f, 2.0f, 3.0f) });
 	instances.update_transforms();
 
 	// Serialize to file
@@ -144,15 +142,10 @@ TEST_CASE("instances serialization") {
 		REQUIRE(status == bitsery::ReaderError::NoError);
 	}
 
-	const bnp::Position pos = loaded_instances.positions.at(0);
-	CHECK(pos.value.x == Catch::Approx(1.0f));
-	CHECK(pos.value.y == Catch::Approx(2.0f));
-	CHECK(pos.value.z == Catch::Approx(3.0f));
-
-	const bnp::Scale scale = loaded_instances.scales.at(0);
-	CHECK(scale.value.x == Catch::Approx(1.0f));
-	CHECK(scale.value.y == Catch::Approx(2.0f));
-	CHECK(scale.value.z == Catch::Approx(3.0f));
+	const bnp::Transform transform = loaded_instances.transforms.at(0);
+	CHECK(transform.position.x == Catch::Approx(1.0f));
+	CHECK(transform.position.y == Catch::Approx(2.0f));
+	CHECK(transform.position.z == Catch::Approx(3.0f));
 
 	// Cleanup
 	fs::remove(path);
@@ -173,8 +166,8 @@ TEST_CASE("scene serialization") {
 	bnp::Node node2 = original_scene.create_node();
 
 	// Add components to nodes
-	node1.add_component<bnp::Position>(bnp::Position{ { 1.0f, 2.0f, 3.0f } });
-	node2.add_component<bnp::Position>(bnp::Position{ { 4.0f, 5.0f, 6.0f } });
+	node1.add_component<bnp::Transform>(bnp::Transform{ { 1.0f, 2.0f, 3.0f } });
+	node2.add_component<bnp::Transform>(bnp::Transform{ { 4.0f, 5.0f, 6.0f } });
 
 	std::vector<bnp::Node> node_list;
 
@@ -215,18 +208,18 @@ TEST_CASE("scene serialization") {
 	bnp::Node node3 = loaded_nodes.at(0);
 	bnp::Node node4 = loaded_nodes.at(1);
 
-	REQUIRE(node3.has_component<bnp::Position>());
-	REQUIRE(node4.has_component<bnp::Position>());
+	REQUIRE(node3.has_component<bnp::Transform>());
+	REQUIRE(node4.has_component<bnp::Transform>());
 
-	const auto& pos1 = node3.get_component<bnp::Position>();
-	CHECK(pos1.value.x == Catch::Approx(1.0f));
-	CHECK(pos1.value.y == Catch::Approx(2.0f));
-	CHECK(pos1.value.z == Catch::Approx(3.0f));
+	const auto& transform1 = node3.get_component<bnp::Transform>();
+	CHECK(transform1.position.x == Catch::Approx(1.0f));
+	CHECK(transform1.position.y == Catch::Approx(2.0f));
+	CHECK(transform1.position.z == Catch::Approx(3.0f));
 
-	const auto& pos2 = node4.get_component<bnp::Position>();
-	CHECK(pos2.value.x == Catch::Approx(4.0f));
-	CHECK(pos2.value.y == Catch::Approx(5.0f));
-	CHECK(pos2.value.z == Catch::Approx(6.0f));
+	const auto& transform2 = node4.get_component<bnp::Transform>();
+	CHECK(transform2.position.x == Catch::Approx(4.0f));
+	CHECK(transform2.position.y == Catch::Approx(5.0f));
+	CHECK(transform2.position.z == Catch::Approx(6.0f));
 
 	// Cleanup the temporary file
 	fs::remove(path);
@@ -238,24 +231,24 @@ TEST_CASE("collect component IDs") {
 	entt::registry registry;
 	entt::entity entity = registry.create();
 
-	registry.emplace<bnp::Position>(entity, bnp::Position{ {1.0f, 1.0f, 1.0f } });
+	registry.emplace<bnp::Transform>(entity, bnp::Transform{ {1.0f, 1.0f, 1.0f } });
 
-	bnp::collect_component_ids<bnp::Position>(registry, entity, component_ids);
+	bnp::collect_component_ids<bnp::Transform>(registry, entity, component_ids);
 
-	REQUIRE(component_ids[0] == entt::type_hash<bnp::Position>::value());
+	REQUIRE(component_ids[0] == entt::type_hash<bnp::Transform>::value());
 }
 
 
-TEST_CASE("get position") {
+TEST_CASE("get transform") {
 	std::vector<uint32_t> component_ids;
 	entt::registry registry;
 	entt::entity entity = registry.create();
 
-	registry.emplace<bnp::Position>(entity, bnp::Position{ {1.0f, 1.0f, 1.0f } });
+	registry.emplace<bnp::Transform>(entity, bnp::Transform{ {1.0f, 1.0f, 1.0f } });
 
-	bnp::Position position = registry.get<bnp::Position>(entity);
+	bnp::Transform transform = registry.get<bnp::Transform>(entity);
 
-	CHECK(position.value.x == Catch::Approx(1.0f));
-	CHECK(position.value.y == Catch::Approx(1.0f));
-	CHECK(position.value.z == Catch::Approx(1.0f));
+	CHECK(transform.position.x == Catch::Approx(1.0f));
+	CHECK(transform.position.y == Catch::Approx(1.0f));
+	CHECK(transform.position.z == Catch::Approx(1.0f));
 }

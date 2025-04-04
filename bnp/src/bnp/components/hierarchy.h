@@ -4,6 +4,7 @@
 #include <bnp/core/node.hpp>
 
 namespace bnp {
+
 	struct Parent {
 		entt::entity value;
 	};
@@ -11,4 +12,5 @@ namespace bnp {
 	struct Child {
 		entt::entity value;
 	};
+
 }

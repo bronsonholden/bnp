@@ -49,10 +49,8 @@ namespace bnp {
 	// use for static entities where each instance has no
 	// indivdual state other than their transform
 	struct Instances {
-		std::vector<Position> positions;
-		std::vector<Rotation> rotations;
-		std::vector<Scale> scales;
-		std::vector<glm::mat4> transforms;
+		std::vector<Transform> transforms;
+		std::vector<glm::mat4> world_transforms;
 		GLuint vb_id;
 		bool dirty;
 
@@ -69,32 +67,25 @@ namespace bnp {
 		}
 
 		void update_transforms() {
-			cout << "update_transforms" << endl;
 			if (!dirty) return;
 
 			if (!vb_id) {
 				glGenBuffers(1, &vb_id);
 			}
 
-			const size_t count = positions.size();
+			const size_t count = transforms.size();
 
 			if (count > 0) {
-				transforms.resize(count);
+				world_transforms.resize(count);
 			}
 
-			for (int i = 0; i < positions.size(); ++i) {
-				glm::mat4 transform = glm::mat4(1.0f);
-
-				transform = glm::translate(transform, positions.at(i).value);
-				transform *= glm::mat4_cast(rotations.at(i).value);
-				transform = glm::scale(transform, scales.at(i).value);
-
-				transforms[i] = transform;
+			for (int i = 0; i < transforms.size(); ++i) {
+				world_transforms[i] = transforms[i].world_transform;
 			}
 
 			// Update instance buffer data
 			glBindBuffer(GL_ARRAY_BUFFER, vb_id);
-			glBufferData(GL_ARRAY_BUFFER, transforms.size() * sizeof(glm::mat4), transforms.data(), GL_DYNAMIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, world_transforms.size() * sizeof(glm::mat4), world_transforms.data(), GL_DYNAMIC_DRAW);
 
 			dirty = false;
 		}

@@ -1,16 +1,12 @@
 #define ALL_COMPONENTS           \
-       bnp::Position,            \
-       bnp::Scale,               \
-       bnp::Rotation,            \
+       bnp::Transform,            \
        bnp::Instances,           \
        bnp::Renderable,          \
        bnp::Mesh,                \
        bnp::Material             \
 
 #define REGISTERED_COMPONENTS     \
-       X(bnp::Position)           \
-       X(bnp::Scale)              \
-       X(bnp::Rotation)           \
+       X(bnp::Transform)          \
        X(bnp::Instances)          \
        X(bnp::Renderable)
 

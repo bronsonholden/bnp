@@ -79,7 +79,7 @@ namespace bnp {
 		Mesh mesh = factory.cube(1.0f);
 
 		Node cube = scene.create_node();
-		cube.add_component<Position>(Position{ { 0.0f, 0.0f, 0.0f } });
+		cube.add_component<Transform>(Transform{ { 0.0f, 0.0f, 0.0f } });
 		cube.add_component<Mesh>(mesh);
 		cube.add_component<Material>(material);
 		cube.add_component<Renderable>(true);
@@ -88,18 +88,19 @@ namespace bnp {
 
 		const int count = 100000;
 
-		instances.positions.reserve(count);
-		instances.rotations.reserve(count);
-		instances.scales.reserve(count);
+		instances.transforms.reserve(count);
 
 		RandomFloatGenerator pos_gen(-50.0f, 50.0f);
 		RandomFloatGenerator rot_gen(-1.0f, 1.0f);
-		RandomFloatGenerator scale_gen(0.1, 0.8f);
+		RandomFloatGenerator scale_gen(0.1f, 0.8f);
 
 		for (int i = 0; i < count; ++i) {
-			instances.positions.push_back(Position{ { pos_gen.generate(), pos_gen.generate(), pos_gen.generate() } });
-			instances.rotations.push_back(Rotation{ { glm::quat() } });
-			instances.scales.push_back(Scale{ glm::vec3(scale_gen.generate()) });
+			float uniform_scale = scale_gen.generate();
+			instances.transforms.push_back(Transform{
+				{ pos_gen.generate(), pos_gen.generate(), pos_gen.generate() },
+				glm::quat(),
+				{ uniform_scale, uniform_scale, uniform_scale }
+				});
 		}
 
 		instances.update_transforms();
@@ -127,7 +128,7 @@ namespace bnp {
 	}
 
 	void Engine::run() {
-		const bool load = true;
+		const bool regenerate = !true;
 
 		Material material = material_factory.load_material({
 			{GL_VERTEX_SHADER, vertex_shader_source},
@@ -141,35 +142,33 @@ namespace bnp {
 
 		Scene scene(registry);
 
-		if (!load) {
+		if (regenerate) {
 			create_test_scene_data_file();
 		}
-		else {
-			load_test_scene_data_file(scene);
 
-			cout << "Scene loaded" << endl;
-			cout << "Nodes: " << scene.get_all_nodes().size() << endl;
+		load_test_scene_data_file(scene);
 
-			for (auto& node : scene.get_all_nodes()) {
-				node.add_component<Mesh>(mesh);
-				node.add_component<Material>(material);
-				node.get_component<Renderable>().value = true;
+		cout << "Scene loaded" << endl;
+		cout << "Nodes: " << scene.get_all_nodes().size() << endl;
 
-				cout << "Node " << ((int)node.get_entity_id()) << ": " << node.get_num_components() << " components" << endl;
-				cout << "  EnTT valid: " << node.get_registry().valid(node.get_entity_id()) << endl;
-				cout << "  Position: " << node.has_component<Position>() << endl;
-				cout << "  Instances: " << node.has_component<Instances>() << endl;
-				cout << "    Instance count: " << node.get_component<Instances>().positions.size() << endl;
-				cout << "    Instances component ptr: " << &node.get_component<Instances>() << endl;
-				cout << "  Material: " << node.has_component<Material>() << endl;
-				cout << "  Mesh: " << node.has_component<Mesh>() << endl;
-				cout << "  Renderable: " << node.has_component<Renderable>() << endl;
-				cout << "    value: " << node.get_component<Renderable>().value << endl;
-			}
+		for (auto& node : scene.get_all_nodes()) {
+			node.add_component<Mesh>(mesh);
+			node.add_component<Material>(material);
+			node.get_component<Renderable>().value = true;
+
+			cout << "Node " << ((int)node.get_entity_id()) << ": " << node.get_num_components() << " components" << endl;
+			cout << "  EnTT valid: " << node.get_registry().valid(node.get_entity_id()) << endl;
+			cout << "  Transform: " << node.has_component<Transform>() << endl;
+			cout << "  Instances: " << node.has_component<Instances>() << endl;
+			cout << "    Instance count: " << node.get_component<Instances>().transforms.size() << endl;
+			cout << "    Instances component ptr: " << &node.get_component<Instances>() << endl;
+			cout << "  Material: " << node.has_component<Material>() << endl;
+			cout << "  Mesh: " << node.has_component<Mesh>() << endl;
+			cout << "  Renderable: " << node.has_component<Renderable>() << endl;
+			cout << "    value: " << node.get_component<Renderable>().value << endl;
 		}
 
 		auto view = registry.view<Mesh, Material, Renderable, Instances>();
-
 
 		float accumulator = 0.0f;
 		const float fixed_dt = 1.0f / 60.0f;

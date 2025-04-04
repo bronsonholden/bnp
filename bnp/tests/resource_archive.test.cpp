@@ -20,7 +20,7 @@ TEST_CASE("resource archive saves and loads") {
 	bnp::Scene scene(registry);
 
 	bnp::Node node = scene.create_node();
-	node.add_component<bnp::Position>(bnp::Position{ { 1.0f, 2.0f, 3.0f } });
+	node.add_component<bnp::Transform>(bnp::Transform{ { 1.0f, 2.0f, 3.0f } });
 
 	saving_archive.insert("test_scene", &scene);
 	saving_archive.save(path);
@@ -34,10 +34,10 @@ TEST_CASE("resource archive saves and loads") {
 
 	bnp::Node loaded_node = loaded_scene->get_all_nodes().at(0);
 
-	const auto& pos = loaded_node.get_component<bnp::Position>();
-	REQUIRE(pos.value.x == Catch::Approx(1.0f));
-	REQUIRE(pos.value.y == Catch::Approx(2.0f));
-	REQUIRE(pos.value.z == Catch::Approx(3.0f));
+	const auto& transform = loaded_node.get_component<bnp::Transform>();
+	REQUIRE(transform.position.x == Catch::Approx(1.0f));
+	REQUIRE(transform.position.y == Catch::Approx(2.0f));
+	REQUIRE(transform.position.z == Catch::Approx(3.0f));
 
 	fs::remove(path);
 }

@@ -10,7 +10,7 @@ using namespace std;
 namespace bnp {
 
 	void RenderManager::render(const entt::registry& registry, const Renderer& renderer) {
-		auto view = registry.view<Mesh, Material, Position, Renderable>();
+		auto view = registry.view<Mesh, Material, Transform, Renderable>();
 
 		// todo: accept as arg
 		Camera camera({
@@ -23,13 +23,11 @@ namespace bnp {
 			if (!registry.all_of<Instances>(entity)) {
 				auto& mesh = view.get<Mesh>(entity);
 				auto& material = view.get<Material>(entity);
-				auto& position = view.get<Position>(entity);
+				auto& transform = view.get<Transform>(entity);
 				auto renderable = view.get<Renderable>(entity);
 
-				glm::mat4 transform = glm::translate(glm::mat4(1.0f), position.value);
-
 				if (renderable.value) {
-					renderer.render(camera, mesh, material, transform);
+					renderer.render(camera, mesh, material, transform.world_transform);
 				}
 			}
 		}

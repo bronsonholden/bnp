@@ -12,28 +12,16 @@ namespace bnp {
 
 	template <typename S>
 	void serialize(S& s, Instances& instances) {
-		uint32_t count = instances.positions.size();
+		uint32_t count = instances.transforms.size();
 
 		s.value4b(count);
 
-		if (instances.positions.size() != count) {
-			instances.positions.resize(count);
-			instances.rotations.resize(count);
-			instances.scales.resize(count);
+		if (instances.transforms.size() != count) {
+			instances.transforms.resize(count);
 		}
 
-		cout << "(de)serialize instance count: " << count << endl;
-
-		for (auto& position : instances.positions) {
-			s.object(position);
-		}
-
-		for (auto& rotation : instances.rotations) {
-			s.object(rotation);
-		}
-
-		for (auto& scale : instances.scales) {
-			s.object(scale);
+		for (auto& transform : instances.transforms) {
+			s.object(transform);
 		}
 
 		instances.update_transforms();
