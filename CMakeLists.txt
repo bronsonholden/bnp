@@ -12,5 +12,7 @@ project("BNP")
 
 enable_testing()
 
+add_compile_definitions(PROJECT_ROOT="${CMAKE_SOURCE_DIR}")
+
 # Include sub-projects.
 add_subdirectory("BNP")

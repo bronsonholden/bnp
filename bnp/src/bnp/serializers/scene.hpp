@@ -2,6 +2,8 @@
 
 #include <bnp/core/scene.h>
 #include <bnp/serializers/node.hpp>
+#include <bnp/serializers/graphics.hpp>
+#include <bnp/serializers/transform.hpp>
 
 #include <bitsery/traits/vector.h>
 

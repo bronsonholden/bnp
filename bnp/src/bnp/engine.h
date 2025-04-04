@@ -2,6 +2,7 @@
 
 #include <bnp/core/window.h>
 #include <bnp/core/time_system.h>
+#include <bnp/core/scene.h>
 #include <bnp/graphics/renderer.h>
 #include <bnp/graphics/material_factory.h>
 #include <bnp/graphics/mesh_factory.h>
@@ -19,6 +20,9 @@ namespace bnp {
 		void run();
 
 	protected:
+		void create_test_scene_data_file();
+		void load_test_scene_data_file(Scene& scene);
+
 		entt::registry registry;
 		Window window;
 		TimeSystem time;

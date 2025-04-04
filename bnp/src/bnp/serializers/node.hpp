@@ -2,6 +2,7 @@
 
 #include <bnp/core/node.hpp>
 #include <bnp/serializers/transform.hpp>
+#include <bnp/serializers/graphics.hpp>
 
 #include <iostream>
 #include <type_traits>
@@ -20,7 +21,7 @@ namespace bnp {
 	void serialize(S& s, bnp::Node& n) {
 		std::vector<uint32_t> component_ids;
 
-		collect_component_ids<bnp::Position>(n.registry, n.entity, component_ids);
+		collect_component_ids<ALL_COMPONENTS>(n.registry, n.entity, component_ids);
 		uint32_t num_components = component_ids.size();
 
 		s.value4b(num_components);

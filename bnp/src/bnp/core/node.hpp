@@ -40,6 +40,14 @@ namespace bnp {
 			registry.remove<T>(entity);
 		}
 
+		template<>
+		void remove_component<Instances>() {
+			if (has_component<Instances>()) {
+				Instances& i = get_component<Instances>();
+				i.cleanup();
+			}
+		}
+
 		unsigned int get_num_components() const;
 
 		template <typename S>

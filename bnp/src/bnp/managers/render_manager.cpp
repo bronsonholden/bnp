@@ -4,6 +4,9 @@
 
 #include <glm/glm.hpp>
 
+#include <iostream>
+using namespace std;
+
 namespace bnp {
 
 	void RenderManager::render(const entt::registry& registry, const Renderer& renderer) {
@@ -25,7 +28,7 @@ namespace bnp {
 
 				glm::mat4 transform = glm::translate(glm::mat4(1.0f), position.value);
 
-				if (renderable) {
+				if (renderable.value) {
 					renderer.render(camera, mesh, material, transform);
 				}
 			}
@@ -33,7 +36,10 @@ namespace bnp {
 	}
 
 	void RenderManager::render_instances(const entt::registry& registry, const Renderer& renderer) {
-		auto view = registry.view<Mesh, Material, Position, Renderable, Instances>();
+		auto view = registry.view<Mesh, Material, Renderable, Instances>();
+
+		//cout << "render_instances (registry size): " << registry.size() << endl;
+		//cout << "render_instances (view size): " << view.size_hint() << endl;
 
 		// todo: accept as arg
 		Camera camera({
@@ -45,11 +51,10 @@ namespace bnp {
 		for (auto entity : view) {
 			auto& mesh = view.get<Mesh>(entity);
 			auto& material = view.get<Material>(entity);
-			auto& position = view.get<Position>(entity);
 			auto& instances = view.get<Instances>(entity);
-			auto renderable = view.get<Renderable>(entity);
+			auto& renderable = view.get<Renderable>(entity);
 
-			if (renderable) {
+			if (renderable.value) {
 				renderer.render_instances(camera, mesh, material, instances);
 			}
 		}

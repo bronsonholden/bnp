@@ -6,9 +6,14 @@
 #include <gl/glew.h>
 #include <vector>
 
+#include <iostream>
+using namespace std;
+
 namespace bnp {
 
-	typedef bool Renderable;
+	struct Renderable {
+		bool value;
+	};
 
 	struct Vertex {
 		float position[3];
@@ -49,18 +54,33 @@ namespace bnp {
 		std::vector<Scale> scales;
 		std::vector<glm::mat4> transforms;
 		GLuint vb_id;
+		bool dirty;
 
-		Instances() {
-			glGenBuffers(1, &vb_id);
-
+		Instances() : vb_id(0), dirty(true) {
 		}
 
 		~Instances() {
-			glDeleteBuffers(1, &vb_id);
+		}
+
+		void cleanup() {
+			if (vb_id) {
+				glDeleteBuffers(1, &vb_id);
+			}
 		}
 
 		void update_transforms() {
-			transforms.resize(positions.size());
+			cout << "update_transforms" << endl;
+			if (!dirty) return;
+
+			if (!vb_id) {
+				glGenBuffers(1, &vb_id);
+			}
+
+			const size_t count = positions.size();
+
+			if (count > 0) {
+				transforms.resize(count);
+			}
 
 			for (int i = 0; i < positions.size(); ++i) {
 				glm::mat4 transform = glm::mat4(1.0f);
@@ -71,6 +91,12 @@ namespace bnp {
 
 				transforms[i] = transform;
 			}
+
+			// Update instance buffer data
+			glBindBuffer(GL_ARRAY_BUFFER, vb_id);
+			glBufferData(GL_ARRAY_BUFFER, transforms.size() * sizeof(glm::mat4), transforms.data(), GL_DYNAMIC_DRAW);
+
+			dirty = false;
 		}
 	};
 

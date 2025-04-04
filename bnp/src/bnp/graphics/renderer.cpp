@@ -64,11 +64,7 @@ namespace bnp {
 		GLuint color_loc = glGetUniformLocation(material.shader_id, "color");
 		glUniform3f(color_loc, 0.5f, 0.8f, 0.2f);
 
-		// Update instance buffer data
 		glBindBuffer(GL_ARRAY_BUFFER, instances.vb_id);
-		glBufferData(GL_ARRAY_BUFFER, instances.transforms.size() * sizeof(glm::mat4), instances.transforms.data(), GL_DYNAMIC_DRAW);
-
-		glUnmapBuffer(GL_ARRAY_BUFFER);
 
 		// Bind VAO and set up instanced attribute pointers
 		glBindVertexArray(mesh.va_id);

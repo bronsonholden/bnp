@@ -7,9 +7,11 @@
 #include <bitsery/traits/vector.h>
 
 #include <bnp/core/node.hpp>
+#include <bnp/core/window.h>
 #include <bnp/serializers/transform.hpp>
 #include <bnp/serializers/node.hpp>
 #include <bnp/serializers/scene.hpp>
+#include <bnp/serializers/graphics.hpp>
 
 #include <fstream>
 #include <filesystem>
@@ -101,6 +103,56 @@ TEST_CASE("node serialization") {
 	CHECK(pos.value.x == Catch::Approx(1.0f));
 	CHECK(pos.value.y == Catch::Approx(1.0f));
 	CHECK(pos.value.z == Catch::Approx(1.0f));
+
+	// Cleanup
+	fs::remove(path);
+}
+
+TEST_CASE("instances serialization") {
+	namespace fs = std::filesystem;
+
+	// Create a temporary file
+	const fs::path path = fs::temp_directory_path() / "test_instances.bin";
+
+	bnp::Instances instances;
+	bnp::Window window;
+
+	instances.positions.push_back(bnp::Position{ glm::vec3(1.0f, 2.0f, 3.0f) });
+	instances.rotations.push_back(bnp::Rotation{ glm::quat() });
+	instances.scales.push_back(bnp::Scale{ glm::vec3(1.0f, 2.0f, 3.0f) });
+	instances.update_transforms();
+
+	// Serialize to file
+	{
+		std::ofstream os(path, std::ios::binary);
+		REQUIRE(os.is_open());
+
+		bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
+		ser.object(instances);
+		ser.adapter().flush();
+	}
+
+	bnp::Instances loaded_instances;
+	// Deserialize into a new node
+	{
+		std::ifstream is(path, std::ios::binary);
+		REQUIRE(is.is_open());
+
+		bitsery::Deserializer<bitsery::InputStreamAdapter> des{ is };
+		des.object(loaded_instances);
+		auto status = des.adapter().error();
+		REQUIRE(status == bitsery::ReaderError::NoError);
+	}
+
+	const bnp::Position pos = loaded_instances.positions.at(0);
+	CHECK(pos.value.x == Catch::Approx(1.0f));
+	CHECK(pos.value.y == Catch::Approx(2.0f));
+	CHECK(pos.value.z == Catch::Approx(3.0f));
+
+	const bnp::Scale scale = loaded_instances.scales.at(0);
+	CHECK(scale.value.x == Catch::Approx(1.0f));
+	CHECK(scale.value.y == Catch::Approx(2.0f));
+	CHECK(scale.value.z == Catch::Approx(3.0f));
 
 	// Cleanup
 	fs::remove(path);
