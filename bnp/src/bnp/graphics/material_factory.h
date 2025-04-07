@@ -11,7 +11,7 @@ namespace bnp {
 	public:
 		MaterialFactory() = default;
 
-		Material load_material(const std::vector<std::pair<GLuint, const char*>>& shaders);
+		Material load_material(const std::vector<std::pair<ShaderType, std::string>>& shaders);
 
 	protected:
 		GLuint compile_shader(const char* source, GLuint type);

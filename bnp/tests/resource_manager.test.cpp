@@ -86,8 +86,8 @@ TEST_CASE("cleans up unused materials") {
 	bnp::Node node(registry);
 	bnp::Window window;
 	bnp::Material material = material_factory.load_material({
-		{GL_VERTEX_SHADER, vertex_shader_source},
-		{GL_FRAGMENT_SHADER, fragment_shader_source}
+		{bnp::ShaderType::VertexShader, vertex_shader_source},
+		{bnp::ShaderType::FragmentShader, fragment_shader_source}
 		});
 
 	node.add_component<bnp::Material>(material);

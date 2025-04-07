@@ -11,6 +11,11 @@ using namespace std;
 
 namespace bnp {
 
+	enum ShaderType {
+		VertexShader = 1,
+		FragmentShader
+	};
+
 	struct Renderable {
 		bool value;
 	};
@@ -21,6 +26,18 @@ namespace bnp {
 		float tex_coords[2];
 	};
 
+	template <typename S>
+	void serialize(S& s, Vertex& vertex) {
+		s.value4b(vertex.position[0]);
+		s.value4b(vertex.position[1]);
+		s.value4b(vertex.position[2]);
+		s.value4b(vertex.normal[0]);
+		s.value4b(vertex.normal[1]);
+		s.value4b(vertex.normal[2]);
+		s.value4b(vertex.tex_coords[0]);
+		s.value4b(vertex.tex_coords[1]);
+	}
+
 	struct Mesh {
 		// vertex array object
 		GLuint va_id;
@@ -28,16 +45,37 @@ namespace bnp {
 		GLuint vb_id;
 		// element buffer object
 		GLuint eb_id;
-
 		size_t vertex_count;
+
+		std::vector<Vertex> vertices;
 	};
 
 	struct Texture {
+		std::string resource_id;
 		GLuint texture_id;
+
+		Texture() : texture_id(0) { }
 	};
 
 	struct Material {
+		std::string vertex_shader_resource_id;
+		std::string fragment_shader_resource_id;
 		GLuint shader_id;
+
+		Material() : shader_id(0) { }
+
+		//Material(const Material& other)
+		//	: vertex_shader_resource_id(other.vertex_shader_resource_id),
+		//	fragment_shader_resource_id(other.fragment_shader_resource_id),
+		//	shader_id(other.shader_id)
+		//{
+		//}
+
+		//Material(Material&& other) noexcept
+		//	: vertex_shader_resource_id(std::move(other.vertex_shader_resource_id)),
+		//	fragment_shader_resource_id(std::move(other.fragment_shader_resource_id))
+		//{
+		//}
 	};
 
 	struct Camera {

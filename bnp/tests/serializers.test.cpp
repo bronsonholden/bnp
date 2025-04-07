@@ -5,6 +5,7 @@
 #include <bitsery/adapter/stream.h>
 #include <bitsery/adapter/buffer.h>
 #include <bitsery/traits/vector.h>
+#include <bitsery/traits/string.h>
 
 #include <bnp/core/node.hpp>
 #include <bnp/core/window.h>
@@ -12,6 +13,8 @@
 #include <bnp/serializers/node.hpp>
 #include <bnp/serializers/scene.hpp>
 #include <bnp/serializers/graphics.hpp>
+
+#include <bnp/managers/archive_manager.h>
 
 #include <fstream>
 #include <filesystem>
@@ -222,6 +225,43 @@ TEST_CASE("scene serialization") {
 	CHECK(transform2.position.z == Catch::Approx(6.0f));
 
 	// Cleanup the temporary file
+	fs::remove(path);
+}
+
+TEST_CASE("archive index serialization") {
+	namespace fs = std::filesystem;
+
+	std::filesystem::path path = fs::temp_directory_path() / "test_archive_index.bin";
+	bnp::ArchiveIndex index;
+
+	index.entries.emplace("test_resource_file.bin", bnp::ArchiveIndexEntry{
+		{ "test_resource", { 0, 100 } }
+		});
+
+	{
+		std::ofstream os(path, std::ios::binary);
+		REQUIRE(os.is_open());
+
+		bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
+
+		ser.object(index);
+		ser.adapter().flush();
+	}
+
+	bnp::ArchiveIndex loaded_index;
+	{
+		std::ifstream is(path, std::ios::binary);
+		REQUIRE(is.is_open());
+
+		bitsery::Deserializer<bitsery::InputStreamAdapter> des{ is };
+
+		des.object(loaded_index);
+	}
+
+	REQUIRE(loaded_index.entries.size() == 1);
+	REQUIRE(loaded_index.entries.at("test_resource_file.bin").at("test_resource").first == 0);
+	REQUIRE(loaded_index.entries.at("test_resource_file.bin").at("test_resource").second == 100);
+
 	fs::remove(path);
 }
 

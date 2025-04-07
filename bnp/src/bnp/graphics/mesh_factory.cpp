@@ -2,11 +2,11 @@
 
 namespace bnp {
 
-	Mesh MeshFactory::cube(float size = 1.0f) {
+	void MeshFactory::create_cube(std::vector<Vertex>& out_vertices, std::vector<uint32_t>& out_indices, float size) {
 		float half = size / 2.0f;
 
 		// Cube vertices and normals (CCW winding)
-		Vertex vertices[] = {
+		out_vertices = {
 			// Front face
 			{{-half, -half,  half}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}},  // 0
 			{{ half, -half,  half}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}},  // 1
@@ -45,7 +45,7 @@ namespace bnp {
 		};
 
 		// Index data for each face (2 triangles per face)
-		GLuint indices[] = {
+		out_indices = {
 			// Front face (CCW)
 			0, 3, 2, 2, 1, 0,
 
@@ -64,7 +64,18 @@ namespace bnp {
 			// Bottom face (CCW)
 			20, 23, 22, 22, 21, 20
 		};
+	}
 
+	Mesh MeshFactory::cube(float scale) {
+		std::vector<Vertex> vertices;
+		std::vector<uint32_t> indices;
+
+		create_cube(vertices, indices, scale);
+
+		return create(vertices, indices);
+	}
+
+	Mesh MeshFactory::create(const std::vector<Vertex>& vertices, const std::vector<uint32_t> indices) {
 
 		Mesh mesh = Mesh();
 
@@ -72,11 +83,11 @@ namespace bnp {
 		glBindVertexArray(mesh.va_id);
 		glGenBuffers(1, &mesh.vb_id);
 		glBindBuffer(GL_ARRAY_BUFFER, mesh.vb_id);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 
 		glGenBuffers(1, &mesh.eb_id);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.eb_id);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW);
 
 		// Vertex positions
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);

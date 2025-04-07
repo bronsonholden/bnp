@@ -8,6 +8,7 @@
 #define REGISTERED_COMPONENTS     \
        X(bnp::Transform)          \
        X(bnp::Instances)          \
+       X(bnp::Material)          \
        X(bnp::Renderable)
 
 #if 0

@@ -4,6 +4,15 @@
 
 namespace bnp {
 
+	GLuint gl_shader_type(ShaderType shader_type) {
+		switch (shader_type) {
+		case VertexShader: return GL_VERTEX_SHADER;
+		case FragmentShader: return GL_FRAGMENT_SHADER;
+		default:
+			return 0;
+		}
+	}
+
 	GLuint MaterialFactory::compile_shader(const char* source, GLuint type) {
 		GLuint shader = glCreateShader(type);
 		glShaderSource(shader, 1, &source, nullptr);
@@ -23,13 +32,14 @@ namespace bnp {
 	}
 
 	Material MaterialFactory::load_material(
-		const std::vector<std::pair<GLuint, const char*>>& shaders)
+		const std::vector<std::pair<ShaderType, std::string>>& shaders)
 	{
 		GLuint program = glCreateProgram();
 		std::vector<GLuint> shader_objects;
 
-		for (const auto& [shader_type, shader_source] : shaders) {
-			GLuint shader = compile_shader(shader_source, shader_type);
+		for (const auto& [type, shader_source] : shaders) {
+			GLuint shader_type = gl_shader_type(type);
+			GLuint shader = compile_shader(shader_source.data(), shader_type);
 			if (shader) {
 				glAttachShader(program, shader);
 				shader_objects.push_back(shader);
@@ -51,7 +61,9 @@ namespace bnp {
 				glDeleteShader(shader);
 			}
 			glDeleteProgram(program);
-			return { 0 };
+			Material material;
+			material.shader_id = 0;
+			return material;
 		}
 
 		// Clean up shaders after successful linking
@@ -60,7 +72,9 @@ namespace bnp {
 			glDeleteShader(shader);
 		}
 
-		return { program };
+		Material material;
+		material.shader_id = program;
+		return material;
 	}
 
 } // namespace bnp

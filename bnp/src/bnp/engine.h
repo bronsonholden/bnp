@@ -8,6 +8,7 @@
 #include <bnp/graphics/mesh_factory.h>
 #include <bnp/managers/resource_manager.h>
 #include <bnp/managers/render_manager.h>
+#include <bnp/managers/archive_manager.h>
 
 #include <entt/entt.hpp>
 
@@ -20,6 +21,12 @@ namespace bnp {
 		void run();
 
 	protected:
+		// archive test
+		void create_instanced_cubes_test_scene();
+		void load_instanced_cubes_test_scene();
+		Scene test_scene;
+
+		// static files test
 		void create_test_scene_data_file();
 		void load_test_scene_data_file(Scene& scene);
 
@@ -31,6 +38,7 @@ namespace bnp {
 		MeshFactory factory;
 		MaterialFactory material_factory;
 
+		ArchiveManager archive_manager;
 		RenderManager render_manager;
 		ResourceManager resource_manager;
 

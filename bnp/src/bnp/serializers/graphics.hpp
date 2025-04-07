@@ -11,6 +11,12 @@ using namespace std;
 namespace bnp {
 
 	template <typename S>
+	void serialize(S& s, Material& material) {
+		s.text1b(material.vertex_shader_resource_id, material.vertex_shader_resource_id.size());
+		s.text1b(material.fragment_shader_resource_id, material.fragment_shader_resource_id.size());
+	}
+
+	template <typename S>
 	void serialize(S& s, Instances& instances) {
 		uint32_t count = instances.transforms.size();
 
