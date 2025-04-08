@@ -8,6 +8,7 @@
  */
 
 #include <bnp/components/graphics.h>
+#include <bnp/managers/archive_manager.h>
 
 #include <entt/entt.hpp>
 #include <vector>
@@ -18,13 +19,13 @@ namespace bnp {
 	public:
 		ResourceManager() = default;
 
-		void add_mesh(Mesh mesh);
-		void add_material(Material material);
+		void add_mesh(ResourceIdentifier resource_id, Mesh mesh);
+		void add_material(ResourceIdentifier resource_id, Material material);
 		void cleanup(const entt::registry& registry);
 
 	protected:
-		std::vector<Mesh> meshes;
-		std::vector<Material> materials;
+		std::unordered_map<ResourceIdentifier, Mesh> meshes;
+		std::unordered_map<ResourceIdentifier, Material> materials;
 
 		void cleanup_meshes(const entt::registry& registry);
 		void cleanup_materials(const entt::registry& registry);

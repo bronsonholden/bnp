@@ -53,9 +53,11 @@ namespace bnp {
 			auto& renderable = view.get<Renderable>(entity);
 
 			if (renderable.value) {
+				const Transform& t = instances.transforms.at(0);
 				renderer.render_instances(camera, mesh, material, instances);
 			}
 		}
+
 	}
 
 } // namespace bnp

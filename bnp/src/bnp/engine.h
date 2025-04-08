@@ -24,13 +24,9 @@ namespace bnp {
 		// archive test
 		void create_instanced_cubes_test_scene();
 		void load_instanced_cubes_test_scene();
-		Scene test_scene;
-
-		// static files test
-		void create_test_scene_data_file();
-		void load_test_scene_data_file(Scene& scene);
 
 		entt::registry registry;
+		Scene test_scene;
 		Window window;
 		TimeSystem time;
 		Renderer renderer;

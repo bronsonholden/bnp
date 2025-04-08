@@ -59,7 +59,7 @@ TEST_CASE("cleans up unused meshes") {
 	bnp::Mesh mesh = mesh_factory.cube(1.0f);
 
 	node.add_component<bnp::Mesh>(mesh);
-	resource_manager.add_mesh(mesh);
+	resource_manager.add_mesh("test_mesh", mesh);
 
 	window.poll();
 	window.clear();
@@ -91,7 +91,7 @@ TEST_CASE("cleans up unused materials") {
 		});
 
 	node.add_component<bnp::Material>(material);
-	resource_manager.add_material(material);
+	resource_manager.add_material("test_material", material);
 
 	window.poll();
 	window.clear();

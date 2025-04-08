@@ -63,12 +63,11 @@ namespace bnp {
 				s.value8b(entry_count);
 
 				for (auto& [_resource_id, span] : entry) {
-					// workaround; unordered_map key is const, but we're not deserializing here
+					// workaround; unordered_map key is const, but we're serializing here
 					ResourceIdentifier resource_id = _resource_id;
-					s.text1b(resource_id, 256);
-
 					auto& [offset, count] = span;
 
+					s.text1b(resource_id, 256);
 					s.value8b(offset);
 					s.value8b(count);
 				}
@@ -77,6 +76,8 @@ namespace bnp {
 		else {
 			index.entries.reserve(count);
 
+			cout << "Building index" << endl;
+
 			while (count--) {
 				ResourceFileName file_name;
 				uint64_t entry_count = 0;
@@ -84,6 +85,8 @@ namespace bnp {
 
 				s.text1b(file_name, 256);
 				s.value8b(entry_count);
+
+				cout << "  " << file_name << endl;
 
 				index.entries.emplace(file_name, entry);
 				index.entries.at(file_name).reserve(entry_count);
@@ -96,6 +99,8 @@ namespace bnp {
 					s.text1b(identifier, 256);
 					s.value8b(offset);
 					s.value8b(count);
+
+					cout << "    " << identifier << ": offset=" << offset << ", count=" << count << endl;
 
 					index.entries.at(file_name).emplace(identifier, ArchiveIndexSpan{ offset, count });
 				}
@@ -148,11 +153,6 @@ namespace bnp {
 	void serialize(S& s, Archive& archive) {
 	}
 
-	//void buffer_from_file(std::ifstream& is, std::vector<char>& buffer, uint64_t offset, uint64_t count) {
-	//	is.seekg(offset);
-	//	is.read(buffer.data(), count);
-	//}
-
 	class ArchiveManager {
 	public:
 		ArchiveManager(std::filesystem::path dir);
@@ -163,6 +163,8 @@ namespace bnp {
 		}
 
 		void load() {
+			index.entries.clear();
+
 			std::filesystem::path path = dir / "index.bin";
 			std::ifstream is(path, std::ios::binary);
 			bitsery::Deserializer<bitsery::InputStreamAdapter> des{ is };
@@ -177,12 +179,6 @@ namespace bnp {
 		}
 
 		void save(uint64_t max_chunk_size = 1024 * 1024) {
-			// serialized as:
-			// - 8b: <x>
-			//   container (<x> bytes)
-			// - 8b: <y>
-			//   container (<y> bytes)
-
 			// copy the index
 			ArchiveIndex new_index = index;
 
@@ -197,8 +193,6 @@ namespace bnp {
 				std::filesystem::path out_path(dir / new_name);
 				std::ifstream is(in_path, std::ios::binary);
 				std::ofstream os(out_path, std::ios::binary);
-				bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
-				bitsery::Deserializer<bitsery::InputStreamAdapter> des{ is };
 
 				// if any indexed resources
 				if (new_index.entries.find(file_name) != new_index.entries.end()) {
@@ -245,19 +239,19 @@ namespace bnp {
 
 				// now write pending resources
 				for (auto& [_resource_id, resource] : archive.pending_resources) {
-					std::streamoff off = os.tellp();
+					std::streamoff offset = os.tellp();
 
 					ResourceIdentifier resource_id = _resource_id;
 					uint64_t count = resource.data.bytes.size();
 
-					ser.container1b(resource.data.bytes, count);
+					os.write((char*)resource.data.bytes.data(), count);
 
-					ArchiveIndexSpan span{ off, count };
+					ArchiveIndexSpan span{ offset, count };
 
 					new_index.entries.at(file_name).emplace(resource_id, span);
 				}
 
-				ser.adapter().flush();
+				os.flush();
 			}
 
 			// save index
@@ -311,23 +305,34 @@ namespace bnp {
 		// load resource into memory
 		const Resource* load_resource(std::string resource_id) {
 			Archive* archive = get_archive_for_resource_id(resource_id);
+
+			if (archive == nullptr) {
+				return nullptr;
+			}
+
 			std::filesystem::path path = std::filesystem::absolute(archive->path);
 			std::filesystem::path base = std::filesystem::absolute(dir);
 			std::filesystem::path relative = std::filesystem::relative(path, base);
 			std::ifstream is(path, std::ios::binary);
 
-			bitsery::Deserializer<bitsery::InputStreamAdapter> des{ is };
-
 			auto& span = index.entries.at(relative.string()).at(resource_id);
+
+			cout << "relative.string(): " << relative.string() << endl;
 
 			uint64_t offset = span.first;
 			uint64_t num_bytes = span.second;
 
-			ResourceData data{ std::vector<std::byte>(num_bytes) }; // todo
+
+			ResourceData data{ std::vector<std::byte>(num_bytes) };
 
 			is.seekg(span.first);
+			is.read((char*)data.bytes.data(), num_bytes);
 
-			des.container1b(data.bytes, num_bytes);
+			if (resource_id == "debug_vertex_shader.glsl") {
+				cout << endl << "reading " << resource_id << ": offset=" << offset << ", count=" << num_bytes << endl << endl;
+				std::string src(reinterpret_cast<const char*>(data.bytes.data()), data.bytes.size());
+				//cout << src << endl;
+			}
 
 			auto result = archive->resources.emplace(resource_id, Resource{ std::move(data), false });
 
@@ -357,9 +362,6 @@ namespace bnp {
 			if (!archive) {
 				return nullptr;
 			}
-
-			archive->pending_resources.find(resource_id);
-			archive->pending_resources.end();
 
 			if (archive->pending_resources.find(resource_id) != archive->pending_resources.end()) {
 				return &archive->pending_resources.at(resource_id);

@@ -65,6 +65,46 @@ TEST_CASE("transform serialization") {
 	fs::remove(path);
 }
 
+TEST_CASE("mesh serialization") {
+	namespace fs = std::filesystem;
+
+	// Create a temporary file
+	const fs::path path = fs::temp_directory_path() / "test_mesh.bin";
+
+	// Original component
+	bnp::Mesh original_mesh;
+
+	original_mesh.resource_id = "test_mesh";
+
+	// Serialize to file
+	{
+		std::ofstream os(path, std::ios::binary);
+		REQUIRE(os.is_open());
+
+		bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
+		ser.object(original_mesh);
+		ser.adapter().flush();
+	}
+
+	// Deserialize from file
+	bnp::Mesh loaded_mesh;
+	{
+		std::ifstream is(path, std::ios::binary);
+		REQUIRE(is.is_open());
+
+		bitsery::Deserializer<bitsery::InputStreamAdapter> des{ is };
+		des.object(loaded_mesh);
+		auto status = des.adapter().error();
+		REQUIRE(status == bitsery::ReaderError::NoError);
+	}
+
+	// Compare
+	CHECK(loaded_mesh.resource_id == "test_mesh");
+
+	// Cleanup
+	fs::remove(path);
+}
+
 TEST_CASE("node serialization") {
 	namespace fs = std::filesystem;
 

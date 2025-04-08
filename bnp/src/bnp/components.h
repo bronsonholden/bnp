@@ -1,14 +1,15 @@
 #define ALL_COMPONENTS           \
-       bnp::Transform,            \
+       bnp::Transform,           \
        bnp::Instances,           \
-       bnp::Renderable,          \
+       bnp::Material,            \
        bnp::Mesh,                \
-       bnp::Material             \
+       bnp::Renderable
 
 #define REGISTERED_COMPONENTS     \
        X(bnp::Transform)          \
        X(bnp::Instances)          \
-       X(bnp::Material)          \
+       X(bnp::Material)           \
+       X(bnp::Mesh)               \
        X(bnp::Renderable)
 
 #if 0

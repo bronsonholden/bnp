@@ -4,6 +4,12 @@
 #include "testing.h"
 #include <bnp/managers/archive_manager.h>
 
+void printByte(std::byte b) {
+	// Print the byte as a 2-digit hex number with leading zeros
+	std::cout << "0x" << std::hex << std::setw(2) << std::setfill('0')
+		<< static_cast<int>(std::to_integer<uint8_t>(b)) << std::endl;
+}
+
 TEST_CASE("creates unique archive") {
 	namespace fs = std::filesystem;
 	std::filesystem::path dir = fs::temp_directory_path() / "data";
@@ -98,6 +104,7 @@ TEST_CASE("saves and loads archive and index files") {
 		REQUIRE(!loaded_archive_manager.resource_is_loaded("test_resource"));
 		const bnp::Resource* loaded_resource = loaded_archive_manager.get_resource("test_resource");
 		REQUIRE(loaded_resource != nullptr);
+		printByte(loaded_resource->data.bytes[0]);
 		REQUIRE((loaded_resource->data.bytes == std::vector<std::byte>{ std::byte{ 0x01 }, std::byte{ 0x02 } }));
 		REQUIRE(loaded_archive_manager.resource_is_loaded("test_resource"));
 	}
@@ -138,10 +145,7 @@ TEST_CASE("saves and loads archive and index files") {
 		REQUIRE(entry.find("test_resource_2") != entry.end());
 		REQUIRE(entry.at("test_resource").first == 0);
 		REQUIRE(entry.at("test_resource").second == 2);
-
-		// to account for bitsery size prefix. this line may fail if test
-		// resource data changes substantially
-		REQUIRE(entry.at("test_resource_2").first == 3);
+		REQUIRE(entry.at("test_resource_2").first == 2);
 		REQUIRE(entry.at("test_resource_2").second == 3);
 
 		REQUIRE(!loaded_archive_manager.resource_is_loaded("test_resource"));

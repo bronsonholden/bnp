@@ -26,41 +26,40 @@ namespace bnp {
 		float tex_coords[2];
 	};
 
-	template <typename S>
-	void serialize(S& s, Vertex& vertex) {
-		s.value4b(vertex.position[0]);
-		s.value4b(vertex.position[1]);
-		s.value4b(vertex.position[2]);
-		s.value4b(vertex.normal[0]);
-		s.value4b(vertex.normal[1]);
-		s.value4b(vertex.normal[2]);
-		s.value4b(vertex.tex_coords[0]);
-		s.value4b(vertex.tex_coords[1]);
-	}
-
 	struct Mesh {
-		// vertex array object
-		GLuint va_id;
-		// vertex buffer object
-		GLuint vb_id;
-		// element buffer object
-		GLuint eb_id;
-		size_t vertex_count;
+		std::string resource_id;
 
+		// vertex array object
+		GLuint va_id = 0;
+		// vertex buffer object
+		GLuint vb_id = 0;
+		// element buffer object
+		GLuint eb_id = 0;
+
+		size_t vertex_count = 0;
+	};
+
+	struct MeshData {
 		std::vector<Vertex> vertices;
+		std::vector<uint32_t> indices;
 	};
 
 	struct Texture {
 		std::string resource_id;
-		GLuint texture_id;
+		GLuint texture_id = 0;
 
 		Texture() : texture_id(0) { }
+	};
+
+	struct ShaderData {
+		ShaderType shader_type;
+		std::string source;
 	};
 
 	struct Material {
 		std::string vertex_shader_resource_id;
 		std::string fragment_shader_resource_id;
-		GLuint shader_id;
+		GLuint shader_id = 0;
 
 		Material() : shader_id(0) { }
 
@@ -79,9 +78,9 @@ namespace bnp {
 	};
 
 	struct Camera {
-		glm::vec3 position;
-		glm::vec3 target;
-		glm::vec3 up;
+		glm::vec3 position = glm::vec3(0.0f);
+		glm::vec3 target = glm::vec3(0.0f);
+		glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	};
 
 	// use for static entities where each instance has no
