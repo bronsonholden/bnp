@@ -59,4 +59,3 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(bitsery)
 target_include_directories(bnplib PUBLIC ${bitsery_SOURCE_DIR}/include)
-message(STATUS "Bitsery include path: ${bitsery_SOURCE_DIR}/include")
