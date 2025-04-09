@@ -28,7 +28,12 @@ namespace bnp {
 			camera.up
 		);
 
-		glm::mat4 projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+		GLint viewport[4];
+		glGetIntegerv(GL_VIEWPORT, viewport);
+
+		float aspect = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
+
+		glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
 
 		// Set the transform matrices
 		GLuint model_loc = glGetUniformLocation(material.shader_id, "model");
@@ -50,9 +55,14 @@ namespace bnp {
 	void Renderer::render_instances(const Camera& camera, const Mesh& mesh, const Material& material, const Instances& instances) const {
 		glUseProgram(material.shader_id);
 
+		GLint viewport[4];
+		glGetIntegerv(GL_VIEWPORT, viewport);
+
+		float aspect = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
+
 		// Camera view and projection matrices
 		glm::mat4 view = glm::lookAt(camera.position, camera.target, camera.up);
-		glm::mat4 projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+		glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
 
 		// Set the uniform locations for matrices
 		GLuint view_loc = glGetUniformLocation(material.shader_id, "view");

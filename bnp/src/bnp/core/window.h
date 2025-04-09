@@ -11,12 +11,17 @@ namespace bnp {
 
 		Window();
 		~Window();
-		int poll();
+		int poll(SDL_Event& event);
 		void clear();
 		void swap();
+
+		SDL_Window* get_sdl_window();
+		SDL_GLContext* get_gl_context();
 
 	private:
 		SDL_Window* w;
 		SDL_GLContext glContext;
+
+		void handle_window_event(SDL_Event& event);
 	};
 }

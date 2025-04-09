@@ -61,7 +61,8 @@ TEST_CASE("cleans up unused meshes") {
 	node.add_component<bnp::Mesh>(mesh);
 	resource_manager.add_mesh("test_mesh", mesh);
 
-	window.poll();
+	SDL_Event event;
+	window.poll(event);
 	window.clear();
 
 	REQUIRE(glIsVertexArray(mesh.va_id));
@@ -93,7 +94,8 @@ TEST_CASE("cleans up unused materials") {
 	node.add_component<bnp::Material>(material);
 	resource_manager.add_material("test_material", material);
 
-	window.poll();
+	SDL_Event event;
+	window.poll(event);
 	window.clear();
 
 	REQUIRE(glIsProgram(material.shader_id));

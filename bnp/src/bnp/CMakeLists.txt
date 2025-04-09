@@ -59,3 +59,38 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(bitsery)
 target_include_directories(bnplib PUBLIC ${bitsery_SOURCE_DIR}/include)
+
+FetchContent_Declare(
+    imgui
+    GIT_REPOSITORY https://github.com/ocornut/imgui.git
+    GIT_TAG v1.89.9
+)
+
+FetchContent_MakeAvailable(imgui)
+
+# Core ImGui library
+add_library(imgui_lib
+    ${imgui_SOURCE_DIR}/imgui.cpp
+    ${imgui_SOURCE_DIR}/imgui_draw.cpp
+    ${imgui_SOURCE_DIR}/imgui_tables.cpp
+    ${imgui_SOURCE_DIR}/imgui_widgets.cpp
+)
+
+target_include_directories(imgui_lib PUBLIC
+    ${imgui_SOURCE_DIR}
+)
+
+add_library(imgui_backend
+    ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl2.cpp
+    ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
+)
+
+target_include_directories(imgui_backend PUBLIC
+    ${imgui_SOURCE_DIR}
+    ${imgui_SOURCE_DIR}/backends
+)
+
+target_link_libraries(imgui_backend PUBLIC SDL2::SDL2-static)
+
+target_include_directories(bnplib PUBLIC ${bitsery_SOURCE_DIR})
+target_link_libraries(bnplib PUBLIC imgui_lib imgui_backend)

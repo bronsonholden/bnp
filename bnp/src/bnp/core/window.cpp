@@ -18,9 +18,9 @@ namespace bnp {
 			"SDL window",
 			SDL_WINDOWPOS_CENTERED,
 			SDL_WINDOWPOS_CENTERED,
-			800,
-			600,
-			SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN
+			1920,
+			1080,
+			SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
 		);
 
 		if (!this->w) {
@@ -53,15 +53,32 @@ namespace bnp {
 		SDL_Quit();
 	}
 
-	int Window::poll() {
-		SDL_Event event;
+	int Window::poll(SDL_Event& event) {
 		int ret = SDL_PollEvent(&event);
 
-		if (event.type == SDL_QUIT) {
+		switch (event.type) {
+		case SDL_QUIT:
 			this->open = false;
+			break;
+		case SDL_WINDOWEVENT:
+			handle_window_event(event);
+			break;
+		default:
+			;
 		}
 
 		return ret;
+	}
+
+	void Window::handle_window_event(SDL_Event& event) {
+		switch (event.window.event) {
+		case SDL_WINDOWEVENT_RESIZED:
+		case SDL_WINDOWEVENT_SIZE_CHANGED:
+			glViewport(0, 0, event.window.data1, event.window.data2);
+			break;
+		default:
+			;
+		}
 	}
 
 	void Window::clear() {
@@ -70,5 +87,13 @@ namespace bnp {
 
 	void Window::swap() {
 		SDL_GL_SwapWindow(this->w);
+	}
+
+	SDL_Window* Window::get_sdl_window() {
+		return w;
+	}
+
+	SDL_GLContext* Window::get_gl_context() {
+		return &glContext;
 	}
 }

@@ -7,6 +7,7 @@
 #include <bnp/serializers/scene.hpp>
 #include <bnp/serializers/graphics.hpp>
 #include <bnp/managers/archive_manager.h>
+#include <bnp/ui/file_browser.h>
 
 #include <string>
 #include <fstream>
@@ -15,6 +16,10 @@
 #include <bitsery/adapter/stream.h>
 #include <bitsery/adapter/buffer.h>
 #include <bitsery/traits/vector.h>
+
+#include <imgui.h>
+#include <backends/imgui_impl_sdl2.h>
+#include <backends/imgui_impl_opengl3.h>
 
 #include <iostream>
 using namespace std;
@@ -86,7 +91,7 @@ namespace bnp {
 		renderer.initialize();
 		archive_manager.load();
 
-		glEnable(GL_DEBUG_OUTPUT);
+		//glEnable(GL_DEBUG_OUTPUT);
 		glDebugMessageCallback(MessageCallback, 0);
 	}
 
@@ -330,8 +335,18 @@ namespace bnp {
 			glm::vec3(0.0f, 1.0f, 0.0f)
 			});
 
+		auto context = ImGui::CreateContext();
+		ImGui_ImplSDL2_InitForOpenGL(window.get_sdl_window(), window.get_gl_context());
+		ImGui_ImplOpenGL3_Init();
+
+		FileBrowser browser;
+
 		while (window.open) {
-			window.poll();
+			SDL_Event event;
+
+			while (window.poll(event)) {
+				ImGui_ImplSDL2_ProcessEvent(&event);
+			}
 
 			time.new_frame();
 
@@ -351,6 +366,31 @@ namespace bnp {
 			// rendering
 			//render_manager.render(registry, renderer);
 			render_manager.render_instances(registry, renderer);
+
+			ImGui::SetCurrentContext(context);
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplSDL2_NewFrame(window.get_sdl_window());
+			ImGui::NewFrame();
+
+			// Your ImGui UI here
+			ImGui::Begin("Test Window");
+			ImGui::Text("Hello, ImGui!");
+			ImGui::End();
+
+			ImGui::Begin("Test Window 2");
+			ImGui::Text("Hello, ImGui!");
+			ImGui::End();
+
+			browser.render();
+
+			if (browser.has_selection()) {
+				std::string path = browser.get_selected_path();
+				ImGui::Text("Selected path: %s", path.c_str());
+			}
+
+			ImGui::Render();
+
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 			window.swap();
 		}
