@@ -8,6 +8,8 @@
 #include <bnp/serializers/graphics.hpp>
 #include <bnp/managers/archive_manager.h>
 #include <bnp/ui/file_browser.h>
+#include <bnp/ui/scene_inspector.h>
+#include <bnp/ui/node_inspector.h>
 
 #include <string>
 #include <fstream>
@@ -91,6 +93,10 @@ namespace bnp {
 		renderer.initialize();
 		archive_manager.load();
 
+		Node node = test_scene.create_node();
+
+		node.add_component<Transform>(Transform{ glm::vec3(0.0f), glm::quat(), glm::vec3(1.0f) });
+
 		//glEnable(GL_DEBUG_OUTPUT);
 		glDebugMessageCallback(MessageCallback, 0);
 	}
@@ -172,9 +178,9 @@ namespace bnp {
 				node.add_component<Renderable>(true);
 
 				Instances instances;
-				const int count = 50000;
+				const int count = 50;
 				instances.transforms.reserve(count);
-				RandomFloatGenerator pos_gen(-50.0f, 50.0f);
+				RandomFloatGenerator pos_gen(-10.0f, 10.0f);
 				RandomFloatGenerator rot_gen(-1.0f, 1.0f);
 				RandomFloatGenerator scale_gen(0.1f, 0.8f);
 				for (int i = 0; i < count; ++i) {
@@ -322,26 +328,29 @@ namespace bnp {
 	}
 
 	void Engine::run() {
-		create_instanced_cubes_test_scene();
-		load_instanced_cubes_test_scene();
+		//create_instanced_cubes_test_scene();
+		//load_instanced_cubes_test_scene();
 
 		const float fixed_dt = 1.0f / 60.0f;
 
 		time.start();
 
-		Camera camera({
-			glm::vec3(5.0f, 5.0f, 5.0f),
-			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(0.0f, 1.0f, 0.0f)
-			});
-
 		auto context = ImGui::CreateContext();
+		ImGui::SetCurrentContext(context);
 		ImGui_ImplSDL2_InitForOpenGL(window.get_sdl_window(), window.get_gl_context());
 		ImGui_ImplOpenGL3_Init();
 
-		FileBrowser browser;
+		FileBrowser file_browser;
+		SceneInspector scene_inspector(test_scene);
 
 		while (window.open) {
+			Camera camera({
+				glm::vec3(5.0f, 5.0f, 5.0f),
+				glm::vec3(0.0f, 0.0f, 0.0f),
+				glm::vec3(0.0f, 1.0f, 0.0f),
+				glm::ortho(0, window.get_width(), 0, window.get_height())
+				});
+
 			SDL_Event event;
 
 			while (window.poll(event)) {
@@ -365,27 +374,24 @@ namespace bnp {
 
 			// rendering
 			//render_manager.render(registry, renderer);
-			render_manager.render_instances(registry, renderer);
+			//render_manager.render_instances(registry, renderer, camera);
 
-			ImGui::SetCurrentContext(context);
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplSDL2_NewFrame(window.get_sdl_window());
 			ImGui::NewFrame();
 
-			// Your ImGui UI here
-			ImGui::Begin("Test Window");
-			ImGui::Text("Hello, ImGui!");
-			ImGui::End();
+			file_browser.render();
+			scene_inspector.render();
 
-			ImGui::Begin("Test Window 2");
-			ImGui::Text("Hello, ImGui!");
-			ImGui::End();
-
-			browser.render();
-
-			if (browser.has_selection()) {
-				std::string path = browser.get_selected_path();
+			if (file_browser.has_selection()) {
+				std::string path = file_browser.get_selected_path();
 				ImGui::Text("Selected path: %s", path.c_str());
+			}
+
+			if (scene_inspector.get_inspected_entity()) {
+				Node node = test_scene.get_node(*scene_inspector.get_inspected_entity());
+				static NodeInspector node_inspector(node);
+				node_inspector.render();
 			}
 
 			ImGui::Render();

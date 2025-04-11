@@ -1,0 +1,61 @@
+#include <bnp/ui/node_inspector.h>
+#include <bnp/ui/components/transform_inspector.h>
+#include <bnp/ui/components/instances_inspector.h>
+
+namespace bnp {
+
+	NodeInspector::NodeInspector(Node node)
+		: node(node) {}
+
+	void NodeInspector::render() {
+		if (!node.valid()) {
+			ImGui::TextColored(ImVec4(1, 0, 0, 1), "Invalid node.");
+			return;
+		}
+
+		ImGui::Begin("Node Inspector");
+
+		ImGui::Text("Entity ID: %u", static_cast<uint32_t>(node.get_entity_id()));
+		ImGui::Separator();
+
+		ImGui::Text("Components:");
+		ImGui::Indent();
+
+		// This assumes you have ALL_COMPONENTS defined somewhere
+		// For now, we'll manually check known types — you can template this later
+		if (node.has_component<Transform>()) {
+			if (ImGui::TreeNode("Transform")) {
+				TransformInspector transform_inspector(node);
+
+				transform_inspector.render();
+				// TODO: Add editable fields
+				ImGui::TreePop();
+			}
+		}
+
+		if (node.has_component<Parent>()) {
+			if (ImGui::TreeNode("Parent")) {
+				ImGui::Text("Component: Parent");
+				// TODO: Show parent entity ID
+				ImGui::TreePop();
+			}
+		}
+
+		if (node.has_component<Instances>()) {
+			if (ImGui::TreeNode("Instances")) {
+				InstancesInspector instances_inspector(node);
+
+				instances_inspector.render();
+				ImGui::TreePop();
+			}
+		}
+
+		// Add more components here...
+		// if (node.has_component<YourComponent>()) { ... }
+
+		ImGui::Unindent();
+
+		ImGui::End();
+	}
+
+}

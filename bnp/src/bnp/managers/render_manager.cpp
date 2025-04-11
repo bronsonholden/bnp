@@ -9,15 +9,8 @@ using namespace std;
 
 namespace bnp {
 
-	void RenderManager::render(const entt::registry& registry, const Renderer& renderer) {
+	void RenderManager::render(const entt::registry& registry, const Renderer& renderer, const Camera& camera) {
 		auto view = registry.view<Mesh, Material, Transform, Renderable>();
-
-		// todo: accept as arg
-		Camera camera({
-			glm::vec3(5.0f, 5.0f, 5.0f),
-			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(0.0f, 1.0f, 0.0f)
-			});
 
 		for (auto entity : view) {
 			if (!registry.all_of<Instances>(entity)) {
@@ -33,18 +26,8 @@ namespace bnp {
 		}
 	}
 
-	void RenderManager::render_instances(const entt::registry& registry, const Renderer& renderer) {
+	void RenderManager::render_instances(const entt::registry& registry, const Renderer& renderer, const Camera& camera) {
 		auto view = registry.view<Mesh, Material, Renderable, Instances>();
-
-		//cout << "render_instances (registry size): " << registry.size() << endl;
-		//cout << "render_instances (view size): " << view.size_hint() << endl;
-
-		// todo: accept as arg
-		Camera camera({
-			glm::vec3(5.0f, 5.0f, 5.0f),
-			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(0.0f, 1.0f, 0.0f)
-			});
 
 		for (auto entity : view) {
 			auto& mesh = view.get<Mesh>(entity);

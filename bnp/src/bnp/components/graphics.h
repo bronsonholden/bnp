@@ -78,9 +78,10 @@ namespace bnp {
 	};
 
 	struct Camera {
-		glm::vec3 position = glm::vec3(0.0f);
+		glm::vec3 position = glm::vec3(5.0f);
 		glm::vec3 target = glm::vec3(0.0f);
 		glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+		glm::mat4 perspective = glm::perspective(glm::radians(45.0f), 1280.0f / 920.0f, 0.1f, 100.0f);
 	};
 
 	// use for static entities where each instance has no

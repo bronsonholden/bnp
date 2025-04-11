@@ -25,7 +25,7 @@ namespace bnp {
 		}
 
 		void update_world_transform() {
-			world_transform = glm::translate(world_transform, position) * glm::mat4_cast(rotation) * glm::scale(glm::mat4(1.0f), scale);
+			world_transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4_cast(rotation) * glm::scale(glm::mat4(1.0f), scale);
 			dirty = false;
 		}
 	};

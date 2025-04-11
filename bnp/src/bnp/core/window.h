@@ -18,6 +18,9 @@ namespace bnp {
 		SDL_Window* get_sdl_window();
 		SDL_GLContext* get_gl_context();
 
+		int get_width() const;
+		int get_height() const;
+
 	private:
 		SDL_Window* w;
 		SDL_GLContext glContext;

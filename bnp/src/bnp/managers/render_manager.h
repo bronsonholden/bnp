@@ -9,8 +9,8 @@ namespace bnp {
 	public:
 		RenderManager() = default;
 
-		void render(const entt::registry& registry, const Renderer& renderer);
-		void render_instances(const entt::registry& registry, const Renderer& renderer);
+		void render(const entt::registry& registry, const Renderer& renderer, const Camera& camera);
+		void render_instances(const entt::registry& registry, const Renderer& renderer, const Camera& camera);
 	};
 
 } // namespace bnp

@@ -89,6 +89,18 @@ namespace bnp {
 		SDL_GL_SwapWindow(this->w);
 	}
 
+	int Window::get_width() const {
+		int width;
+		SDL_GetWindowSize(w, &width, nullptr);
+		return width;
+	}
+
+	int Window::get_height() const {
+		int height;
+		SDL_GetWindowSize(w, nullptr, &height);
+		return height;
+	}
+
 	SDL_Window* Window::get_sdl_window() {
 		return w;
 	}
