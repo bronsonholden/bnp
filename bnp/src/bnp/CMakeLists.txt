@@ -94,3 +94,15 @@ target_link_libraries(imgui_backend PUBLIC SDL2::SDL2-static)
 
 target_include_directories(bnplib PUBLIC ${bitsery_SOURCE_DIR})
 target_link_libraries(bnplib PUBLIC imgui_lib imgui_backend)
+
+
+# stb_image
+FetchContent_Declare(
+    stb
+    GIT_REPOSITORY https://github.com/nothings/stb.git
+    GIT_TAG master
+)
+
+FetchContent_MakeAvailable(stb)
+
+target_include_directories(bnplib PUBLIC ${stb_SOURCE_DIR})

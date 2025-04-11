@@ -343,6 +343,10 @@ namespace bnp {
 		FileBrowser file_browser;
 		SceneInspector scene_inspector(test_scene);
 
+		std::filesystem::path root = PROJECT_ROOT;
+
+		Texture texture = texture_factory.load_from_file(root / "bnp/resources/sprites/out/squirrel.png");
+
 		while (window.open) {
 			Camera camera({
 				glm::vec3(5.0f, 5.0f, 5.0f),

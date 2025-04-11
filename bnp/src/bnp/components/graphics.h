@@ -49,6 +49,12 @@ namespace bnp {
 		GLuint texture_id = 0;
 
 		Texture() : texture_id(0) { }
+
+		void cleanup() {
+			if (texture_id) {
+				glDeleteTextures(1, &texture_id);
+			}
+		}
 	};
 
 	struct ShaderData {
