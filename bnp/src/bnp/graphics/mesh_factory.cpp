@@ -66,6 +66,17 @@ namespace bnp {
 		};
 	}
 
+	void MeshFactory::create_box(std::vector<Vertex>& out_vertices, std::vector<uint32_t>& out_indices) {
+		out_vertices = {
+			{{ 0, 0, 0}, { 0, 0, 1 }, { 0, 0 }},
+			{{ 0, 1, 0}, { 0, 0, 1 }, { 0, 1 }},
+			{{ 1, 1, 0}, { 0, 0, 1 }, { 1, 1}},
+			{{ 1, 0, 0}, { 0, 0, 1 }, { 1, 0 }}
+		};
+
+		out_indices = { 0, 2, 1, 2, 0, 3 };
+	}
+
 	Mesh MeshFactory::cube(float scale) {
 		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
@@ -104,6 +115,15 @@ namespace bnp {
 		mesh.vertex_count = 36;
 
 		return mesh;
+	}
+
+	Mesh MeshFactory::box() {
+		std::vector<Vertex> vertices;
+		std::vector<uint32_t> indices;
+
+		create_box(vertices, indices);
+
+		return create(vertices, indices);
 	}
 
 }

@@ -8,6 +8,8 @@ namespace bnp {
 		Texture texture;
 
 		int width, height, channels;
+
+		stbi_set_flip_vertically_on_load(true);
 		unsigned char* data = stbi_load(path.string().data(), &width, &height, &channels, 0);
 
 		GLenum format;
@@ -18,6 +20,8 @@ namespace bnp {
 			stbi_image_free(data);
 			return texture;
 		}
+
+		texture.channels = channels;
 
 		glGenTextures(1, &texture.texture_id);
 		glBindTexture(GL_TEXTURE_2D, texture.texture_id);

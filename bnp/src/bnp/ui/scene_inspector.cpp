@@ -42,7 +42,9 @@ namespace bnp {
 
 				ImGui::TableNextColumn();
 
-				if (ImGui::Button("Inspect")) {
+				char button_label[32];
+				snprintf(button_label, sizeof(button_label), "Inspect##%u", static_cast<uint32_t>(entity));
+				if (ImGui::Button(button_label)) {
 					inspected_entity = entity;
 				}
 			}

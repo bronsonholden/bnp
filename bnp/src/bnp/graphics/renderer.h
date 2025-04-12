@@ -15,8 +15,8 @@ namespace bnp {
 		~Renderer();
 
 		void initialize();
-		void render(const Camera& camera, const Mesh& mesh, const Material& material, const glm::mat4& transform) const;
-		void render_instances(const Camera& camera, const Mesh& mesh, const Material& material, const Instances& instances) const;
+		void render(const Camera& camera, const Mesh& mesh, const Material& material, const Texture& texture, const glm::mat4& transform) const;
+		void render_instances(const Camera& camera, const Mesh& mesh, const Material& material, const Texture& texture, const Instances& instances) const;
 		void shutdown();
 	};
 

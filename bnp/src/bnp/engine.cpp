@@ -4,6 +4,7 @@
 #include <bnp/components/transform.h>
 #include <bnp/components/graphics.h>
 #include <bnp/helpers/random_float_generator.hpp>
+#include <bnp/helpers/color_helper.hpp>
 #include <bnp/serializers/scene.hpp>
 #include <bnp/serializers/graphics.hpp>
 #include <bnp/managers/archive_manager.h>
@@ -33,6 +34,28 @@ layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCoords;
 
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+out vec3 frag_pos;
+out vec3 normal;
+out vec2 tex_coords;
+
+void main() {
+    frag_pos = vec3(model * vec4(aPos, 1.0));
+    normal = normalize(mat3(transpose(inverse(model))) * aNormal);
+    tex_coords = aTexCoords;
+    gl_Position = projection * view * vec4(frag_pos, 1.0);
+}
+)";
+
+const char* instanced_vertex_shader_source = R"(
+#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec2 aTexCoords;
+
 // Instanced model matrix
 layout (location = 3) in mat4 model;
 
@@ -54,19 +77,26 @@ void main() {
 // Basic fragment shader source code
 const char* fragment_shader_source = R"(
 #version 330 core
+
 out vec4 frag_color;
 
 in vec3 frag_pos;
 in vec3 normal;
 in vec2 tex_coords;
 
-uniform vec3 color;
+uniform sampler2D sprite_texture;
+
+const float muls[3] = float[](1.0f, 1.1f, 0.9f);
 
 void main() {
+    float row = gl_FragCoord.y;
     vec3 light_dir = normalize(vec3(2.0, 1.0, 0.3));
-    float diff = max(dot(normal, light_dir), 0.0);
-    vec3 diffuse = diff * color;
-    frag_color = vec4(diffuse, 1.0);
+    vec4 tex_color = texture(sprite_texture, tex_coords);
+    //float diff = max(dot(normal, light_dir), 0.0);
+    //vec3 diffuse = diff * sprite_texture;
+    int idx = int(mod(floor(row / 3.0), 3.0));
+    tex_color *= muls[idx];
+    frag_color = tex_color;
 }
 )";
 
@@ -99,6 +129,14 @@ namespace bnp {
 
 		//glEnable(GL_DEBUG_OUTPUT);
 		glDebugMessageCallback(MessageCallback, 0);
+
+		const glm::vec4 clear_color = ColorHelper::hex_to_rgba("a3d9ff");
+		glClearColor(
+			clear_color.r,
+			clear_color.g,
+			clear_color.b,
+			clear_color.a
+		);
 	}
 
 	Engine::~Engine() {
@@ -134,7 +172,7 @@ namespace bnp {
 
 			// create vertex shader
 			{
-				std::string vertex_source = vertex_shader_source;
+				std::string vertex_source = instanced_vertex_shader_source;
 				std::vector<std::byte> buffer;
 				bitsery::Serializer<bitsery::OutputBufferAdapter<std::vector<std::byte>>> ser{ buffer };
 				// serialize shader data
@@ -215,16 +253,7 @@ namespace bnp {
 
 		archive_manager.load();
 
-		cout << "scene_test_instanced_cubes: " << archive_manager.get_resource("scene_test_instanced_cubes") << endl;
-		cout << "test_cube_mesh: " << archive_manager.get_resource("test_cube_mesh") << endl;
-		cout << "debug_vertex_shader.glsl: " << archive_manager.get_resource("debug_vertex_shader.glsl") << endl;
-		cout << "debug_fragment_shader.glsl: " << archive_manager.get_resource("debug_fragment_shader.glsl") << endl;
-
-		cout << "has test_data.bin: " << archive_manager.has_archive("test_data.bin") << endl;
-		cout << "has test_cube_mesh: " << archive_manager.has_resource("test_cube_mesh") << endl;
-
 		const Resource* resource = archive_manager.get_resource("scene_test_instanced_cubes");
-		cout << "loaded scene_test_instanced_cubes: " << resource->data.bytes.size() << " bytes" << endl;
 		bitsery::Deserializer<bitsery::InputBufferAdapter<std::vector<std::byte>>> des{ resource->data.bytes.begin(), resource->data.bytes.end() };
 
 		des.object(test_scene);
@@ -251,8 +280,6 @@ namespace bnp {
 			for (auto& entity : view) {
 				auto& mesh = registry.get<Mesh>(entity);
 
-				cout << mesh.resource_id << " loading from archive" << endl;
-
 				ResourceIdentifier resource_id = mesh.resource_id;
 				MeshData mesh_data;
 
@@ -267,10 +294,6 @@ namespace bnp {
 				Mesh loaded_mesh = mesh_factory.create(mesh_data.vertices, mesh_data.indices);
 
 				registry.patch<Mesh>(entity, [&loaded_mesh](auto& mesh) {
-					cout << "mesh.va_id: " << loaded_mesh.va_id << endl;
-					cout << "mesh.vb_id: " << loaded_mesh.vb_id << endl;
-					cout << "mesh.eb_id: " << loaded_mesh.eb_id << endl;
-
 					mesh.va_id = loaded_mesh.va_id;
 					mesh.vb_id = loaded_mesh.vb_id;
 					mesh.eb_id = loaded_mesh.eb_id;
@@ -319,7 +342,6 @@ namespace bnp {
 				// todo: handle already-loaded material (e.g. one material used on two entities)
 				Material loaded_material = material_factory.load_material(shaders);
 
-				// issue here?
 				registry.patch<Material>(entity, [&loaded_material](auto& material) {
 					material.shader_id = loaded_material.shader_id;
 					});
@@ -345,14 +367,40 @@ namespace bnp {
 
 		std::filesystem::path root = PROJECT_ROOT;
 
-		Texture texture = texture_factory.load_from_file(root / "bnp/resources/sprites/out/squirrel.png");
+		{
+			MeshFactory mesh_factory;
+			Node node = test_scene.create_node();
+			Mesh mesh = mesh_factory.box();
+			Mesh cube = mesh_factory.cube(1.0f);
+			Texture texture = texture_factory.load_from_file(root / "bnp/resources/sprites/out/squirrel.png");
+			Material material = material_factory.load_material({
+				{ShaderType::VertexShader, vertex_shader_source},
+				{ShaderType::FragmentShader, fragment_shader_source}
+				});
+			texture.resource_id = "squirrel_spritesheet";
+			node.add_component<Texture>(texture);
+			node.add_component<Mesh>(cube);
+			node.add_component<Transform>(Transform{ glm::vec3(-120, -120, 0), glm::quat(),  glm::vec3(240, 240, 1) });
+			node.add_component<Renderable>(true);
+			node.add_component<Material>(material);
+		}
 
 		while (window.open) {
+
+			float width = static_cast<float>(window.get_width());
+			float height = static_cast<float>(window.get_height());
 			Camera camera({
-				glm::vec3(5.0f, 5.0f, 5.0f),
+				glm::vec3(0.0f, 0.0f, 500.0f),
 				glm::vec3(0.0f, 0.0f, 0.0f),
 				glm::vec3(0.0f, 1.0f, 0.0f),
-				glm::ortho(0, window.get_width(), 0, window.get_height())
+				glm::ortho(
+					-width / 2,
+					width / 2,
+					-height / 2,
+					height / 2,
+					0.1f,
+					10000.0f
+					)
 				});
 
 			SDL_Event event;
@@ -377,8 +425,8 @@ namespace bnp {
 			window.clear();
 
 			// rendering
-			//render_manager.render(registry, renderer);
-			//render_manager.render_instances(registry, renderer, camera);
+			render_manager.render(registry, renderer, camera);
+			render_manager.render_instances(registry, renderer, camera);
 
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplSDL2_NewFrame(window.get_sdl_window());
@@ -394,7 +442,7 @@ namespace bnp {
 
 			if (scene_inspector.get_inspected_entity()) {
 				Node node = test_scene.get_node(*scene_inspector.get_inspected_entity());
-				static NodeInspector node_inspector(node);
+				NodeInspector node_inspector(node);
 				node_inspector.render();
 			}
 

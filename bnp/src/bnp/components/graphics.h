@@ -47,6 +47,7 @@ namespace bnp {
 	struct Texture {
 		std::string resource_id;
 		GLuint texture_id = 0;
+		uint8_t channels = 0;
 
 		Texture() : texture_id(0) { }
 

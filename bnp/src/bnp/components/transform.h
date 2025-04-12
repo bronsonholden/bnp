@@ -22,6 +22,7 @@ namespace bnp {
 			world_transform(glm::mat4(1.0f)),
 			dirty(true)
 		{
+			update_world_transform();
 		}
 
 		void update_world_transform() {

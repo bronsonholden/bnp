@@ -43,6 +43,7 @@ namespace bnp {
 			node.get_registry().patch<Transform>(node.get_entity_id(), [&pos, scale](Transform& transform) {
 				transform.position = { pos[0], pos[1], pos[2] };
 				transform.scale = { scale[0], scale[1], scale[2] };
+				transform.update_world_transform();
 				});
 		}
 	}

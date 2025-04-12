@@ -37,8 +37,6 @@ namespace bnp {
 		if (glewError != GLEW_OK) {
 			throw glewGetErrorString(glewError);
 		}
-
-		glClearColor(0.2f, 0.15f, 0.5f, 1.0f);
 	}
 
 	Window::~Window() {
