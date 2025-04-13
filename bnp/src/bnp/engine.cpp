@@ -4,6 +4,7 @@
 #include <bnp/components/transform.h>
 #include <bnp/components/graphics.h>
 #include <bnp/helpers/random_float_generator.hpp>
+#include <bnp/graphics/sprite_factory.h>
 #include <bnp/helpers/color_helper.hpp>
 #include <bnp/serializers/scene.hpp>
 #include <bnp/serializers/graphics.hpp>
@@ -85,17 +86,19 @@ in vec3 normal;
 in vec2 tex_coords;
 
 uniform sampler2D sprite_texture;
+uniform vec2 uv0;
+uniform vec2 uv1;
 
-const float muls[3] = float[](1.0f, 1.1f, 0.9f);
+const float muls[3] = float[](0.0f, 0.07f, -0.09f);
 
 void main() {
     float row = gl_FragCoord.y;
     vec3 light_dir = normalize(vec3(2.0, 1.0, 0.3));
-    vec4 tex_color = texture(sprite_texture, tex_coords);
+    vec4 tex_color = texture(sprite_texture, mix(uv0, uv1, tex_coords));
     //float diff = max(dot(normal, light_dir), 0.0);
     //vec3 diffuse = diff * sprite_texture;
-    int idx = int(mod(floor(row / 3.0), 3.0));
-    tex_color *= muls[idx];
+    int idx = int(mod(floor(row / 2.0), 3.0));
+    tex_color += vec4(vec3(muls[idx]), tex_color.a);
     frag_color = tex_color;
 }
 )";
@@ -143,216 +146,30 @@ namespace bnp {
 		renderer.shutdown();
 	}
 
-	void Engine::create_instanced_cubes_test_scene() {
-		if (!archive_manager.has_archive("test_data.bin")) {
-			archive_manager.create_archive("test_data.bin");
+	Node Engine::load_sprite(std::filesystem::path sprite_path, std::filesystem::path json_path) {
+		std::filesystem::path root = PROJECT_ROOT;
+		Node node = test_scene.create_node();
+		Texture texture = texture_factory.load_from_file(root / sprite_path);
+		Material material = material_factory.load_material({
+			{ShaderType::VertexShader, vertex_shader_source},
+			{ShaderType::FragmentShader, fragment_shader_source}
+			});
+		texture.resource_id = sprite_path.string();
+		node.add_component<Texture>(texture);
+		node.add_component<Renderable>(true);
+		node.add_component<Material>(material);
+		resource_manager.add_texture(sprite_path.string(), texture);
+
+		SpriteFactory sprite_factory;
+
+		if (json_path != "") {
+			sprite_factory.load_from_aseprite(node, (root / json_path).string());
 		}
 
-		if (!archive_manager.has_resource("scene_test_instanced_cubes")) {
-			MeshFactory mesh_factory;
-
-			// create mesh data and write
-			{
-				MeshData mesh_data;
-				mesh_factory.create_cube(mesh_data.vertices, mesh_data.indices, 1.0f);
-
-				std::vector<std::byte> buffer;
-
-				bitsery::Serializer<bitsery::OutputBufferAdapter<std::vector<std::byte>>> ser{ buffer };
-				ser.object(mesh_data);
-				ser.adapter().flush();
-
-				cout << "wrote mesh: " << buffer.size() << " bytes" << endl;
-				cout << mesh_data.vertices.size() << " vertices" << endl;
-				cout << mesh_data.indices.size() << " indices" << endl;
-
-				archive_manager.add_resource("test_data.bin", "test_cube_mesh", ResourceData{ buffer });
-
-			}
-
-			// create vertex shader
-			{
-				std::string vertex_source = instanced_vertex_shader_source;
-				std::vector<std::byte> buffer;
-				bitsery::Serializer<bitsery::OutputBufferAdapter<std::vector<std::byte>>> ser{ buffer };
-				// serialize shader data
-
-				ShaderData shader_data{ VertexShader , vertex_source };
-				ser.object(shader_data);
-				ser.adapter().flush();
-
-				archive_manager.add_resource("test_data.bin", "debug_vertex_shader.glsl", ResourceData{ buffer });
-			}
-
-			// create fragment shader
-			{
-				std::string fragment_source = fragment_shader_source;
-				std::vector<std::byte> buffer;
-				bitsery::Serializer<bitsery::OutputBufferAdapter<std::vector<std::byte>>> ser{ buffer };
-				// serialize shader data
-
-				ShaderData shader_data{ FragmentShader , fragment_source };
-				ser.object(shader_data);
-				ser.adapter().flush();
-
-				archive_manager.add_resource("test_data.bin", "debug_fragment_shader.glsl", ResourceData{ buffer });
-			}
-
-			// create scene
-			{
-				Scene scene(registry);
-
-				Node node = scene.create_node();
-
-				Material material;
-				material.vertex_shader_resource_id = "debug_vertex_shader.glsl";
-				material.fragment_shader_resource_id = "debug_fragment_shader.glsl";
-				node.add_component<Material>(material);
-
-				Mesh mesh;
-				mesh.resource_id = "test_cube_mesh";
-				node.add_component<Mesh>(mesh);
-
-				node.add_component<Renderable>(true);
-
-				Instances instances;
-				const int count = 50;
-				instances.transforms.reserve(count);
-				RandomFloatGenerator pos_gen(-10.0f, 10.0f);
-				RandomFloatGenerator rot_gen(-1.0f, 1.0f);
-				RandomFloatGenerator scale_gen(0.1f, 0.8f);
-				for (int i = 0; i < count; ++i) {
-					float uniform_scale = scale_gen.generate();
-					instances.transforms.push_back(Transform{
-						{ pos_gen.generate(), pos_gen.generate(), pos_gen.generate() },
-						glm::quat(),
-						{ uniform_scale, uniform_scale, uniform_scale }
-						});
-				}
-				instances.update_transforms();
-				node.add_component<Instances>(instances);
-
-				std::vector<std::byte> buffer;
-				bitsery::Serializer<bitsery::OutputBufferAdapter<std::vector<std::byte>>> ser{ buffer };
-
-				ser.object(scene);
-				ser.adapter().flush();
-				cout << "saved scene_test_instanced_cubes: " << buffer.size() << " bytes" << endl;
-
-				archive_manager.add_resource("test_data.bin", "scene_test_instanced_cubes", ResourceData{ buffer });
-
-			}
-
-			archive_manager.save();
-		}
-
-	}
-
-	void Engine::load_instanced_cubes_test_scene() {
-		namespace fs = std::filesystem;
-
-		archive_manager.load();
-
-		const Resource* resource = archive_manager.get_resource("scene_test_instanced_cubes");
-		bitsery::Deserializer<bitsery::InputBufferAdapter<std::vector<std::byte>>> des{ resource->data.bytes.begin(), resource->data.bytes.end() };
-
-		des.object(test_scene);
-
-		for (auto& [entity, node] : test_scene.get_nodes()) {
-			cout << "Node " << ((int)node.get_entity_id()) << ": " << node.get_num_components() << " components" << endl;
-			cout << "  EnTT valid: " << registry.valid(node.get_entity_id()) << endl;
-			cout << "  Transform: " << node.has_component<Transform>() << endl;
-			cout << "  Instances: " << node.has_component<Instances>() << endl;
-			cout << "    Instance count: " << node.get_component<Instances>().transforms.size() << endl;
-			cout << "    Instances component ptr: " << &node.get_component<Instances>() << endl;
-			cout << "  Material: " << node.has_component<Material>() << endl;
-			cout << "  Mesh: " << node.has_component<Mesh>() << endl;
-			cout << "    resource_id: " << node.get_component<Mesh>().resource_id << endl;
-			cout << "  Renderable: " << node.has_component<Renderable>() << endl;
-			cout << "    value: " << node.get_component<Renderable>().value << endl;
-		}
-
-		{
-			auto view = registry.view<Mesh, Material>();
-
-			MeshFactory mesh_factory;
-
-			for (auto& entity : view) {
-				auto& mesh = registry.get<Mesh>(entity);
-
-				ResourceIdentifier resource_id = mesh.resource_id;
-				MeshData mesh_data;
-
-				const Resource* mesh_resource = archive_manager.get_resource(resource_id);
-				cout << "resource ptr: " << mesh_resource << endl;
-				const std::vector<std::byte>& buffer = mesh_resource->data.bytes;
-
-				bitsery::Deserializer<bitsery::InputBufferAdapter<std::vector<std::byte>>> des{ buffer.begin(), buffer.end() };
-				des.object(mesh_data);
-
-				// todo: handle already-loaded mesh (e.g. one mesh used on two entities)
-				Mesh loaded_mesh = mesh_factory.create(mesh_data.vertices, mesh_data.indices);
-
-				registry.patch<Mesh>(entity, [&loaded_mesh](auto& mesh) {
-					mesh.va_id = loaded_mesh.va_id;
-					mesh.vb_id = loaded_mesh.vb_id;
-					mesh.eb_id = loaded_mesh.eb_id;
-
-					mesh.vertex_count = loaded_mesh.vertex_count;
-					});
-			}
-		}
-
-		{
-			auto view = registry.view<Instances>();
-
-			for (auto& entity : view) {
-				auto& instances = registry.get<Instances>(entity);
-
-				instances.update_transforms();
-			}
-		}
-
-		{
-			auto view = registry.view<Material>();
-
-			MaterialFactory material_factory;
-
-			for (auto& entity : view) {
-				auto& material = registry.get<Material>(entity);
-				std::vector<std::pair<ShaderType, std::string>> shaders;
-
-				if (material.vertex_shader_resource_id.size()) {
-					ShaderData shader_data;
-					const Resource* resource = archive_manager.get_resource(material.vertex_shader_resource_id);
-					const std::vector<std::byte>& bytes = resource->data.bytes;
-					bitsery::Deserializer<bitsery::InputBufferAdapter<std::vector<std::byte>>> des{ bytes.begin(), bytes.end() };
-					des.object(shader_data);
-					shaders.push_back({ shader_data.shader_type, shader_data.source });
-				}
-				if (material.fragment_shader_resource_id.size()) {
-					ShaderData shader_data;
-					const Resource* resource = archive_manager.get_resource(material.fragment_shader_resource_id);
-					const std::vector<std::byte>& bytes = resource->data.bytes;
-					bitsery::Deserializer<bitsery::InputBufferAdapter<std::vector<std::byte>>> des{ bytes.begin(), bytes.end() };
-					des.object(shader_data);
-					shaders.push_back({ shader_data.shader_type, shader_data.source });
-				}
-
-				// todo: handle already-loaded material (e.g. one material used on two entities)
-				Material loaded_material = material_factory.load_material(shaders);
-
-				registry.patch<Material>(entity, [&loaded_material](auto& material) {
-					material.shader_id = loaded_material.shader_id;
-					});
-			}
-		}
+		return node;
 	}
 
 	void Engine::run() {
-		//create_instanced_cubes_test_scene();
-		//load_instanced_cubes_test_scene();
-
 		const float fixed_dt = 1.0f / 60.0f;
 
 		time.start();
@@ -365,25 +182,35 @@ namespace bnp {
 		FileBrowser file_browser;
 		SceneInspector scene_inspector(test_scene);
 
-		std::filesystem::path root = PROJECT_ROOT;
+		Node squirrel = load_sprite(
+			"bnp/resources/sprites/squirrel/squirrel.png",
+			"bnp/resources/sprites/squirrel/squirrel.json"
+		);
+		squirrel.add_component<Transform>(Transform{
+			glm::vec3(-120, -120, 0),
+			glm::quat(),
+			glm::vec3(120, 120, 1)
+			});
 
-		{
-			MeshFactory mesh_factory;
-			Node node = test_scene.create_node();
-			Mesh mesh = mesh_factory.box();
-			Mesh cube = mesh_factory.cube(1.0f);
-			Texture texture = texture_factory.load_from_file(root / "bnp/resources/sprites/out/squirrel.png");
-			Material material = material_factory.load_material({
-				{ShaderType::VertexShader, vertex_shader_source},
-				{ShaderType::FragmentShader, fragment_shader_source}
-				});
-			texture.resource_id = "squirrel_spritesheet";
-			node.add_component<Texture>(texture);
-			node.add_component<Mesh>(cube);
-			node.add_component<Transform>(Transform{ glm::vec3(-120, -120, 0), glm::quat(),  glm::vec3(240, 240, 1) });
-			node.add_component<Renderable>(true);
-			node.add_component<Material>(material);
-		}
+		Node grass = load_sprite(
+			"bnp/resources/sprites/grass_01/grass_01.png",
+			"bnp/resources/sprites/grass_01/grass_01.json"
+		);
+		grass.add_component<Transform>(Transform{
+			glm::vec3(120, -120, 0),
+			glm::quat(),
+			glm::vec3(120, 120, 1)
+			});
+
+		Node bush = load_sprite(
+			"bnp/resources/sprites/bush_01/bush_01.png",
+			"bnp/resources/sprites/bush_01/bush_01.json"
+		);
+		bush.add_component<Transform>(Transform{
+			glm::vec3(180, -120, 0),
+			glm::quat(),
+			glm::vec3(120, 120, 1)
+			});
 
 		while (window.open) {
 
@@ -421,18 +248,20 @@ namespace bnp {
 			//cout << "fps: " << std::to_string(1.0f / dt) << endl;
 
 			// manager updates
+			sprite_animation_manager.update(registry, dt);
 
 			window.clear();
 
 			// rendering
-			render_manager.render(registry, renderer, camera);
-			render_manager.render_instances(registry, renderer, camera);
+			//render_manager.render(registry, renderer, camera);
+			//render_manager.render_instances(registry, renderer, camera);
+			render_manager.render_sprites(registry, renderer, camera);
 
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplSDL2_NewFrame(window.get_sdl_window());
 			ImGui::NewFrame();
 
-			file_browser.render();
+			//file_browser.render();
 			scene_inspector.render();
 
 			if (file_browser.has_selection()) {

@@ -4,8 +4,9 @@
 
 #include <glm/glm.hpp>
 #include <gl/glew.h>
-#include <vector>
 
+#include <vector>
+#include <unordered_map>
 #include <iostream>
 using namespace std;
 
@@ -26,6 +27,38 @@ namespace bnp {
 		float tex_coords[2];
 	};
 
+	struct SpriteFrame {
+		uint32_t frame_index;
+		float duration = 0.0f;
+		glm::vec2 uv0;
+		glm::vec2 uv1;
+		glm::ivec2 pixel_offset = {};
+		glm::ivec2 size = {};
+	};
+
+	struct SpriteAnimation {
+		std::string name;
+		std::vector<SpriteFrame> frames;
+	};
+
+	struct Sprite {
+		uint8_t layer = 0;
+		uint32_t spritesheet_width;
+		uint32_t spritesheet_height;
+		uint32_t frame_width;
+		uint32_t frame_height;
+		std::unordered_map<std::string, SpriteAnimation> animations;
+	};
+
+	struct SpriteAnimator {
+		std::string current_animation;
+		size_t current_frame_index = 0;
+		float time = 0.0f;
+		bool playing = true;
+		bool loop = true;
+		bool done = false;
+	};
+
 	struct Mesh {
 		std::string resource_id;
 
@@ -37,6 +70,14 @@ namespace bnp {
 		GLuint eb_id = 0;
 
 		size_t vertex_count = 0;
+
+		void cleanup() {
+			if (va_id) glDeleteVertexArrays(1, &va_id);
+			if (eb_id) glDeleteBuffers(1, &eb_id);
+			if (vb_id) glDeleteBuffers(1, &vb_id);
+
+			va_id = vb_id = eb_id = 0;
+		}
 	};
 
 	struct MeshData {

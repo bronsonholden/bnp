@@ -106,3 +106,25 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(stb)
 
 target_include_directories(bnplib PUBLIC ${stb_SOURCE_DIR})
+
+# nlohmann/json
+include(FetchContent)
+
+FetchContent_Declare(
+  nlohmann_json
+  GIT_REPOSITORY https://github.com/nlohmann/json.git
+  GIT_TAG v3.11.2 # or latest stable release
+)
+
+FetchContent_MakeAvailable(nlohmann_json)
+target_link_libraries(bnplib PUBLIC nlohmann_json)
+
+FetchContent_Declare(
+  box2d
+  GIT_REPOSITORY https://github.com/erincatto/box2d.git
+  GIT_TAG v2.4.1
+)
+
+FetchContent_MakeAvailable(box2d)
+
+target_link_libraries(bnplib PRIVATE box2d)

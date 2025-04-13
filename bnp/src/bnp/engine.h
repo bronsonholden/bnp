@@ -10,6 +10,7 @@
 #include <bnp/managers/resource_manager.h>
 #include <bnp/managers/render_manager.h>
 #include <bnp/managers/archive_manager.h>
+#include <bnp/managers/sprite_animation_manager.h>
 
 #include <entt/entt.hpp>
 
@@ -22,10 +23,6 @@ namespace bnp {
 		void run();
 
 	protected:
-		// archive test
-		void create_instanced_cubes_test_scene();
-		void load_instanced_cubes_test_scene();
-
 		entt::registry registry;
 		Scene test_scene;
 		Window window;
@@ -39,8 +36,11 @@ namespace bnp {
 		ArchiveManager archive_manager;
 		RenderManager render_manager;
 		ResourceManager resource_manager;
+		SpriteAnimationManager sprite_animation_manager;
 
 		void update(float dt);
 		void fixed_update();
+
+		Node load_sprite(std::filesystem::path sprite_path, std::filesystem::path json_path);
 	};
 }

@@ -13,9 +13,14 @@ namespace bnp {
 		materials.emplace(resource_id, material);
 	}
 
+	void ResourceManager::add_texture(ResourceIdentifier resource_id, Texture  texture) {
+		textures.emplace(resource_id, texture);
+	}
+
 	void ResourceManager::cleanup(const entt::registry& registry) {
 		cleanup_meshes(registry);
 		cleanup_materials(registry);
+		cleanup_textures(registry);
 	}
 
 	void ResourceManager::cleanup_meshes(const entt::registry& registry) {
@@ -96,5 +101,29 @@ namespace bnp {
 		}
 	}
 
+	void ResourceManager::cleanup_textures(const entt::registry& registry) {
+		auto textures_view = registry.view<Texture>();
+		std::vector<GLuint> used_texture_ids, unused_texture_ids;
+
+		used_texture_ids.reserve(512);
+		unused_texture_ids.reserve(512);
+
+		for (auto& entity : textures_view) {
+			const auto& [texture] = textures_view.get(entity);
+			used_texture_ids.push_back(texture.texture_id);
+		}
+
+
+		for (const auto& [_, texture] : textures) {
+			if (std::find(used_texture_ids.begin(), used_texture_ids.end(), texture.texture_id) == used_texture_ids.end()) {
+				// if texture isn't found
+				unused_texture_ids.push_back(texture.texture_id);
+			}
+		}
+
+		for (GLuint texture_id : unused_texture_ids) {
+			glDeleteTextures(1, &texture_id);
+		}
+	}
 
 }

@@ -17,6 +17,56 @@ namespace bnp {
 	void Renderer::initialize() {
 		glewInit();
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDisable(GL_CULL_FACE);
+	}
+
+	void Renderer::render_sprite(const Camera& camera, const SpriteFrame& sprite_frame, const Mesh& mesh, const Material& material, const Texture& texture, const glm::mat4& transform) const {
+		glUseProgram(material.shader_id);
+
+		if (texture.channels == 4) {
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		}
+
+		GLint viewport[4];
+		glGetIntegerv(GL_VIEWPORT, viewport);
+
+		float aspect = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
+
+		glm::mat4 view = glm::lookAt(camera.position, camera.target, camera.up);
+		glm::mat4 projection = camera.perspective;
+
+		// Set the transform matrices
+		GLuint model_loc = glGetUniformLocation(material.shader_id, "model");
+		GLuint view_loc = glGetUniformLocation(material.shader_id, "view");
+		GLuint proj_loc = glGetUniformLocation(material.shader_id, "projection");
+		GLuint uv0_loc = glGetUniformLocation(material.shader_id, "uv0");
+		GLuint uv1_loc = glGetUniformLocation(material.shader_id, "uv1");
+
+		glUniformMatrix4fv(model_loc, 1, GL_FALSE, &transform[0][0]);
+		glUniformMatrix4fv(view_loc, 1, GL_FALSE, &view[0][0]);
+		glUniformMatrix4fv(proj_loc, 1, GL_FALSE, &projection[0][0]);
+		glUniform2f(uv0_loc, sprite_frame.uv0.x, sprite_frame.uv0.y);
+		glUniform2f(uv1_loc, sprite_frame.uv1.x, sprite_frame.uv1.y);
+
+		// Set color
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture.texture_id);
+		glUniform1i(glGetUniformLocation(material.shader_id, "sprite_texture"), 0);
+
+		glBindVertexArray(mesh.va_id);
+
+		if (mesh.eb_id) {
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.eb_id);
+		}
+
+		glDrawElements(GL_TRIANGLES, mesh.vertex_count, GL_UNSIGNED_INT, 0);
+
+		if (texture.channels == 4) {
+			glDisable(GL_BLEND);
+		}
 	}
 
 	void Renderer::render(const Camera& camera, const Mesh& mesh, const Material& material, const Texture& texture, const glm::mat4& transform) const {
@@ -45,7 +95,8 @@ namespace bnp {
 		glUniformMatrix4fv(proj_loc, 1, GL_FALSE, &projection[0][0]);
 
 		// Set color
-		glBindTexture(GL_TEXTURE0, texture.texture_id);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture.texture_id);
 		glUniform1i(glGetUniformLocation(material.shader_id, "sprite_texture"), 0);
 
 		glBindVertexArray(mesh.va_id);
