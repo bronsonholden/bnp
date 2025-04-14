@@ -44,7 +44,7 @@ namespace bnp {
 		if (node.has_component<PhysicsBody2D>()) {
 			auto& body = node.get_component<PhysicsBody2D>();
 
-			body.body->SetTransform(b2Vec2{ pos[0] / 128.0f, pos[1] / 128.0f }, body.body->GetAngle());
+			body.body->SetTransform(b2Vec2{ pos[0], pos[1] }, body.body->GetAngle());
 		}
 		else {
 			node.get_registry().patch<Transform>(node.get_entity_id(), [&pos, scale](Transform& transform) {

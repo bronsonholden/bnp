@@ -28,7 +28,7 @@ namespace bnp {
 		time_point start_time_;
 
 		float delta_time_ = 0.0f;
-		float fixed_delta_time_ = 1.0f / 60.0f;
+		float fixed_delta_time_ = 1.0f / 120.0f;
 		float accumulator_ = 0.0f;
 		float total_time_ = 0.0f;
 

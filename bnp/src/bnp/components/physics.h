@@ -1,5 +1,7 @@
 #pragma once
 
+#include <bnp/components/graphics.h>
+
 #include <box2d/box2d.h>
 #include <glm/glm.hpp>
 
@@ -7,6 +9,7 @@ namespace bnp {
 
 	struct PhysicsBody2D {
 		b2Body* body = nullptr;
+		Mesh mesh;
 	};
 
 	struct Motility {

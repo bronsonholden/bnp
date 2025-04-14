@@ -28,7 +28,7 @@ namespace bnp {
 		input_direction_.x = speed;
 
 		auto& body = registry_.get<PhysicsBody2D>(entity_);
-		float new_velocity_x = input_direction_.x / 128.0f;
+		float new_velocity_x = input_direction_.x;
 
 		body.body->SetLinearVelocity(b2Vec2{ new_velocity_x, 0 });
 

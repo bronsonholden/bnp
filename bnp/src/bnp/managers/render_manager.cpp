@@ -2,6 +2,7 @@
 #include <bnp/managers/render_manager.h>
 #include <bnp/components/transform.h>
 #include <bnp/components/graphics.h>
+#include <bnp/components/physics.h>
 
 #include <glm/glm.hpp>
 
@@ -39,15 +40,15 @@ namespace bnp {
 	}
 
 	void RenderManager::render_wireframes(const entt::registry& registry, const Renderer& renderer, const Camera& camera) {
-		auto view = registry.view<Transform, Renderable>();
+		glDisable(GL_DEPTH_TEST);
 
+		// mesh/sprite wireframes
 		{
+			auto view = registry.view<Transform, Renderable>();
 			glm::vec4 color(1.0f);
 
-			// mesh wireframes
 			for (auto entity : view) {
 				auto& transform = view.get<Transform>(entity);
-				auto& renderable = view.get<Renderable>(entity);
 
 				if (registry.all_of<Mesh>(entity)) {
 					auto& mesh = registry.get<Mesh>(entity);
@@ -60,6 +61,23 @@ namespace bnp {
 		}
 
 		// physics body wireframes
+		{
+			auto view = registry.view<Renderable, PhysicsBody2D>();
+			glm::vec4 color(0.0f, 0.0f, 1.0f, 1.0f);
+
+			for (auto entity : view) {
+				auto& body = view.get<PhysicsBody2D>(entity);
+				auto& body_transform = body.body->GetTransform();
+				auto& position = body_transform.p;
+				auto& rotation = body_transform.q;
+
+				glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0));
+
+				renderer.render_wireframe(camera, body.mesh, wireframe_material, transform, color);
+			}
+		}
+
+		glEnable(GL_DEPTH_TEST);
 	}
 
 	void RenderManager::render_instances(const entt::registry& registry, const Renderer& renderer, const Camera& camera) {

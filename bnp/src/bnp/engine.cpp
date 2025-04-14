@@ -189,14 +189,14 @@ namespace bnp {
 			"bnp/resources/sprites/squirrel/squirrel.json"
 		);
 		squirrel.add_component<Transform>(Transform{
-			glm::vec3(-120, -120, 0),
+			glm::vec3(0, 0, 0),
 			glm::quat(),
-			glm::vec3(120, 120, 1)
+			glm::vec3(1)
 			});
 
 		b2BodyDef squirrel_body_def;
 		b2PolygonShape box_shape;
-		box_shape.SetAsBox(120 / 128.0f, 120 / 128.0f);
+		box_shape.SetAsBox(0.5f, 0.5f);
 
 		b2FixtureDef squirrel_fixture_def;
 		squirrel_fixture_def.shape = &box_shape;
@@ -207,21 +207,28 @@ namespace bnp {
 		squirrel_body_def.type = b2_dynamicBody;
 		squirrel_body_def.awake = true;
 		squirrel_body_def.enabled = true;
-		squirrel_body_def.position = b2Vec2(-120 / 128.0f, -120 / 128.0f);
+		squirrel_body_def.position = b2Vec2(0, 0);
 		squirrel_body_def.gravityScale = 0.0f; // fake ground
 
 		physics_manager.add_body(squirrel, squirrel_body_def, squirrel_fixture_def);
-		squirrel.add_component<Motility>(Motility{ 300 });
+		squirrel.add_component<Motility>(Motility{ 2.5 });
 		squirrel.add_component<Controllable>(Controllable{ true });
+
+		MeshFactory mesh_factory;
+		registry.patch<PhysicsBody2D>(squirrel.get_entity_id(), [&](PhysicsBody2D& body) {
+			// todo: put this in physics manager (optionally generate mesh)
+			// and use actual vertices, not a prebaked box
+			body.mesh = mesh_factory.box();
+			});
 
 		Node grass = load_sprite(
 			"bnp/resources/sprites/grass_01/grass_01.png",
 			"bnp/resources/sprites/grass_01/grass_01.json"
 		);
 		grass.add_component<Transform>(Transform{
-			glm::vec3(120, -120, 0),
+			glm::vec3(4, 0, 0),
 			glm::quat(),
-			glm::vec3(120, 120, 1)
+			glm::vec3(1)
 			});
 
 		Node bush = load_sprite(
@@ -229,17 +236,17 @@ namespace bnp {
 			"bnp/resources/sprites/bush_01/bush_01.json"
 		);
 		bush.add_component<Transform>(Transform{
-			glm::vec3(180, -120, 0),
+			glm::vec3(3, 0, 0),
 			glm::quat(),
-			glm::vec3(120, 120, 1)
+			glm::vec3(1)
 			});
 
 		Controller controller(registry, squirrel.get_entity_id());
 
 		while (window.open) {
 
-			float width = static_cast<float>(window.get_width());
-			float height = static_cast<float>(window.get_height());
+			float width = static_cast<float>(window.get_width()) / 128.0f;
+			float height = static_cast<float>(window.get_height()) / 128.0f;
 			Camera camera({
 				glm::vec3(0.0f, 0.0f, 500.0f),
 				glm::vec3(0.0f, 0.0f, 0.0f),
@@ -274,7 +281,6 @@ namespace bnp {
 
 			// manager updates
 			sprite_animation_manager.update(registry, dt);
-			physics_manager.update(registry, dt);
 
 			window.clear();
 
@@ -317,6 +323,6 @@ namespace bnp {
 	}
 
 	void Engine::fixed_update() {
-
+		physics_manager.update(registry, time.fixed_delta_time());
 	}
 }

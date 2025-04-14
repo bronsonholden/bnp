@@ -8,8 +8,8 @@ namespace bnp {
 	{}
 
 	void PhysicsManager::update(entt::registry& registry, float dt) {
-		const int velocityIterations = 6;
-		const int positionIterations = 2;
+		const int velocityIterations = 1;
+		const int positionIterations = 1;
 
 		world.Step(dt, velocityIterations, positionIterations);
 
@@ -22,8 +22,8 @@ namespace bnp {
 			const b2Vec2& pos = body.body->GetPosition();
 
 			registry.patch<Transform>(entity, [&pos](Transform& t) {
-				t.position.x = pos.x * 128.0f;
-				t.position.y = pos.y * 128.0f;
+				t.position.x = pos.x;
+				t.position.y = pos.y;
 				t.update_world_transform();
 				});
 		}
