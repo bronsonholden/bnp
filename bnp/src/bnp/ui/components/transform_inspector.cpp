@@ -1,4 +1,5 @@
 #include <bnp/ui/components/transform_inspector.h>
+#include <bnp/components/physics.h>
 
 namespace bnp {
 	TransformInspector::TransformInspector(Node& _node) : node(_node) {
@@ -10,8 +11,6 @@ namespace bnp {
 	}
 
 	void TransformInspector::render() {
-		ImGui::Text("Transform");
-
 		Transform& transform = node.get_component<Transform>();
 
 		bool changed = false;
@@ -39,7 +38,15 @@ namespace bnp {
 			changed = true;
 		}
 
-		if (changed) {
+		if (!changed) return;
+
+
+		if (node.has_component<PhysicsBody2D>()) {
+			auto& body = node.get_component<PhysicsBody2D>();
+
+			body.body->SetTransform(b2Vec2{ pos[0] / 128.0f, pos[1] / 128.0f }, body.body->GetAngle());
+		}
+		else {
 			node.get_registry().patch<Transform>(node.get_entity_id(), [&pos, scale](Transform& transform) {
 				transform.position = { pos[0], pos[1], pos[2] };
 				transform.scale = { scale[0], scale[1], scale[2] };

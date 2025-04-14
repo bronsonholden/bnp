@@ -42,7 +42,7 @@ namespace bnp {
 	};
 
 	struct Sprite {
-		uint8_t layer = 0;
+		int layer = 0;
 		SpriteFrame default_frame;
 		uint32_t spritesheet_width;
 		uint32_t spritesheet_height;

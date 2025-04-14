@@ -282,6 +282,7 @@ namespace bnp {
 			//render_manager.render(registry, renderer, camera);
 			//render_manager.render_instances(registry, renderer, camera);
 			render_manager.render_sprites(registry, renderer, camera);
+			render_manager.render_wireframes(registry, renderer, camera);
 
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplSDL2_NewFrame(window.get_sdl_window());

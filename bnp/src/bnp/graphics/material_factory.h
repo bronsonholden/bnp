@@ -12,6 +12,7 @@ namespace bnp {
 		MaterialFactory() = default;
 
 		Material load_material(const std::vector<std::pair<ShaderType, std::string>>& shaders);
+		Material wireframe_material();
 
 	protected:
 		GLuint compile_shader(const char* source, GLuint type);

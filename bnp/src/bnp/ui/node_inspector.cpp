@@ -1,6 +1,7 @@
 #include <bnp/ui/node_inspector.h>
 #include <bnp/ui/components/transform_inspector.h>
 #include <bnp/ui/components/instances_inspector.h>
+#include <bnp/ui/components/sprite_inspector.h>
 
 namespace bnp {
 
@@ -46,6 +47,15 @@ namespace bnp {
 				InstancesInspector instances_inspector(node);
 
 				instances_inspector.render();
+				ImGui::TreePop();
+			}
+		}
+
+		if (node.has_component<Sprite>()) {
+			if (ImGui::TreeNode("Sprite")) {
+				SpriteInspector sprite_inspector(node);
+
+				sprite_inspector.render();
 				ImGui::TreePop();
 			}
 		}

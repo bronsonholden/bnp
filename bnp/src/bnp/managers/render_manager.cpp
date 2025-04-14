@@ -11,7 +11,8 @@ using namespace std;
 namespace bnp {
 
 	RenderManager::RenderManager()
-		: sprite_mesh(MeshFactory().box())
+		: sprite_mesh(MeshFactory().box()),
+		wireframe_material(MaterialFactory().wireframe_material())
 	{
 	}
 
@@ -35,6 +36,30 @@ namespace bnp {
 				}
 			}
 		}
+	}
+
+	void RenderManager::render_wireframes(const entt::registry& registry, const Renderer& renderer, const Camera& camera) {
+		auto view = registry.view<Transform, Renderable>();
+
+		{
+			glm::vec4 color(1.0f);
+
+			// mesh wireframes
+			for (auto entity : view) {
+				auto& transform = view.get<Transform>(entity);
+				auto& renderable = view.get<Renderable>(entity);
+
+				if (registry.all_of<Mesh>(entity)) {
+					auto& mesh = registry.get<Mesh>(entity);
+					renderer.render_wireframe(camera, mesh, wireframe_material, transform.world_transform, color);
+				}
+				else {
+					renderer.render_wireframe(camera, sprite_mesh, wireframe_material, transform.world_transform, color);
+				}
+			}
+		}
+
+		// physics body wireframes
 	}
 
 	void RenderManager::render_instances(const entt::registry& registry, const Renderer& renderer, const Camera& camera) {

@@ -51,7 +51,6 @@ namespace bnp {
 		glUniform2f(uv0_loc, sprite_frame.uv0.x, sprite_frame.uv0.y);
 		glUniform2f(uv1_loc, sprite_frame.uv1.x, sprite_frame.uv1.y);
 
-		// Set color
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture.texture_id);
 		glUniform1i(glGetUniformLocation(material.shader_id, "sprite_texture"), 0);
@@ -67,6 +66,39 @@ namespace bnp {
 		if (texture.channels == 4) {
 			glDisable(GL_BLEND);
 		}
+	}
+
+	void Renderer::render_wireframe(const Camera& camera, const Mesh& mesh, const Material& material, const glm::mat4& world_transform, const glm::vec4& color) const {
+		glUseProgram(material.shader_id);
+
+		GLint viewport[4];
+		glGetIntegerv(GL_VIEWPORT, viewport);
+
+		float aspect = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
+
+		glm::mat4 view = glm::lookAt(camera.position, camera.target, camera.up);
+		glm::mat4 projection = camera.perspective;
+
+		// Set the transform matrices
+		GLuint model_loc = glGetUniformLocation(material.shader_id, "model");
+		GLuint view_loc = glGetUniformLocation(material.shader_id, "view");
+		GLuint proj_loc = glGetUniformLocation(material.shader_id, "projection");
+		GLuint color_loc = glGetUniformLocation(material.shader_id, "color");
+
+		glUniformMatrix4fv(model_loc, 1, GL_FALSE, &world_transform[0][0]);
+		glUniformMatrix4fv(view_loc, 1, GL_FALSE, &view[0][0]);
+		glUniformMatrix4fv(proj_loc, 1, GL_FALSE, &projection[0][0]);
+		glUniform4fv(color_loc, 1, &color[0]);
+
+		glBindVertexArray(mesh.va_id);
+
+		if (mesh.eb_id) {
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.eb_id);
+		}
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glDrawElements(GL_TRIANGLES, mesh.vertex_count, GL_UNSIGNED_INT, 0);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
 	void Renderer::render(const Camera& camera, const Mesh& mesh, const Material& material, const Texture& texture, const glm::mat4& transform) const {
@@ -94,7 +126,6 @@ namespace bnp {
 		glUniformMatrix4fv(view_loc, 1, GL_FALSE, &view[0][0]);
 		glUniformMatrix4fv(proj_loc, 1, GL_FALSE, &projection[0][0]);
 
-		// Set color
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture.texture_id);
 		glUniform1i(glGetUniformLocation(material.shader_id, "sprite_texture"), 0);
