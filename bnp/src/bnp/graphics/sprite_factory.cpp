@@ -52,8 +52,8 @@ namespace bnp {
 					frame.frame_index = i;
 					frame.duration = duration;
 					frame.size = { w, h };
-					frame.uv0 = glm::vec2((float)x / sprite.spritesheet_width, (float)(y) / sprite.spritesheet_height);
-					frame.uv1 = glm::vec2((float)(x + w) / sprite.spritesheet_width, (float)(y + h) / sprite.spritesheet_height);
+					frame.uv0 = glm::vec2((float)x / sprite.spritesheet_width, (float)(y + h) / sprite.spritesheet_height);
+					frame.uv1 = glm::vec2((float)(x + w) / sprite.spritesheet_width, (float)(y) / sprite.spritesheet_height);
 
 					anim.frames.push_back(frame);
 				}
@@ -62,15 +62,25 @@ namespace bnp {
 			}
 		}
 
-		// Store frame size from the first parsed frame
+		// Store frame size from the first parsed frame. todo: probably fix, but might
+		// use consistent frame sizes for all spritesheets anyways
 		if (!sprite.animations.empty()) {
-			glm::ivec2 size = sprite.animations.begin()->second.frames.front().size;
+			sprite.default_frame = sprite.animations.begin()->second.frames.front();
+			glm::ivec2 size = sprite.default_frame.size;
 			sprite.frame_width = size.x;
 			sprite.frame_height = size.y;
 		}
 		else {
 			sprite.frame_width = sprite.spritesheet_width;
 			sprite.frame_height = sprite.spritesheet_width;
+			sprite.default_frame = SpriteFrame{
+				0,
+				0.0f,
+				{ 0.0f, 1.0f },
+				{ 1.0f, 0.0f },
+				glm::ivec2{},
+				glm::ivec2{ sprite.spritesheet_width, sprite.spritesheet_height }
+			};
 		}
 
 		node.add_component<Sprite>(sprite);

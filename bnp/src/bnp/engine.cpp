@@ -3,6 +3,7 @@
 #include <bnp/core/node.hpp>
 #include <bnp/components/transform.h>
 #include <bnp/components/graphics.h>
+#include <bnp/components/controllable.h>
 #include <bnp/helpers/random_float_generator.hpp>
 #include <bnp/graphics/sprite_factory.h>
 #include <bnp/helpers/color_helper.hpp>
@@ -12,6 +13,7 @@
 #include <bnp/ui/file_browser.h>
 #include <bnp/ui/scene_inspector.h>
 #include <bnp/ui/node_inspector.h>
+#include <bnp/controllers/controller.h>
 
 #include <string>
 #include <fstream>
@@ -192,6 +194,26 @@ namespace bnp {
 			glm::vec3(120, 120, 1)
 			});
 
+		b2BodyDef squirrel_body_def;
+		b2PolygonShape box_shape;
+		box_shape.SetAsBox(120 / 128.0f, 120 / 128.0f);
+
+		b2FixtureDef squirrel_fixture_def;
+		squirrel_fixture_def.shape = &box_shape;
+		squirrel_fixture_def.density = 1.0f;
+		squirrel_fixture_def.friction = 0.3f;
+		squirrel_fixture_def.restitution = 0.1f;
+
+		squirrel_body_def.type = b2_dynamicBody;
+		squirrel_body_def.awake = true;
+		squirrel_body_def.enabled = true;
+		squirrel_body_def.position = b2Vec2(-120 / 128.0f, -120 / 128.0f);
+		squirrel_body_def.gravityScale = 0.0f; // fake ground
+
+		physics_manager.add_body(squirrel, squirrel_body_def, squirrel_fixture_def);
+		squirrel.add_component<Motility>(Motility{ 300 });
+		squirrel.add_component<Controllable>(Controllable{ true });
+
 		Node grass = load_sprite(
 			"bnp/resources/sprites/grass_01/grass_01.png",
 			"bnp/resources/sprites/grass_01/grass_01.json"
@@ -211,6 +233,8 @@ namespace bnp {
 			glm::quat(),
 			glm::vec3(120, 120, 1)
 			});
+
+		Controller controller(registry, squirrel.get_entity_id());
 
 		while (window.open) {
 
@@ -234,6 +258,7 @@ namespace bnp {
 
 			while (window.poll(event)) {
 				ImGui_ImplSDL2_ProcessEvent(&event);
+				controller.process_event(event);
 			}
 
 			time.new_frame();
@@ -249,6 +274,7 @@ namespace bnp {
 
 			// manager updates
 			sprite_animation_manager.update(registry, dt);
+			physics_manager.update(registry, dt);
 
 			window.clear();
 

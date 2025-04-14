@@ -9,7 +9,6 @@ namespace bnp {
 
 		int width, height, channels;
 
-		stbi_set_flip_vertically_on_load(true);
 		unsigned char* data = stbi_load(path.string().data(), &width, &height, &channels, 0);
 
 		GLenum format;

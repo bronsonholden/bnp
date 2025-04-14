@@ -43,10 +43,12 @@ namespace bnp {
 
 	struct Sprite {
 		uint8_t layer = 0;
+		SpriteFrame default_frame;
 		uint32_t spritesheet_width;
 		uint32_t spritesheet_height;
 		uint32_t frame_width;
 		uint32_t frame_height;
+		glm::ivec2 mirror = { 1, 1 };
 		std::unordered_map<std::string, SpriteAnimation> animations;
 	};
 

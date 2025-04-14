@@ -128,3 +128,4 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(box2d)
 
 target_link_libraries(bnplib PRIVATE box2d)
+target_include_directories(bnplib PUBLIC ${box2d_SOURCE_DIR}/include)

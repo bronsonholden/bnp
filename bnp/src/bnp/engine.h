@@ -11,6 +11,7 @@
 #include <bnp/managers/render_manager.h>
 #include <bnp/managers/archive_manager.h>
 #include <bnp/managers/sprite_animation_manager.h>
+#include <bnp/managers/physics_manager.h>
 
 #include <entt/entt.hpp>
 
@@ -37,6 +38,7 @@ namespace bnp {
 		RenderManager render_manager;
 		ResourceManager resource_manager;
 		SpriteAnimationManager sprite_animation_manager;
+		PhysicsManager physics_manager;
 
 		void update(float dt);
 		void fixed_update();

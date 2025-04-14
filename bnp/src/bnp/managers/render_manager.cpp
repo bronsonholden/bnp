@@ -65,6 +65,7 @@ namespace bnp {
 			auto& renderable = view.get<Renderable>(entity);
 			auto& texture = view.get<Texture>(entity);
 
+			// maybe todo: split into render animated vs static sprites, so we can use a ref here
 			SpriteFrame sprite_frame;
 
 			if (registry.all_of<SpriteAnimator>(entity)) {
@@ -74,18 +75,20 @@ namespace bnp {
 				sprite_frame = animation.frames.at(animator.current_frame_index);
 			}
 			else {
-				sprite_frame.frame_index = 0;
-				sprite_frame.uv0 = { 0, 0 };
-				sprite_frame.uv1 = {
-					static_cast<float>(sprite.frame_width) / sprite.spritesheet_width,
-					static_cast<float>(sprite.frame_height) / sprite.spritesheet_height
-				};
+				sprite_frame = sprite.default_frame;
 			}
 
 			glDisable(GL_DEPTH_TEST);
 
+			glm::vec3 scalar = glm::vec3(
+				static_cast<float>(sprite.mirror.x),
+				static_cast<float>(sprite.mirror.y),
+				1.0f
+			);
+			glm::mat4 world_transform = transform.world_transform * glm::scale(glm::mat4(1.0f), scalar);
+
 			if (renderable.value) {
-				renderer.render_sprite(camera, sprite_frame, sprite_mesh, material, texture, transform.world_transform);
+				renderer.render_sprite(camera, sprite_frame, sprite_mesh, material, texture, world_transform);
 			}
 
 			glEnable(GL_DEPTH_TEST);
