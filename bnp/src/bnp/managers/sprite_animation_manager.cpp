@@ -19,7 +19,7 @@ namespace  bnp {
 			auto& motility = registry.get<Motility>(entity);
 
 			registry.patch<Sprite>(entity, [&](Sprite& sprite) {
-				if (glm::length(motility.current_velocity) > 0.001f) {
+				if (std::abs(motility.current_velocity.x) > 0.001f) {
 					if (motility.current_velocity.x < 0) {
 						sprite.mirror.x = -1;
 					}
@@ -32,7 +32,10 @@ namespace  bnp {
 			registry.patch<SpriteAnimator>(entity, [&motility](SpriteAnimator& animator) {
 				std::string new_animation = animator.current_animation;
 
-				if (motility.walking) {
+				if (motility.jumping || motility.falling) {
+					new_animation = "Jump";
+				}
+				else if (motility.walking) {
 					new_animation = "Walk";
 				}
 				else if (motility.idle) {
@@ -75,7 +78,7 @@ namespace  bnp {
 			}
 
 			if (new_frame_index >= animation.frames.size()) {
-				if (animator.loop) {
+				if (animation.repeat == 0) {
 					new_frame_index = 0;
 				}
 				else {

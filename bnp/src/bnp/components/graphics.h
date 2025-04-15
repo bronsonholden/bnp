@@ -40,6 +40,9 @@ namespace bnp {
 	struct SpriteAnimation {
 		std::string name;
 		std::vector<SpriteFrame> frames;
+
+		// currently: if 0, loop, otherwise play once. todo
+		uint32_t repeat = 0;
 	};
 
 	struct Sprite {
@@ -60,6 +63,8 @@ namespace bnp {
 		size_t current_frame_index = 0;
 		float time = 0.0f;
 		bool playing = true;
+
+		// ignored in favor of SpriteAnimation::repeat for now
 		bool loop = true;
 		bool done = false;
 	};

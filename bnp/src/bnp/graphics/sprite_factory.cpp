@@ -43,6 +43,11 @@ namespace bnp {
 				anim.name = name;
 				anim.frames.reserve(to - from + 1);
 
+				// todo: support actual repeat count
+				if (tag.contains("repeat")) {
+					anim.repeat = 1;
+				}
+
 				for (int i = from; i <= to; ++i) {
 					const auto& frame_data = frames.at(i);
 					auto duration = frame_data["duration"].get<float>() / 1000.0f;

@@ -5,7 +5,20 @@ namespace bnp {
 
 	PhysicsManager::PhysicsManager()
 		: world(b2Vec2(0.0f, -9.8))
-	{}
+	{
+		b2BodyDef groundBodyDef;
+		groundBodyDef.position.Set(0.0f, -0.5f);  // Set Y to your desired "floor"
+		groundBodyDef.type = b2_staticBody;
+
+		b2Body* groundBody = world.CreateBody(&groundBodyDef);
+
+		// Create a box shape for the ground
+		b2PolygonShape groundBox;
+		groundBox.SetAsBox(50.0f, 0.5f);  // Width, Height (flat platform)
+
+		// Attach the shape to the ground body
+		groundBody->CreateFixture(&groundBox, 0.0f);
+	}
 
 	void PhysicsManager::update(entt::registry& registry, float dt) {
 		const int velocityIterations = 1;
@@ -67,15 +80,15 @@ namespace bnp {
 
 			b2FixtureDef fixture_def;
 			fixture_def.shape = &body_shape;
-			fixture_def.density = 1.0f;
+			fixture_def.density = 5.0f;
 			fixture_def.friction = 0.3f;
-			fixture_def.restitution = 0.1f;
+			fixture_def.restitution = 0.0f;
 
 			body_def.type = b2_dynamicBody;
 			body_def.awake = true;
 			body_def.enabled = true;
 			body_def.position = b2Vec2(transform.position.x, transform.position.y);
-			body_def.gravityScale = 0.0f; // fake ground
+			body_def.gravityScale = 1.0f;
 
 			b2Body* body = world.CreateBody(&body_def);
 

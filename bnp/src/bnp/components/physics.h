@@ -13,11 +13,17 @@ namespace bnp {
 	};
 
 	struct Motility {
-		float speed;
+		float speed = 1.0f;
+		float jump_height = 2.0f;
+		float current_air_control = 1.0f;
+		float air_control_ramp = 0.985f;
+		float fall_time = 0.0f;
 		//bool sprinting;
 		//float sprinting_mul;
+		bool air_control = false;
 		bool falling = false;
 		bool idle = true;
+		bool start_jump = false;
 		bool jumping = false;
 		bool walking = false;
 		bool crouching = false;

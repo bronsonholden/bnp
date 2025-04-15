@@ -11,6 +11,7 @@ namespace bnp {
 	}
 
 	void Controller::process_event(const SDL_Event& event) {
+
 		const Uint8* keyboard = SDL_GetKeyboardState(nullptr);
 
 		auto& motility = registry_.get<Motility>(entity_);
@@ -36,6 +37,12 @@ namespace bnp {
 
 		auto& updated_motility = registry_.patch<Motility>(entity_, [=](Motility& m) {
 			m.impulse = impulse;
+
+			if (event.type == SDL_KEYDOWN) {
+				if (!m.jumping && !m.falling && event.key.keysym.sym == SDLK_SPACE && event.key.repeat == 0) {
+					m.start_jump = true;
+				}
+			}
 
 			if (m.idle && glm::length(impulse) > 0.001f) {
 				m.walking = true;
