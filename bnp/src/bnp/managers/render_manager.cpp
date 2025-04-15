@@ -71,9 +71,16 @@ namespace bnp {
 				auto& position = body_transform.p;
 				auto& rotation = body_transform.q;
 
-				glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0));
+				b2PolygonShape* shape = static_cast<b2PolygonShape*>(body.body->GetFixtureList()->GetShape());
 
-				renderer.render_wireframe(camera, body.mesh, wireframe_material, transform, color);
+				// m_vertices[2] is top-right corner
+				float height = shape->m_vertices[2].y * 2;
+				float width = shape->m_vertices[2].x * 2;
+
+				glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0));
+				transform = glm::scale(transform, glm::vec3(width, height, 1.0f));
+
+				renderer.render_wireframe(camera, sprite_mesh, wireframe_material, transform, color);
 			}
 		}
 

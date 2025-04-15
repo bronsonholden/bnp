@@ -15,34 +15,45 @@ namespace bnp {
 
 		auto& motility = registry_.get<Motility>(entity_);
 
-		float speed = 0;
+		glm::vec3 impulse(0.0f);
 
 		if (keyboard[SDL_SCANCODE_A]) {
-			speed -= motility.speed;
+			impulse.x = -1;
 		}
 
 		if (keyboard[SDL_SCANCODE_D]) {
-			speed += motility.speed;
+			impulse.x = 1;
 		}
 
-		input_direction_.x = speed;
-
 		auto& body = registry_.get<PhysicsBody2D>(entity_);
-		float new_velocity_x = input_direction_.x;
 
-		body.body->SetLinearVelocity(b2Vec2{ new_velocity_x, 0 });
+		if (glm::length(impulse) > 0.001f) {
+			impulse = glm::normalize(impulse);
+		}
 
-		registry_.patch<Motility>(entity_, [=](Motility& m) {
-			m.current_velocity = glm::vec3{ new_velocity_x, 0, 0 };
+		// todo: move to physics manager
+		//body.body->SetLinearVelocity(b2Vec2{ new_velocity_x, 0 });
 
-			if (m.idle && glm::length(m.current_velocity) > 0.001f) {
+		auto& updated_motility = registry_.patch<Motility>(entity_, [=](Motility& m) {
+			m.impulse = impulse;
+
+			if (m.idle && glm::length(impulse) > 0.001f) {
 				m.walking = true;
 				m.idle = false;
 			}
-
-			if (m.walking && glm::length(m.current_velocity) < 0.001f) {
+			else if (m.walking && glm::length(impulse) < 0.001f) {
 				m.walking = false;
 				m.idle = true;
+			}
+
+			if (m.idle && keyboard[SDL_SCANCODE_S]) {
+				m.idle = false;
+				m.crouching = true;
+			}
+
+			if (m.crouching && !keyboard[SDL_SCANCODE_S]) {
+				m.idle = true;
+				m.crouching = false;
 			}
 			});
 	}

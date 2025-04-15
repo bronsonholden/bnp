@@ -53,7 +53,6 @@ namespace bnp {
 				t.scale.y = transform.scale.y;
 				t.scale.z = transform.scale.z;
 				t.dirty = true;
-				t.update_world_transform();
 				instances.dirty = true;
 				instances.update_transforms();
 				});

@@ -17,6 +17,9 @@ namespace bnp {
 
 		// update current animations with timestep
 		void tick_animations(entt::registry& registry, float dt);
+
+		// update 2d colliders if necessary
+		void update_colliders(entt::registry& registry);
 	};
 
 }

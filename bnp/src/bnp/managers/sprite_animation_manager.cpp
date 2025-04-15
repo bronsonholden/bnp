@@ -7,6 +7,7 @@ namespace  bnp {
 	void SpriteAnimationManager::update(entt::registry& registry, float dt) {
 		update_animations(registry, dt);
 		tick_animations(registry, dt);
+		update_colliders(registry);
 	}
 
 	void SpriteAnimationManager::update_animations(entt::registry& registry, float dt) {
@@ -36,6 +37,9 @@ namespace  bnp {
 				}
 				else if (motility.idle) {
 					new_animation = "Idle";
+				}
+				else if (motility.crouching) {
+					new_animation = "Crouch";
 				}
 
 				if (new_animation != animator.current_animation) {
@@ -80,12 +84,53 @@ namespace  bnp {
 				}
 			}
 
+			if (new_frame_index != animator.current_frame_index) {
+				auto& new_frame = animation.frames.at(new_frame_index);
+
+				// activate colliders for the frame
+
+				//if (registry.all_of<PhysicsBody2D>(entity)) {
+				//	auto& body = registry.get<PhysicsBody2D>(entity);
+
+				//	if (frame.collider != new_frame.collider) {
+				//		for (b2Fixture* f = body.body->GetFixtureList(); f;) {
+				//			b2Fixture* next = f->GetNext();
+				//			body.body->DestroyFixture(f);
+				//			f = next;
+				//		}
+
+				//		float width = static_cast<float>(new_frame.collider.z) / new_frame.size.x;
+				//		float height = static_cast<float>(new_frame.collider.w) / new_frame.size.y;
+
+				//		b2Fixture* fixture = body.body->GetFixtureList();
+				//		if (!fixture) {
+				//			// Create a new polygon shape with the new dimensions
+				//			b2PolygonShape shape;
+				//			shape.SetAsBox(width / 2, height / 2);
+
+				//			b2FixtureDef fixture_def;
+				//			fixture_def.shape = &shape;
+				//			fixture_def.density = 1.0f;
+				//			fixture_def.friction = 0.3f;
+				//			fixture_def.restitution = 0.1f;
+
+				//			body.body->CreateFixture(&fixture_def);
+				//		}
+
+				//	}
+				//}
+			}
+
 			registry.patch<SpriteAnimator>(entity, [=](SpriteAnimator& sa) {
 				sa.current_frame_index = new_frame_index;
 				sa.time = new_time;
 				sa.done = new_done;
 				});
 		}
+	}
+
+	void SpriteAnimationManager::update_colliders(entt::registry& registry) {
+
 	}
 
 }

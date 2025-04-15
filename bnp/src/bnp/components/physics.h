@@ -20,6 +20,8 @@ namespace bnp {
 		bool idle = true;
 		bool jumping = false;
 		bool walking = false;
+		bool crouching = false;
+		glm::vec3 impulse = glm::vec3(0.0f);
 		glm::vec3 current_velocity = glm::vec3(0.0f);
 	};
 

@@ -32,8 +32,6 @@ namespace bnp {
 		s.value4b(t.scale.x);
 		s.value4b(t.scale.y);
 		s.value4b(t.scale.z);
-
-		t.update_world_transform();
 	}
 
 }

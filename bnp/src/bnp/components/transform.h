@@ -22,11 +22,16 @@ namespace bnp {
 			world_transform(glm::mat4(1.0f)),
 			dirty(true)
 		{
-			update_world_transform();
 		}
 
-		void update_world_transform() {
-			world_transform = glm::translate(glm::mat4(1.0f), position) * glm::mat4_cast(rotation) * glm::scale(glm::mat4(1.0f), scale);
+		void update_world_transform(const glm::mat4& parent_world_transform) {
+			glm::mat4 local_transform =
+				glm::translate(glm::mat4(1.0f), position) *
+				glm::mat4_cast(rotation) *
+				glm::scale(glm::mat4(1.0f), scale);
+
+			world_transform = parent_world_transform * local_transform;
+
 			dirty = false;
 		}
 	};

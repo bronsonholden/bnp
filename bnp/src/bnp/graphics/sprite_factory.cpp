@@ -1,4 +1,5 @@
 #include <bnp/graphics/sprite_factory.h>
+#include <bnp/components/physics.h>
 
 namespace bnp {
 
@@ -23,10 +24,13 @@ namespace bnp {
 		const auto& frames = json["frames"];
 		if (frames.empty()) throw std::runtime_error("No frames in Aseprite JSON.");
 
-		// Map frame index to SpriteFrame
-		std::vector<std::string> frame_keys;
-		for (const auto& item : frames.items()) frame_keys.push_back(item.key());
-		std::sort(frame_keys.begin(), frame_keys.end());
+		// preload collider slices
+		std::unordered_map<int, glm::ivec4> collider_by_frame;
+
+		// if no body slice defined
+		glm::ivec4 body = load_body_slice(meta);
+
+		sprite.body_slice = body;
 
 		// Parse animations from frameTags
 		if (meta.contains("frameTags")) {
@@ -40,7 +44,7 @@ namespace bnp {
 				anim.frames.reserve(to - from + 1);
 
 				for (int i = from; i <= to; ++i) {
-					const auto& frame_data = frames.at(frame_keys[i]);
+					const auto& frame_data = frames.at(i);
 					auto duration = frame_data["duration"].get<float>() / 1000.0f;
 
 					auto x = frame_data["frame"]["x"].get<int>();
@@ -54,11 +58,30 @@ namespace bnp {
 					frame.size = { w, h };
 					frame.uv0 = glm::vec2((float)x / sprite.spritesheet_width, (float)(y + h) / sprite.spritesheet_height);
 					frame.uv1 = glm::vec2((float)(x + w) / sprite.spritesheet_width, (float)(y) / sprite.spritesheet_height);
+					frame.coords = glm::ivec4(x, y, w, h);
 
 					anim.frames.push_back(frame);
 				}
 
 				sprite.animations[name] = anim;
+			}
+		}
+
+		if (meta.contains("slices")) {
+			for (const auto& slice : meta["slices"]) {
+				std::string name = slice["name"];
+
+				std::unordered_map<uint32_t, glm::ivec4> slice_keys;
+
+				for (const auto& key : slice["keys"]) {
+					auto x = key["bounds"]["x"].get<int>();
+					auto y = key["bounds"]["y"].get<int>();
+					auto w = key["bounds"]["w"].get<int>();
+					auto h = key["bounds"]["h"].get<int>();
+					slice_keys.emplace(key["frame"].get<uint32_t>(), glm::ivec4(x, y, w, h));
+				}
+
+				sprite.slices.emplace(name, slice_keys);
 			}
 		}
 
@@ -92,6 +115,40 @@ namespace bnp {
 			animator.playing = true;
 			node.add_component<SpriteAnimator>(animator);
 		}
+	}
+
+	glm::ivec4 SpriteFactory::load_body_slice(const nlohmann::json& meta) {
+		int spritesheet_width = meta["size"]["w"];
+		int spritesheet_height = meta["size"]["h"];
+
+		glm::ivec4 default_body(0);
+
+		if (!meta.contains("slices")) {
+			return default_body;
+		}
+
+		for (const auto& slice : meta["slices"]) {
+			if (slice.contains("name") && slice["name"] == "Body" && slice.contains("keys")) {
+				for (const auto& key : slice["keys"]) {
+					if (!key.contains("frame") || !key.contains("bounds") || key["frame"] != 0) {
+						return default_body;
+					}
+
+					int frame_index = key["frame"];
+					const auto& bounds = key["bounds"];
+
+					return glm::ivec4(
+						bounds["x"].get<int>(),
+						bounds["y"].get<int>(),
+						bounds["w"].get<int>(),
+						bounds["h"].get<int>()
+					);
+
+				}
+			}
+		}
+
+		return default_body;
 	}
 
 }

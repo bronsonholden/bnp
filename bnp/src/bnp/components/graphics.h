@@ -34,6 +34,7 @@ namespace bnp {
 		glm::vec2 uv1;
 		glm::ivec2 pixel_offset = {};
 		glm::ivec2 size = {};
+		glm::ivec4 coords;
 	};
 
 	struct SpriteAnimation {
@@ -50,6 +51,8 @@ namespace bnp {
 		uint32_t frame_height;
 		glm::ivec2 mirror = { 1, 1 };
 		std::unordered_map<std::string, SpriteAnimation> animations;
+		glm::ivec4 body_slice;
+		std::unordered_map<std::string, std::unordered_map<uint32_t, glm::ivec4>> slices;
 	};
 
 	struct SpriteAnimator {
@@ -61,6 +64,7 @@ namespace bnp {
 		bool done = false;
 	};
 
+	// maybe todo: add `managed` prop. If unmanaged, cleanup automatically happens
 	struct Mesh {
 		std::string resource_id;
 
@@ -87,6 +91,7 @@ namespace bnp {
 		std::vector<uint32_t> indices;
 	};
 
+	// maybe todo: add `managed` prop. If unmanaged, cleanup automatically happens
 	struct Texture {
 		std::string resource_id;
 		GLuint texture_id = 0;
