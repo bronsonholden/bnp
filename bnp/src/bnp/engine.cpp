@@ -91,7 +91,7 @@ uniform sampler2D sprite_texture;
 uniform vec2 uv0;
 uniform vec2 uv1;
 
-const float adds[3] = float[](0.0f, 0.07f, -0.09f);
+const float adds[4] = float[](0.0f, 0.03f, -0.12f, -0.12);
 
 void main() {
     float row = gl_FragCoord.y;
@@ -99,7 +99,7 @@ void main() {
     vec4 tex_color = texture(sprite_texture, mix(uv0, uv1, tex_coords));
     //float diff = max(dot(normal, light_dir), 0.0);
     //vec3 diffuse = diff * sprite_texture;
-    int idx = int(mod(floor(row / 2.0), 3.0));
+    int idx = int(mod(floor(row / 2.0), 4.0));
     tex_color += vec4(vec3(adds[idx]), tex_color.a);
     frag_color = tex_color;
 }
@@ -219,6 +219,16 @@ namespace bnp {
 			glm::vec3(1)
 			});
 
+		Node arch = load_sprite(
+			"bnp/resources/sprites/arch_01/arch_01.png",
+			"bnp/resources/sprites/arch_01/arch_01.json"
+		);
+		arch.add_component<Transform>(Transform{
+			glm::vec3(1, 0, 0),
+			glm::quat(),
+			glm::vec3(4)
+			});
+
 		// pre-run setup
 		physics_manager.generate_sprite_bodies(registry);
 
@@ -274,7 +284,7 @@ namespace bnp {
 			//render_manager.render(registry, renderer, camera);
 			//render_manager.render_instances(registry, renderer, camera);
 			render_manager.render_sprites(registry, renderer, camera);
-			render_manager.render_wireframes(registry, renderer, camera);
+			//render_manager.render_wireframes(registry, renderer, camera);
 
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplSDL2_NewFrame(window.get_sdl_window());
