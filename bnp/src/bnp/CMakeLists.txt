@@ -95,7 +95,6 @@ target_link_libraries(imgui_backend PUBLIC SDL2::SDL2-static)
 target_include_directories(bnplib PUBLIC ${bitsery_SOURCE_DIR})
 target_link_libraries(bnplib PUBLIC imgui_lib imgui_backend)
 
-
 # stb_image
 FetchContent_Declare(
     stb
@@ -129,3 +128,5 @@ FetchContent_MakeAvailable(box2d)
 
 target_link_libraries(bnplib PRIVATE box2d)
 target_include_directories(bnplib PUBLIC ${box2d_SOURCE_DIR}/include)
+
+target_link_libraries(bnplib PUBLIC lua-static)

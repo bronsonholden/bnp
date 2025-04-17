@@ -1,4 +1,4 @@
-#include <bnp/graphics/mesh_factory.h>
+#include <bnp/factories/mesh_factory.h>
 
 namespace bnp {
 

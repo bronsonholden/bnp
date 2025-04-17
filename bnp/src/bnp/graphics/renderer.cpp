@@ -22,7 +22,7 @@ namespace bnp {
 		glDisable(GL_CULL_FACE);
 	}
 
-	void Renderer::render_sprite(const Camera& camera, const SpriteFrame& sprite_frame, const Mesh& mesh, const Material& material, const Texture& texture, const glm::mat4& transform) const {
+	void Renderer::render_sprite(const Camera& camera, const Sprite& sprite, const SpriteFrame& sprite_frame, const Mesh& mesh, const Material& material, const Texture& texture, const glm::mat4& transform) const {
 		glUseProgram(material.shader_id);
 
 		if (texture.channels == 4) {
@@ -44,12 +44,14 @@ namespace bnp {
 		GLuint proj_loc = glGetUniformLocation(material.shader_id, "projection");
 		GLuint uv0_loc = glGetUniformLocation(material.shader_id, "uv0");
 		GLuint uv1_loc = glGetUniformLocation(material.shader_id, "uv1");
+		GLuint spritesheet_size_loc = glGetUniformLocation(material.shader_id, "spritesheet_size");
 
 		glUniformMatrix4fv(model_loc, 1, GL_FALSE, &transform[0][0]);
 		glUniformMatrix4fv(view_loc, 1, GL_FALSE, &view[0][0]);
 		glUniformMatrix4fv(proj_loc, 1, GL_FALSE, &projection[0][0]);
 		glUniform2f(uv0_loc, sprite_frame.uv0.x, sprite_frame.uv0.y);
 		glUniform2f(uv1_loc, sprite_frame.uv1.x, sprite_frame.uv1.y);
+		glUniform2f(spritesheet_size_loc, sprite.spritesheet_width, sprite.spritesheet_height);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture.texture_id);

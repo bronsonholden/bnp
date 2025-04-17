@@ -1,4 +1,4 @@
-#include <bnp/graphics/sprite_factory.h>
+#include <bnp/factories/sprite_factory.h>
 #include <bnp/components/physics.h>
 
 namespace bnp {
@@ -29,8 +29,6 @@ namespace bnp {
 
 		// if no body slice defined
 		glm::ivec4 body = load_body_slice(meta);
-
-		sprite.body_slice = body;
 
 		// Parse animations from frameTags
 		if (meta.contains("frameTags")) {

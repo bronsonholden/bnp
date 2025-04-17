@@ -2,7 +2,7 @@
 
 #include <bnp/core/node.hpp>
 #include <bnp/graphics/renderer.h>
-#include <bnp/graphics/material_factory.h>
+#include <bnp/factories/material_factory.h>
 
 namespace bnp {
 

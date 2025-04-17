@@ -1,4 +1,4 @@
-#include <bnp/graphics/texture_factory.h>
+#include <bnp/factories/texture_factory.h>
 
 #include <stb_image.h>
 

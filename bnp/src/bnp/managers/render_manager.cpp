@@ -1,4 +1,4 @@
-#include <bnp/graphics/mesh_factory.h>
+#include <bnp/factories/mesh_factory.h>
 #include <bnp/managers/render_manager.h>
 #include <bnp/components/transform.h>
 #include <bnp/components/graphics.h>
@@ -138,7 +138,7 @@ namespace bnp {
 			glm::mat4 world_transform = transform.world_transform * glm::scale(glm::mat4(1.0f), scalar);
 
 			if (renderable.value) {
-				renderer.render_sprite(camera, sprite_frame, sprite_mesh, material, texture, world_transform);
+				renderer.render_sprite(camera, sprite, sprite_frame, sprite_mesh, material, texture, world_transform);
 			}
 
 			glEnable(GL_DEPTH_TEST);

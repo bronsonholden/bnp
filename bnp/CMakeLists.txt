@@ -24,4 +24,5 @@ add_subdirectory(tests)
 # # Link Assimp to your project
 # target_link_libraries(bnplib PUBLIC assimp)
 
+add_subdirectory(vendor/lua-5.4.6)
 add_subdirectory(app)

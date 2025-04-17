@@ -4,9 +4,9 @@
 #include <bnp/core/time_system.h>
 #include <bnp/core/scene.h>
 #include <bnp/graphics/renderer.h>
-#include <bnp/graphics/material_factory.h>
-#include <bnp/graphics/mesh_factory.h>
-#include <bnp/graphics/texture_factory.h>
+#include <bnp/factories/material_factory.h>
+#include <bnp/factories/mesh_factory.h>
+#include <bnp/factories/texture_factory.h>
 #include <bnp/managers/resource_manager.h>
 #include <bnp/managers/render_manager.h>
 #include <bnp/managers/archive_manager.h>

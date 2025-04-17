@@ -54,7 +54,6 @@ namespace bnp {
 		uint32_t frame_height;
 		glm::ivec2 mirror = { 1, 1 };
 		std::unordered_map<std::string, SpriteAnimation> animations;
-		glm::ivec4 body_slice;
 		std::unordered_map<std::string, std::unordered_map<uint32_t, glm::ivec4>> slices;
 	};
 

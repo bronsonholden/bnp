@@ -5,7 +5,8 @@
 #include <bnp/components/graphics.h>
 #include <bnp/components/controllable.h>
 #include <bnp/helpers/random_float_generator.hpp>
-#include <bnp/graphics/sprite_factory.h>
+#include <bnp/factories/sprite_factory.h>
+#include <bnp/factories/script_factory.h>
 #include <bnp/helpers/color_helper.hpp>
 #include <bnp/serializers/scene.hpp>
 #include <bnp/serializers/graphics.hpp>
@@ -91,17 +92,30 @@ uniform sampler2D sprite_texture;
 uniform vec2 uv0;
 uniform vec2 uv1;
 
-const float adds[4] = float[](0.0f, 0.03f, -0.12f, -0.12);
+//const float adds[5] = float[](0.03f, 0.00f, -0.12f, -0.12f, -0.12f);
+//float row = gl_FragCoord.y;
+//tex_color += vec4(vec3(adds[idx]), tex_color.a);
+//int idx = int(mod(floor(row), 5.0));
+
+float random(vec2 p) {
+    return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453);
+}
 
 void main() {
-    float row = gl_FragCoord.y;
-    vec3 light_dir = normalize(vec3(2.0, 1.0, 0.3));
-    vec4 tex_color = texture(sprite_texture, mix(uv0, uv1, tex_coords));
-    //float diff = max(dot(normal, light_dir), 0.0);
-    //vec3 diffuse = diff * sprite_texture;
-    int idx = int(mod(floor(row / 2.0), 4.0));
-    tex_color += vec4(vec3(adds[idx]), tex_color.a);
-    frag_color = tex_color;
+    vec2 interp_tex_coords = mix(uv0, uv1, tex_coords);
+    vec4 tex_color = texture(sprite_texture, interp_tex_coords);
+
+    vec2 cluster_size = vec2(128.0);
+    vec2 frame_coords = interp_tex_coords - uv0;
+    vec2 cluster_coord = floor(frame_coords * cluster_size) / cluster_size;
+
+   // Create a random pattern based on texture coordinates and time
+    float noise = random(cluster_coord * 10); // Adjust the scale and speed as needed
+
+    // Add a subtle speckling effect based on the noise
+    float intensity = 0.04; // Controls the amount of speckling
+
+    frag_color = tex_color + vec4(vec3(noise * intensity), tex_color.a);
 }
 )";
 
@@ -199,9 +213,29 @@ namespace bnp {
 		squirrel.add_component<Controllable>(Controllable{ true });
 
 
+		Node butterfly = load_sprite(
+			"bnp/resources/sprites/butterfly_red/butterfly_red.png",
+			"bnp/resources/sprites/butterfly_red/butterfly_red.json"
+		);
+		butterfly.add_component<Transform>(Transform{
+			glm::vec3(1.75, 0.2, 0),
+			glm::quat(),
+			glm::vec3(0.3)
+			});
+
+		Node butterfly2 = load_sprite(
+			"bnp/resources/sprites/butterfly_yellow/butterfly_yellow.png",
+			"bnp/resources/sprites/butterfly_yellow/butterfly_yellow.json"
+		);
+		butterfly2.add_component<Transform>(Transform{
+			glm::vec3(0.75, 0.2, 0),
+			glm::quat(),
+			glm::vec3(0.3)
+			});
+
 		Node grass = load_sprite(
-			"bnp/resources/sprites/grass_01/grass_01.png",
-			"bnp/resources/sprites/grass_01/grass_01.json"
+			"bnp/resources/sprites/grass_blue_01/grass_blue_01.png",
+			"bnp/resources/sprites/grass_blue_01/grass_blue_01.json"
 		);
 		grass.add_component<Transform>(Transform{
 			glm::vec3(2, 0, 0),
@@ -210,8 +244,8 @@ namespace bnp {
 			});
 
 		Node bush = load_sprite(
-			"bnp/resources/sprites/bush_01/bush_01.png",
-			"bnp/resources/sprites/bush_01/bush_01.json"
+			"bnp/resources/sprites/bush_blue_01/bush_blue_01.png",
+			"bnp/resources/sprites/bush_blue_01/bush_blue_01.json"
 		);
 		bush.add_component<Transform>(Transform{
 			glm::vec3(1, 0, 0),
@@ -233,6 +267,11 @@ namespace bnp {
 		physics_manager.generate_sprite_bodies(registry);
 
 		Controller controller(registry, squirrel.get_entity_id());
+
+		ScriptFactory script_factory;
+
+		std::filesystem::path root = PROJECT_ROOT;
+		script_factory.load_from_file(squirrel, root / "bnp/resources/scripts/log_test.lua");
 
 		while (window.open) {
 
@@ -284,7 +323,7 @@ namespace bnp {
 			//render_manager.render(registry, renderer, camera);
 			//render_manager.render_instances(registry, renderer, camera);
 			render_manager.render_sprites(registry, renderer, camera);
-			//render_manager.render_wireframes(registry, renderer, camera);
+			render_manager.render_wireframes(registry, renderer, camera);
 
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplSDL2_NewFrame(window.get_sdl_window());

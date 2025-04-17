@@ -3,8 +3,8 @@
 #include <bnp/core/node.hpp>
 #include <bnp/core/window.h>
 #include <bnp/components/graphics.h>
-#include <bnp/graphics/mesh_factory.h>
-#include <bnp/graphics/material_factory.h>
+#include <bnp/factories/mesh_factory.h>
+#include <bnp/factories/material_factory.h>
 #include <bnp/managers/resource_manager.h>
 
 // Basic vertex shader source code

@@ -1,4 +1,4 @@
-#include <bnp/graphics/material_factory.h>
+#include <bnp/factories/material_factory.h>
 
 #include <iostream>
 
