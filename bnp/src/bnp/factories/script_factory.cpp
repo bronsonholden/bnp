@@ -21,7 +21,6 @@ namespace bnp {
 
 		Script script{
 			L,
-			true,
 			&node.get_registry(),
 			node.get_entity_id()
 		};
@@ -39,28 +38,24 @@ namespace bnp {
 			return;
 		}
 
-		script.ok = true;
-
 		node.add_component<Script>(script);
 	}
 
 	void ScriptFactory::bind_use(Script& script) {
 		lua_State* L = script.L;
 
-		lua_pushlightuserdata(L, this);
 		lua_pushlightuserdata(L, &script);
 
 		lua_pushcclosure(L, [](lua_State* L) -> int {
-			ScriptFactory* self = static_cast<ScriptFactory*>(lua_touserdata(L, lua_upvalueindex(1)));
-			Script* script = static_cast<Script*>(lua_touserdata(L, lua_upvalueindex(2)));
+			Script* script = static_cast<Script*>(lua_touserdata(L, lua_upvalueindex(1)));
 			const char* name = luaL_checkstring(L, 1);
 
 			if (strcmp(name, "log") == 0) {
-				self->bind_log(*script);
+				bind_log(*script);
 			}
 
 			return 0;
-			}, 2);
+			}, 1);
 
 		lua_setglobal(L, "use");
 	}
@@ -72,19 +67,11 @@ namespace bnp {
 
 		lua_newtable(L); // Stack: [node]
 
-		// Push upvalues for the closure
-		lua_pushlightuserdata(L, this); // upvalue 1
+		lua_pushlightuserdata(L, &script);
 
-		// Create the context userdata and store registry/entity
-		auto* ctx = static_cast<ScriptBindingContext*>(lua_newuserdata(L, sizeof(ScriptBindingContext)));
-		ctx->registry = &registry;
-		ctx->entity = entity;
-
-		// Create closure with 2 upvalues
 		lua_pushcclosure(L, [](lua_State* L) -> int {
 			// Upvalue access
-			auto* self = static_cast<ScriptFactory*>(lua_touserdata(L, lua_upvalueindex(1)));
-			auto* ctx = static_cast<ScriptBindingContext*>(lua_touserdata(L, lua_upvalueindex(2)));
+			auto* script = static_cast<Script*>(lua_touserdata(L, lua_upvalueindex(2)));
 
 			if (!lua_isstring(L, 2)) {
 				return luaL_error(L, "Expected component name string as second argument");
@@ -106,13 +93,11 @@ namespace bnp {
 			}
 
 			return 0;
-			}, 2); // 2 upvalues
+			}, 1);
 
-		// Set node.addComponent = closure
 		lua_setfield(L, -2, "addComponent");
 
-		// Set global "node" = { addComponent = ... }
-		lua_setglobal(L, "node"); // Pops the node table
+		lua_setglobal(L, "node");
 	}
 
 	void ScriptFactory::bind_log(Script& script) {
@@ -143,27 +128,22 @@ namespace bnp {
 			return;
 		}
 
-		// Create context
-		auto* ctx = static_cast<ScriptBindingContext*>(lua_newuserdata(L, sizeof(ScriptBindingContext)));
-		ctx->registry = &registry;
-		ctx->entity = entity;
-
 		lua_newtable(L); // transform table
 
 		// GetPosition
-		lua_pushlightuserdata(L, ctx);
+		lua_pushlightuserdata(L, &script);
 		lua_pushcclosure(L, l_transform_get_position, 1);
 		lua_setfield(L, -2, "GetPosition");
 
 		// SetPosition (expects table with x and y)
-		lua_pushlightuserdata(L, ctx);
+		lua_pushlightuserdata(L, &script);
 		lua_pushcclosure(L, l_transform_set_position, 1);
 		lua_setfield(L, -2, "SetPosition");
 
 		// Set `transform` into `node`
-		lua_setfield(L, -3, "transform"); // node.transform = transform table
+		lua_setfield(L, -2, "transform"); // node.transform = transform table
 
-		lua_pop(L, 2);
+		lua_pop(L, 1);
 	}
 
 }

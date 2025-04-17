@@ -11,8 +11,8 @@ extern "C" {
 namespace bnp {
 
 	int l_transform_get_position(lua_State* L) {
-		auto* ctx = static_cast<ScriptBindingContext*>(lua_touserdata(L, lua_upvalueindex(1)));
-		auto& transform = ctx->registry->get<Transform>(ctx->entity);
+		auto* script = static_cast<Script*>(lua_touserdata(L, lua_upvalueindex(1)));
+		auto& transform = script->registry->get<Transform>(script->entity);
 
 		lua_newtable(L);
 		lua_pushnumber(L, transform.position.x);
@@ -26,8 +26,8 @@ namespace bnp {
 	}
 
 	int l_transform_set_position(lua_State* L) {
-		auto* ctx = static_cast<ScriptBindingContext*>(lua_touserdata(L, lua_upvalueindex(1)));
-		auto& transform = ctx->registry->get<Transform>(ctx->entity);
+		auto* script = static_cast<Script*>(lua_touserdata(L, lua_upvalueindex(1)));
+		auto& transform = script->registry->get<Transform>(script->entity);
 
 		if (!lua_istable(L, 2)) {
 			return luaL_error(L, "SetPosition expects a table with fields x and y");
@@ -37,8 +37,8 @@ namespace bnp {
 		lua_getfield(L, 2, "y");
 		lua_getfield(L, 2, "z");
 
-		if (ctx->registry->all_of<PhysicsBody2D>(ctx->entity)) {
-			auto& body = ctx->registry->get<PhysicsBody2D>(ctx->entity);
+		if (script->registry->all_of<PhysicsBody2D>(script->entity)) {
+			auto& body = script->registry->get<PhysicsBody2D>(script->entity);
 
 			const b2Transform& t = body.body->GetTransform();
 
@@ -56,7 +56,7 @@ namespace bnp {
 			body.body->SetTransform(b2Vec2{ x, y }, body.body->GetAngle());
 		}
 		else {
-			ctx->registry->patch<Transform>(ctx->entity, [=](Transform& t) {
+			script->registry->patch<Transform>(script->entity, [=](Transform& t) {
 				if (lua_isnumber(L, -3)) {
 					t.position.x = static_cast<float>(luaL_checknumber(L, -3));
 				}
@@ -73,7 +73,7 @@ namespace bnp {
 				});
 		}
 
-		lua_pop(L, 2); // pop x and y
+		lua_pop(L, 3);
 
 		return 0;
 	}

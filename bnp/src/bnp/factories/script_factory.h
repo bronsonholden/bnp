@@ -15,10 +15,10 @@ namespace bnp {
 		void load_from_file(Node& node, const std::filesystem::path& path);
 
 	private:
-		void bind_use(Script& script);
-		void bind_node(Script& script);
-		void bind_log(Script& script);
-		void bind_transform(Script& script);
+		static void bind_use(Script& script);
+		static void bind_node(Script& script);
+		static void bind_log(Script& script);
+		static void bind_transform(Script& script);
 	};
 
 }
