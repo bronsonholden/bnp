@@ -17,12 +17,14 @@ namespace bnp {
 
 	class ResourceManager {
 	public:
-		ResourceManager() = default;
+		ResourceManager();
+		~ResourceManager();
 
 		Material load_material(ResourceIdentifier resource_id, std::unordered_map<ShaderType, std::filesystem::path> shaders);
 		Texture load_texture(ResourceIdentifier resource_id, std::filesystem::path path);
 
 	protected:
+		std::filesystem::path root;
 		std::unordered_map<ResourceIdentifier, Material> materials;
 		std::unordered_map<ResourceIdentifier, Texture> textures;
 	};

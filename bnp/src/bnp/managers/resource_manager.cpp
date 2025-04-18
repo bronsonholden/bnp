@@ -11,9 +11,15 @@ using namespace std;
 
 namespace bnp {
 
-	//Mesh ResourceManager::load_mesh(ResourceIdentifier resource_id) {
+	ResourceManager::ResourceManager()
+		: root(PROJECT_ROOT)
+	{
 
-	//}
+	}
+
+	ResourceManager::~ResourceManager() {
+
+	}
 
 	Material ResourceManager::load_material(ResourceIdentifier resource_id, std::unordered_map<ShaderType, std::filesystem::path> shaders) {
 		if (materials.find(resource_id) != materials.end()) {
@@ -23,7 +29,7 @@ namespace bnp {
 		std::unordered_map<ShaderType, std::string> source_map;
 
 		for (auto& [shader_type, path] : shaders) {
-			std::ifstream file(path);
+			std::ifstream file(root / path);
 			std::string source(std::istreambuf_iterator<char>(file), {});
 
 			source_map.emplace(shader_type, std::move(source));
@@ -43,7 +49,7 @@ namespace bnp {
 		}
 
 		TextureFactory texture_factory;
-		Texture texture = texture_factory.load_from_file(path);
+		Texture texture = texture_factory.load_from_file(root / path);
 
 		texture.resource_id = resource_id;
 

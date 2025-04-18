@@ -165,17 +165,17 @@ namespace bnp {
 	Node Engine::load_sprite(std::filesystem::path sprite_path, std::filesystem::path json_path) {
 		std::filesystem::path root = PROJECT_ROOT;
 		Node node = test_scene.create_node();
-		Texture texture = resource_manager.load_texture(sprite_path.string(), root / sprite_path);
+		Texture texture = resource_manager.load_texture(sprite_path.string(), sprite_path);
 		Material material = resource_manager.load_material(sprite_path.string(), {
-			{ShaderType::VertexShader, root / "bnp/resources/shaders/vertex_shader.glsl"},
-			{ShaderType::FragmentShader, root / "bnp/resources/shaders/fragment_shader.glsl"}
+			{ShaderType::VertexShader, "bnp/resources/shaders/vertex_shader.glsl"},
+			{ShaderType::FragmentShader, "bnp/resources/shaders/fragment_shader.glsl"}
 			});
 		node.add_component<Texture>(texture);
 		node.add_component<Renderable>(true);
 		node.add_component<Material>(material);
 
 		SpriteFactory sprite_factory;
-		sprite_factory.load_from_aseprite(node, (root / json_path));
+		sprite_factory.load_from_aseprite(node, root / json_path);
 
 		return node;
 	}
