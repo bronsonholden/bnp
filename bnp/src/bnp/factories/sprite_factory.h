@@ -12,7 +12,7 @@ namespace bnp {
 	public:
 		SpriteFactory() = default;
 
-		void load_from_aseprite(Node& node, const std::string& json_path);
+		void load_from_aseprite(Node& node, const std::filesystem::path& json_path);
 		glm::ivec4 load_body_slice(const nlohmann::json& meta);
 	};
 

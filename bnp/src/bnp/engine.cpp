@@ -175,10 +175,7 @@ namespace bnp {
 		node.add_component<Material>(material);
 
 		SpriteFactory sprite_factory;
-
-		if (json_path != "") {
-			sprite_factory.load_from_aseprite(node, (root / json_path).string());
-		}
+		sprite_factory.load_from_aseprite(node, (root / json_path));
 
 		return node;
 	}

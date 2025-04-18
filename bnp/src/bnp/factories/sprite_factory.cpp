@@ -3,11 +3,11 @@
 
 namespace bnp {
 
-	void SpriteFactory::load_from_aseprite(Node& node, const std::string& json_path) {
+	void SpriteFactory::load_from_aseprite(Node& node, const std::filesystem::path& json_path) {
 		std::ifstream file(json_path);
 
 		if (!file.is_open()) {
-			throw std::runtime_error("Failed to open Aseprite JSON file: " + json_path);
+			throw std::runtime_error("Failed to open Aseprite JSON file: " + json_path.string());
 		}
 
 		nlohmann::json json;
