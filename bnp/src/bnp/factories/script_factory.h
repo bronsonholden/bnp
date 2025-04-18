@@ -19,7 +19,6 @@ namespace bnp {
 		static void bind_use(Script& script);
 		static void bind_node(Script& script);
 		static void bind_log(Script& script);
-		static void bind_transform(Script& script);
 	};
 
 }
