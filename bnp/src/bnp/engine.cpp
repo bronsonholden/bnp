@@ -165,16 +165,14 @@ namespace bnp {
 	Node Engine::load_sprite(std::filesystem::path sprite_path, std::filesystem::path json_path) {
 		std::filesystem::path root = PROJECT_ROOT;
 		Node node = test_scene.create_node();
-		Texture texture = texture_factory.load_from_file(root / sprite_path);
-		Material material = material_factory.load_material({
-			{ShaderType::VertexShader, vertex_shader_source},
-			{ShaderType::FragmentShader, fragment_shader_source}
+		Texture texture = resource_manager.load_texture(sprite_path.string(), root / sprite_path);
+		Material material = resource_manager.load_material(sprite_path.string(), {
+			{ShaderType::VertexShader, root / "bnp/resources/shaders/vertex_shader.glsl"},
+			{ShaderType::FragmentShader, root / "bnp/resources/shaders/fragment_shader.glsl"}
 			});
-		texture.resource_id = sprite_path.string();
 		node.add_component<Texture>(texture);
 		node.add_component<Renderable>(true);
 		node.add_component<Material>(material);
-		resource_manager.add_texture(sprite_path.string(), texture);
 
 		SpriteFactory sprite_factory;
 
@@ -239,6 +237,17 @@ namespace bnp {
 		);
 		grass.add_component<Transform>(Transform{
 			glm::vec3(2, 0, 0),
+			glm::quat(),
+			glm::vec3(1)
+			});
+
+
+		Node grass2 = load_sprite(
+			"bnp/resources/sprites/grass_blue_01/grass_blue_01.png",
+			"bnp/resources/sprites/grass_blue_01/grass_blue_01.json"
+		);
+		grass2.add_component<Transform>(Transform{
+			glm::vec3(2.4, 0, 0),
 			glm::quat(),
 			glm::vec3(1)
 			});
@@ -349,8 +358,6 @@ namespace bnp {
 
 			window.swap();
 		}
-
-		resource_manager.cleanup(registry);
 	}
 
 	void Engine::update(float dt) {

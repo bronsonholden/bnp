@@ -11,7 +11,7 @@
 #include <bnp/managers/archive_manager.h>
 
 #include <entt/entt.hpp>
-#include <vector>
+#include <unordered_map>
 
 namespace bnp {
 
@@ -19,19 +19,12 @@ namespace bnp {
 	public:
 		ResourceManager() = default;
 
-		void add_mesh(ResourceIdentifier resource_id, Mesh mesh);
-		void add_material(ResourceIdentifier resource_id, Material material);
-		void add_texture(ResourceIdentifier resource_id, Texture  texture);
-		void cleanup(const entt::registry& registry);
+		Material load_material(ResourceIdentifier resource_id, std::unordered_map<ShaderType, std::filesystem::path> shaders);
+		Texture load_texture(ResourceIdentifier resource_id, std::filesystem::path path);
 
 	protected:
-		std::unordered_map<ResourceIdentifier, Mesh> meshes;
 		std::unordered_map<ResourceIdentifier, Material> materials;
 		std::unordered_map<ResourceIdentifier, Texture> textures;
-
-		void cleanup_meshes(const entt::registry& registry);
-		void cleanup_materials(const entt::registry& registry);
-		void cleanup_textures(const entt::registry& registry);
 	};
 
 } // namespace bnp

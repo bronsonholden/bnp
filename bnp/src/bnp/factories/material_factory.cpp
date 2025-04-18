@@ -65,7 +65,7 @@ namespace bnp {
 	}
 
 	Material MaterialFactory::load_material(
-		const std::vector<std::pair<ShaderType, std::string>>& shaders)
+		const unordered_map<ShaderType, std::string>& shaders)
 	{
 		GLuint program = glCreateProgram();
 		std::vector<GLuint> shader_objects;

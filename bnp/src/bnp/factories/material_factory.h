@@ -2,7 +2,7 @@
 
 #include <bnp/components/graphics.h>
 
-#include <vector>
+#include <unordered_map>
 #include <GL/glew.h>
 
 namespace bnp {
@@ -11,7 +11,7 @@ namespace bnp {
 	public:
 		MaterialFactory() = default;
 
-		Material load_material(const std::vector<std::pair<ShaderType, std::string>>& shaders);
+		Material load_material(const unordered_map<ShaderType, std::string>& shaders);
 		Material wireframe_material();
 
 	protected:
