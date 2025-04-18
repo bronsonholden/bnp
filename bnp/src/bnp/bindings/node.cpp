@@ -57,7 +57,9 @@ namespace bnp {
 			return luaL_error(L, "Unknown/disallowed component: %s", name);
 		}
 
-		return 0;
+		l_push_script_node(L, node);
+
+		return 1;
 	}
 
 	int l_node_get_component(lua_State* L) {
