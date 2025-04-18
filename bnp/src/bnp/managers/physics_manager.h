@@ -25,6 +25,8 @@ namespace bnp {
 
 	private:
 		b2World world;
+
+		void update_water2d_collisions(entt::registry& registry, float dt);
 	};
 
 } // namespace bnp

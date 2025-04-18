@@ -70,7 +70,7 @@ namespace bnp {
 		}
 	}
 
-	void Renderer::render_wireframe(const Camera& camera, const Mesh& mesh, const Material& material, const glm::mat4& world_transform, const glm::vec4& color) const {
+	void Renderer::render_wireframe(const Camera& camera, const Mesh& mesh, const Material& material, const glm::mat4& world_transform, const glm::vec4& color, bool fill) const {
 		glUseProgram(material.shader_id);
 
 		GLint viewport[4];
@@ -98,9 +98,9 @@ namespace bnp {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.eb_id);
 		}
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		if (!fill) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glDrawElements(GL_TRIANGLES, mesh.vertex_count, GL_UNSIGNED_INT, 0);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		if (!fill) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
 	void Renderer::render(const Camera& camera, const Mesh& mesh, const Material& material, const Texture& texture, const glm::mat4& transform) const {

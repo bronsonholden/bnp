@@ -44,6 +44,8 @@ namespace bnp {
 					});
 			}
 		}
+
+		update_water2d_collisions(registry, dt);
 	}
 
 	void PhysicsManager::add_body(Node& node, const b2BodyDef& body_def, const b2FixtureDef& fixture_def) {
@@ -110,6 +112,71 @@ namespace bnp {
 
 	b2World& PhysicsManager::get_world() {
 		return world;
+	}
+
+	void PhysicsManager::update_water2d_collisions(entt::registry& registry, float dt) {
+		auto view = registry.view<Water2D, Transform>();
+		auto bodies = registry.view<PhysicsBody2D>();
+
+		for (auto entity : view) {
+			auto& water = view.get<Water2D>(entity);
+			auto& water_transform = view.get<Transform>(entity); // world-space position of water
+
+			float water_origin_x = water_transform.position.x;
+			float water_origin_y = water_transform.position.y;
+			float half_width = (water.columns * water.column_width) * 0.5f;
+
+			float water_left = water_origin_x - half_width;
+
+			for (auto body_entity : bodies) {
+				auto& body = bodies.get<PhysicsBody2D>(body_entity);
+				float body_y_vel = std::abs(body.body->GetLinearVelocity().y);
+				b2Fixture* fixture = body.body->GetFixtureList();
+				if (!fixture) continue;
+
+				b2AABB aabb = fixture->GetAABB(0);
+
+				// AABB min/max in world coordinates
+				float aabb_min_x = aabb.lowerBound.x;
+				float aabb_max_x = aabb.upperBound.x;
+				float aabb_min_y = aabb.lowerBound.y;
+				float aabb_max_y = aabb.upperBound.y;
+				float aabb_center_y = aabb_min_y + ((aabb_max_y - aabb_min_y) / 2);
+
+				// Convert AABB x-range to column indices
+				int start_col = static_cast<int>((aabb_min_x - water_left) / water.column_width);
+				int end_col = static_cast<int>((aabb_max_x - water_left) / water.column_width);
+
+				// Clamp column range to valid range
+				start_col = std::max(0, start_col);
+				end_col = std::min(water.columns - 1, end_col);
+
+				for (int i = start_col - 3; i < start_col; ++i) {
+					float surface_y = water.height[i] + water_origin_y;
+
+					if (aabb_center_y < surface_y) {
+						water.velocity[i] += 0.1f * dt * (1 + body_y_vel * 2);
+					}
+				}
+
+				for (int i = end_col + 1; i < end_col + 3; ++i) {
+					float surface_y = water.height[i] + water_origin_y;
+
+					if (aabb_center_y < surface_y) {
+						water.velocity[i] += 0.1f * dt * (1 + body_y_vel * 2);
+					}
+				}
+
+				// Apply splash force to intersecting columns
+				for (int i = start_col; i <= end_col; ++i) {
+					float surface_y = water.height[i] + water_origin_y;
+
+					if (aabb_center_y < surface_y) {
+						water.velocity[i] += -0.1f * dt * (1 + body_y_vel * 2);
+					}
+				}
+			}
+		}
 	}
 
 }

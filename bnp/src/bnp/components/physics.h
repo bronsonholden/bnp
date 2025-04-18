@@ -31,4 +31,13 @@ namespace bnp {
 		glm::vec3 current_velocity = glm::vec3(0.0f);
 	};
 
+	struct Water2D {
+		int columns = 0;
+		float column_width = 0.05f;
+		std::vector<float> height;
+		std::vector<float> velocity;
+		std::vector<float> base_height;
+		float depth = 1.0f;
+	};
+
 }

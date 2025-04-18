@@ -16,6 +16,7 @@
 #include <bnp/ui/node_inspector.h>
 #include <bnp/controllers/controller.h>
 
+#include <vector>
 #include <string>
 #include <fstream>
 #include <filesystem>
@@ -149,7 +150,8 @@ namespace bnp {
 		//glEnable(GL_DEBUG_OUTPUT);
 		glDebugMessageCallback(MessageCallback, 0);
 
-		const glm::vec4 clear_color = ColorHelper::hex_to_rgba("a3d9ff");
+		//const glm::vec4 clear_color = ColorHelper::hex_to_rgba("a3d9ff");
+		const glm::vec4 clear_color = glm::vec4(0, 0, 0, 1);
 		glClearColor(
 			clear_color.r,
 			clear_color.g,
@@ -207,59 +209,76 @@ namespace bnp {
 		squirrel.add_component<Motility>(Motility{ 2.5 });
 		squirrel.add_component<Controllable>(Controllable{ true });
 
-
-		Node butterfly = load_sprite(
-			"bnp/resources/sprites/butterfly_red/butterfly_red.png",
-			"bnp/resources/sprites/butterfly_red/butterfly_red.json"
-		);
-		butterfly.add_component<Transform>(Transform{
-			glm::vec3(1.75, 0.2, 0),
+		Node water = test_scene.create_node();
+		const int water_width = 200;
+		std::vector<float> water_heights(water_width, 1.0f);
+		std::vector<float> water_velocities(water_width, 0.0f);
+		water.add_component<Water2D>(Water2D{
+			water_width,
+			0.1f,
+			water_heights,
+			water_velocities,
+			std::vector<float>(water_width, 1.0f),
+			0.15f
+			});
+		water.add_component<Transform>(Transform{
+			glm::vec3(0, -0.8f, 0),
 			glm::quat(),
-			glm::vec3(0.3)
+			glm::vec3(1.0f)
 			});
 
-		Node butterfly2 = load_sprite(
-			"bnp/resources/sprites/butterfly_yellow/butterfly_yellow.png",
-			"bnp/resources/sprites/butterfly_yellow/butterfly_yellow.json"
-		);
-		butterfly2.add_component<Transform>(Transform{
-			glm::vec3(0.75, 0.2, 0),
-			glm::quat(),
-			glm::vec3(0.3)
-			});
+		//Node butterfly = load_sprite(
+		//	"bnp/resources/sprites/butterfly_red/butterfly_red.png",
+		//	"bnp/resources/sprites/butterfly_red/butterfly_red.json"
+		//);
+		//butterfly.add_component<Transform>(Transform{
+		//	glm::vec3(1.75, 0.2, 0),
+		//	glm::quat(),
+		//	glm::vec3(0.3)
+		//	});
 
-		Node grass = load_sprite(
-			"bnp/resources/sprites/grass_blue_01/grass_blue_01.png",
-			"bnp/resources/sprites/grass_blue_01/grass_blue_01.json"
-		);
-		grass.add_component<Transform>(Transform{
-			glm::vec3(2, 0, 0),
-			glm::quat(),
-			glm::vec3(1)
-			});
+		//Node butterfly2 = load_sprite(
+		//	"bnp/resources/sprites/butterfly_yellow/butterfly_yellow.png",
+		//	"bnp/resources/sprites/butterfly_yellow/butterfly_yellow.json"
+		//);
+		//butterfly2.add_component<Transform>(Transform{
+		//	glm::vec3(0.75, 0.2, 0),
+		//	glm::quat(),
+		//	glm::vec3(0.3)
+		//	});
+
+		//Node grass = load_sprite(
+		//	"bnp/resources/sprites/grass_blue_01/grass_blue_01.png",
+		//	"bnp/resources/sprites/grass_blue_01/grass_blue_01.json"
+		//);
+		//grass.add_component<Transform>(Transform{
+		//	glm::vec3(2, 0, 0),
+		//	glm::quat(),
+		//	glm::vec3(1)
+		//	});
 
 
-		Node grass2 = load_sprite(
-			"bnp/resources/sprites/grass_blue_01/grass_blue_01.png",
-			"bnp/resources/sprites/grass_blue_01/grass_blue_01.json"
-		);
-		grass2.add_component<Transform>(Transform{
-			glm::vec3(2.4, 0, 0),
-			glm::quat(),
-			glm::vec3(1)
-			});
+		//Node grass2 = load_sprite(
+		//	"bnp/resources/sprites/grass_blue_01/grass_blue_01.png",
+		//	"bnp/resources/sprites/grass_blue_01/grass_blue_01.json"
+		//);
+		//grass2.add_component<Transform>(Transform{
+		//	glm::vec3(2.4, 0, 0),
+		//	glm::quat(),
+		//	glm::vec3(1)
+		//	});
 
-		Node bush = load_sprite(
-			"bnp/resources/sprites/bush_blue_01/bush_blue_01.png",
-			"bnp/resources/sprites/bush_blue_01/bush_blue_01.json"
-		);
-		bush.add_component<Transform>(Transform{
-			glm::vec3(1, 0, 0),
-			glm::quat(),
-			glm::vec3(1)
-			});
+		//Node bush = load_sprite(
+		//	"bnp/resources/sprites/bush_blue_01/bush_blue_01.png",
+		//	"bnp/resources/sprites/bush_blue_01/bush_blue_01.json"
+		//);
+		//bush.add_component<Transform>(Transform{
+		//	glm::vec3(1, 0, 0),
+		//	glm::quat(),
+		//	glm::vec3(1)
+		//	});
 
-		Node arch = load_sprite(
+		/*Node arch = load_sprite(
 			"bnp/resources/sprites/arch_01/arch_01.png",
 			"bnp/resources/sprites/arch_01/arch_01.json"
 		);
@@ -267,9 +286,9 @@ namespace bnp {
 			glm::vec3(1, 0, 0),
 			glm::quat(),
 			glm::vec3(4)
-			});
+			});*/
 
-		// pre-run setup
+			// pre-run setup
 		physics_manager.generate_sprite_bodies(registry);
 
 		Controller controller(registry, squirrel.get_entity_id());
@@ -316,6 +335,7 @@ namespace bnp {
 			//cout << "fps: " << std::to_string(1.0f / dt) << endl;
 
 			// manager updates
+			water2d_manager.update(registry, dt);
 			sprite_animation_manager.update(registry, dt);
 			motility_manager.update(registry, dt);
 
