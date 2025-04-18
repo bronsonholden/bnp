@@ -15,6 +15,7 @@ namespace bnp {
 		void load_from_file(Node& node, const std::filesystem::path& path);
 
 	private:
+		static void bind_metatables(Script& script);
 		static void bind_use(Script& script);
 		static void bind_node(Script& script);
 		static void bind_log(Script& script);

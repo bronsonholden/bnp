@@ -19,4 +19,9 @@ namespace bnp {
 		}
 	};
 
+	struct ScriptNode {
+		entt::registry& registry;
+		entt::entity entity;
+	};
+
 }
