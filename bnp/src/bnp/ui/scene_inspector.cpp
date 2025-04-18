@@ -2,8 +2,8 @@
 
 namespace bnp {
 
-	SceneInspector::SceneInspector(Scene& scene)
-		: scene(scene) {}
+	SceneInspector::SceneInspector(entt::registry& _registry)
+		: registry(_registry) {}
 
 	std::optional<entt::entity> SceneInspector::get_selected_entity() const {
 		return selected_entity;
@@ -21,9 +21,8 @@ namespace bnp {
 			ImGui::TableSetupColumn("Entity ID");
 			ImGui::TableHeadersRow();
 
-			auto& nodes = scene.get_nodes();
-
-			for (const auto& [entity, node] : nodes) {
+			registry.each([&](entt::entity entity) {
+				Node node(registry, entity);
 				ImGui::TableNextRow();
 				ImGui::TableNextColumn();
 
@@ -47,7 +46,7 @@ namespace bnp {
 				if (ImGui::Button(button_label)) {
 					inspected_entity = entity;
 				}
-			}
+				});
 
 			ImGui::EndTable();
 		}

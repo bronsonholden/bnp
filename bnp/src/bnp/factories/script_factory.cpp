@@ -75,6 +75,9 @@ namespace bnp {
 		if (luaL_newmetatable(L, "bnp.Node")) {
 			lua_newtable(L);
 
+			lua_pushcfunction(L, l_node_add_child);
+			lua_setfield(L, -2, "CreateChild");
+
 			lua_pushcfunction(L, l_node_add_component);
 			lua_setfield(L, -2, "AddComponent");
 

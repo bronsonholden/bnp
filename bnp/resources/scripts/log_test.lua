@@ -6,3 +6,4 @@ node2:GetComponent("Transform"):SetPosition({ y = 1.0 })
 sprite = node:GetComponent("Sprite")
 slice = sprite:GetSlice("Eyes")
 log.message(slice.x .. ", " .. slice.y)
+

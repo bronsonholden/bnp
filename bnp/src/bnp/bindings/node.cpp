@@ -2,6 +2,7 @@
 #include <bnp/components/physics.h>
 #include <bnp/components/graphics.h>
 #include <bnp/components/script.h>
+#include <bnp/components/hierarchy.h>
 
 extern "C" {
 #include <lua.h>
@@ -23,6 +24,16 @@ namespace bnp {
 			node.get_registry(),
 			node.get_entity_id()
 		};
+	}
+
+	int l_node_add_child(lua_State* L) {
+		Node node = l_pop_script_node(L);
+		Node child(node.get_registry());
+
+		child.add_component<Parent>(Parent{ node.get_entity_id() });
+		l_push_script_node(L, child);
+
+		return 1;
 	}
 
 	int l_node_add_component(lua_State* L) {

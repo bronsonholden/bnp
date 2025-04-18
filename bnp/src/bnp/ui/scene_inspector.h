@@ -9,7 +9,7 @@ namespace bnp {
 
 	class SceneInspector {
 	public:
-		SceneInspector(Scene& scene);
+		SceneInspector(entt::registry& registry);
 
 		void render();
 
@@ -18,7 +18,7 @@ namespace bnp {
 		std::optional<entt::entity> get_inspected_entity() const;
 
 	private:
-		Scene& scene;
+		entt::registry& registry;
 		std::optional<entt::entity> selected_entity;
 		std::optional<entt::entity> inspected_entity;
 	};

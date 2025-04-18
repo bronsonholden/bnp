@@ -196,7 +196,7 @@ namespace bnp {
 		ImGui_ImplOpenGL3_Init();
 
 		FileBrowser file_browser;
-		SceneInspector scene_inspector(test_scene);
+		SceneInspector scene_inspector(registry);
 
 
 		Node squirrel = load_sprite(
@@ -338,7 +338,7 @@ namespace bnp {
 			}
 
 			if (scene_inspector.get_inspected_entity()) {
-				Node node = test_scene.get_node(*scene_inspector.get_inspected_entity());
+				Node node(registry, *scene_inspector.get_inspected_entity());
 				NodeInspector node_inspector(node);
 				node_inspector.render();
 			}

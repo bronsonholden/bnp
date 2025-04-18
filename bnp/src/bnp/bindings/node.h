@@ -15,6 +15,7 @@ namespace bnp {
 	// the given `Node`
 	void l_push_script_node(lua_State* L, Node& node);
 
+	int l_node_add_child(lua_State* L);
 	int l_node_add_component(lua_State* L);
 	int l_node_get_component(lua_State* L);
 
