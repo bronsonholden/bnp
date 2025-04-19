@@ -50,7 +50,8 @@ namespace bnp {
 
 	Engine::Engine()
 		: archive_manager(std::filesystem::path(PROJECT_ROOT) / "bnp/data"),
-		test_scene(registry)
+		test_scene(registry),
+		script_factory(resource_manager)
 	{
 		renderer.initialize();
 		archive_manager.load();
@@ -203,8 +204,6 @@ namespace bnp {
 		physics_manager.generate_sprite_bodies(registry);
 
 		Controller controller(registry, squirrel.get_entity_id());
-
-		ScriptFactory script_factory;
 
 		std::filesystem::path root = PROJECT_ROOT;
 		script_factory.load_from_file(squirrel, root / "bnp/resources/scripts/log_test.lua");

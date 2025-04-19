@@ -7,6 +7,7 @@
 #include <bnp/factories/material_factory.h>
 #include <bnp/factories/mesh_factory.h>
 #include <bnp/factories/texture_factory.h>
+#include <bnp/factories/script_factory.h>
 #include <bnp/managers/resource_manager.h>
 #include <bnp/managers/render_manager.h>
 #include <bnp/managers/archive_manager.h>
@@ -36,6 +37,7 @@ namespace bnp {
 		MeshFactory factory;
 		MaterialFactory material_factory;
 		TextureFactory texture_factory;
+		ScriptFactory script_factory;
 
 		ArchiveManager archive_manager;
 		RenderManager render_manager;

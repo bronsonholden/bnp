@@ -16,6 +16,17 @@ extern "C" {
 
 namespace bnp {
 
+
+	ScriptFactory::ScriptFactory(ResourceManager& _resource_manager)
+		: resource_manager(_resource_manager)
+	{
+
+	}
+
+	ScriptFactory::~ScriptFactory() {
+
+	}
+
 	void ScriptFactory::load_from_file(Node& node, const std::filesystem::path& path) {
 		lua_State* L = luaL_newstate();
 
@@ -33,6 +44,10 @@ namespace bnp {
 
 		lua_pushlightuserdata(L, (void*)"entity_id");
 		lua_pushinteger(L, static_cast<int>(node.get_entity_id()));
+		lua_settable(L, LUA_REGISTRYINDEX);
+
+		lua_pushlightuserdata(L, (void*)"resource_manager");
+		lua_pushlightuserdata(L, &resource_manager);
 		lua_settable(L, LUA_REGISTRYINDEX);
 
 		bind_metatables(script);
