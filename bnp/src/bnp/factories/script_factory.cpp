@@ -120,12 +120,6 @@ namespace bnp {
 		luaL_getmetatable(L, "bnp.Node");
 		lua_setmetatable(L, -2);
 		lua_setglobal(L, "node");
-
-		Node node2 = Node(*script.registry, (entt::entity)3);
-		l_push_script_node(L, node2);
-		luaL_getmetatable(L, "bnp.Node");
-		lua_setmetatable(L, -2);
-		lua_setglobal(L, "node2");
 	}
 
 	void ScriptFactory::bind_log(Script& script) {

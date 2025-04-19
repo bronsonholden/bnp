@@ -121,6 +121,7 @@ namespace bnp {
 		for (auto entity : view) {
 			auto& water = view.get<Water2D>(entity);
 			auto& water_transform = view.get<Transform>(entity); // world-space position of water
+			// todo: make sure we get surface height in world space
 
 			float water_origin_x = water_transform.position.x;
 			float water_origin_y = water_transform.position.y;
@@ -130,7 +131,9 @@ namespace bnp {
 
 			for (auto body_entity : bodies) {
 				auto& body = bodies.get<PhysicsBody2D>(body_entity);
-				float body_y_vel = std::abs(body.body->GetLinearVelocity().y);
+				b2Vec2 velocity = body.body->GetLinearVelocity();
+				// less emphasis on horizontal movement
+				float speed = glm::length(glm::vec2(velocity.x / 4, velocity.y));
 				b2Fixture* fixture = body.body->GetFixtureList();
 				if (!fixture) continue;
 
@@ -151,32 +154,40 @@ namespace bnp {
 				start_col = std::max(0, start_col);
 				end_col = std::min(water.columns - 1, end_col);
 
-				for (int i = start_col - 3; i < start_col; ++i) {
-					float surface_y = water.height[i] + water_origin_y;
+				if (velocity.x < 0) {
+					for (int i = start_col - 3; i >= 0 && i < water.columns && i < start_col; ++i) {
+						float surface_y = water.height[i] + water_origin_y;
 
-					if (aabb_center_y < surface_y) {
-						water.velocity[i] += 0.1f * dt * (1 + body_y_vel * 2);
+						if (aabb_min_y < surface_y) {
+							water.velocity[i] += 0.1f * dt * speed * 0.75;
+						}
+					}
+				}
+				else if (velocity.x > 0) {
+					for (int i = end_col + 1; i >= 0 && i < water.columns && i < end_col + 3; ++i) {
+						float surface_y = water.height[i] + water_origin_y;
+
+						if (aabb_min_y < surface_y) {
+							water.velocity[i] += 0.1f * dt * speed * 0.75;
+						}
 					}
 				}
 
-				for (int i = end_col + 1; i < end_col + 3; ++i) {
-					float surface_y = water.height[i] + water_origin_y;
-
-					if (aabb_center_y < surface_y) {
-						water.velocity[i] += 0.1f * dt * (1 + body_y_vel * 2);
-					}
-				}
 
 				// Apply splash force to intersecting columns
 				for (int i = start_col; i <= end_col; ++i) {
 					float surface_y = water.height[i] + water_origin_y;
 
-					if (aabb_center_y < surface_y) {
-						water.velocity[i] += -0.1f * dt * (1 + body_y_vel * 2);
+					if (aabb_center_y < surface_y && aabb_max_y > surface_y) {
+						water.velocity[i] += -0.1f * dt * (0.1 + velocity.y);
+					}
+
+					if (aabb_max_y < surface_y && (surface_y - aabb_max_y) < ((aabb_max_y - aabb_min_y) / 2)) {
+						water.velocity[i] += 0.1f * dt * (0.1 + velocity.y);
 					}
 				}
 			}
 		}
-	}
 
+	}
 }

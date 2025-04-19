@@ -37,7 +37,6 @@ namespace bnp {
 		std::vector<float> height;
 		std::vector<float> velocity;
 		std::vector<float> base_height;
-		float depth = 1.0f;
 	};
 
 }

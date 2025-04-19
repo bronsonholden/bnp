@@ -32,94 +32,6 @@
 #include <iostream>
 using namespace std;
 
-// Basic vertex shader source code
-const char* vertex_shader_source = R"(
-#version 330 core
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec3 aNormal;
-layout (location = 2) in vec2 aTexCoords;
-
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-
-out vec3 frag_pos;
-out vec3 normal;
-out vec2 tex_coords;
-
-void main() {
-    frag_pos = vec3(model * vec4(aPos, 1.0));
-    normal = normalize(mat3(transpose(inverse(model))) * aNormal);
-    tex_coords = aTexCoords;
-    gl_Position = projection * view * vec4(frag_pos, 1.0);
-}
-)";
-
-const char* instanced_vertex_shader_source = R"(
-#version 330 core
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec3 aNormal;
-layout (location = 2) in vec2 aTexCoords;
-
-// Instanced model matrix
-layout (location = 3) in mat4 model;
-
-uniform mat4 view;
-uniform mat4 projection;
-
-out vec3 frag_pos;
-out vec3 normal;
-out vec2 tex_coords;
-
-void main() {
-    frag_pos = vec3(model * vec4(aPos, 1.0));
-    normal = normalize(mat3(transpose(inverse(model))) * aNormal);
-    tex_coords = aTexCoords;
-    gl_Position = projection * view * vec4(frag_pos, 1.0);
-}
-)";
-
-// Basic fragment shader source code
-const char* fragment_shader_source = R"(
-#version 330 core
-
-out vec4 frag_color;
-
-in vec3 frag_pos;
-in vec3 normal;
-in vec2 tex_coords;
-
-uniform sampler2D sprite_texture;
-uniform vec2 uv0;
-uniform vec2 uv1;
-
-//const float adds[5] = float[](0.03f, 0.00f, -0.12f, -0.12f, -0.12f);
-//float row = gl_FragCoord.y;
-//tex_color += vec4(vec3(adds[idx]), tex_color.a);
-//int idx = int(mod(floor(row), 5.0));
-
-float random(vec2 p) {
-    return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453);
-}
-
-void main() {
-    vec2 interp_tex_coords = mix(uv0, uv1, tex_coords);
-    vec4 tex_color = texture(sprite_texture, interp_tex_coords);
-
-    vec2 cluster_size = vec2(128.0);
-    vec2 frame_coords = interp_tex_coords - uv0;
-    vec2 cluster_coord = floor(frame_coords * cluster_size) / cluster_size;
-
-   // Create a random pattern based on texture coordinates and time
-    float noise = random(cluster_coord * 10); // Adjust the scale and speed as needed
-
-    // Add a subtle speckling effect based on the noise
-    float intensity = 0.04; // Controls the amount of speckling
-
-    frag_color = tex_color + vec4(vec3(noise * intensity), tex_color.a);
-}
-)";
-
 void GLAPIENTRY
 MessageCallback(GLenum source,
 	GLenum type,
@@ -210,19 +122,18 @@ namespace bnp {
 		squirrel.add_component<Controllable>(Controllable{ true });
 
 		Node water = test_scene.create_node();
-		const int water_width = 200;
-		std::vector<float> water_heights(water_width, 1.0f);
+		const int water_width = 100;
+		std::vector<float> water_heights(water_width, 0.18f);
 		std::vector<float> water_velocities(water_width, 0.0f);
 		water.add_component<Water2D>(Water2D{
 			water_width,
 			0.1f,
 			water_heights,
 			water_velocities,
-			std::vector<float>(water_width, 1.0f),
-			0.15f
+			water_heights
 			});
 		water.add_component<Transform>(Transform{
-			glm::vec3(0, -0.8f, 0),
+			glm::vec3(0),
 			glm::quat(),
 			glm::vec3(1.0f)
 			});
@@ -299,8 +210,8 @@ namespace bnp {
 		script_factory.load_from_file(squirrel, root / "bnp/resources/scripts/log_test.lua");
 
 		while (window.open) {
-			float width = static_cast<float>(window.get_width()) / 144;
-			float height = static_cast<float>(window.get_height()) / 144;
+			float width = static_cast<float>(window.get_width()) / 240;
+			float height = static_cast<float>(window.get_height()) / 240;
 
 			Camera camera({
 				glm::vec3(0.0f, 0.0f, 500.0f),
