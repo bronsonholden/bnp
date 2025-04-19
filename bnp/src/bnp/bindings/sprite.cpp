@@ -15,7 +15,8 @@ namespace bnp {
 
 	// sprite:getSlice("SliceName")
 	int l_sprite_get_slice(lua_State* L) {
-		Node node = l_pop_script_node(L, -2);
+		// [sprite, name]
+		Node node = l_pop_script_node(L, 1);
 
 		Sprite& sprite = node.get_component<Sprite>();
 
@@ -25,7 +26,7 @@ namespace bnp {
 			current_frame = node.get_component<SpriteAnimator>().current_frame_index;
 		}
 
-		std::string slice_name = luaL_checkstring(L, 2);
+		std::string slice_name = luaL_checkstring(L, -1);
 
 		auto& slice_keys = sprite.slices.at(slice_name);
 

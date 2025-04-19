@@ -33,15 +33,17 @@ namespace bnp {
 	}
 
 	int l_transform_set_position(lua_State* L) {
+		// [transform, params]
 		Node node = l_pop_script_node(L, -2);
 
-		if (!lua_istable(L, 2)) {
+		// [transform]
+		if (!lua_istable(L, 1)) {
 			return luaL_error(L, "SetPosition expects a table with fields x and y");
 		}
 
-		lua_getfield(L, 2, "x");
-		lua_getfield(L, 2, "y");
-		lua_getfield(L, 2, "z");
+		lua_getfield(L, 1, "x");
+		lua_getfield(L, 1, "y");
+		lua_getfield(L, 1, "z");
 
 		if (node.has_component<PhysicsBody2D>()) {
 			auto& body = node.get_component<PhysicsBody2D>();
