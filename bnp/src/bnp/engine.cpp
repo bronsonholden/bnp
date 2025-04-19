@@ -78,19 +78,18 @@ namespace bnp {
 	}
 
 	Node Engine::load_sprite(std::filesystem::path sprite_path, std::filesystem::path json_path) {
-		std::filesystem::path root = PROJECT_ROOT;
 		Node node = test_scene.create_node();
 		Texture texture = resource_manager.load_texture(sprite_path.string(), sprite_path);
 		Material material = resource_manager.load_material(sprite_path.string(), {
-			{ShaderType::VertexShader, "bnp/resources/shaders/vertex_shader.glsl"},
-			{ShaderType::FragmentShader, "bnp/resources/shaders/fragment_shader.glsl"}
+			{ShaderType::VertexShader, "resources/shaders/vertex_shader.glsl"},
+			{ShaderType::FragmentShader, "resources/shaders/fragment_shader.glsl"}
 			});
 		node.add_component<Texture>(texture);
 		node.add_component<Renderable>(true);
 		node.add_component<Material>(material);
 
 		SpriteFactory sprite_factory;
-		sprite_factory.load_from_aseprite(node, root / json_path);
+		sprite_factory.load_from_aseprite(node, json_path);
 
 		return node;
 	}
@@ -110,8 +109,8 @@ namespace bnp {
 
 
 		Node squirrel = load_sprite(
-			"bnp/resources/sprites/squirrel/squirrel.png",
-			"bnp/resources/sprites/squirrel/squirrel.json"
+			"resources/sprites/squirrel/squirrel.png",
+			"resources/sprites/squirrel/squirrel.json"
 		);
 		squirrel.add_component<Transform>(Transform{
 			glm::vec3(0, 0, 0),
@@ -140,8 +139,8 @@ namespace bnp {
 			});
 
 		//Node butterfly = load_sprite(
-		//	"bnp/resources/sprites/butterfly_red/butterfly_red.png",
-		//	"bnp/resources/sprites/butterfly_red/butterfly_red.json"
+		//	"bnp/sprites/butterfly_red/butterfly_red.png",
+		//	"bnp/sprites/butterfly_red/butterfly_red.json"
 		//);
 		//butterfly.add_component<Transform>(Transform{
 		//	glm::vec3(1.75, 0.2, 0),
@@ -150,8 +149,8 @@ namespace bnp {
 		//	});
 
 		//Node butterfly2 = load_sprite(
-		//	"bnp/resources/sprites/butterfly_yellow/butterfly_yellow.png",
-		//	"bnp/resources/sprites/butterfly_yellow/butterfly_yellow.json"
+		//	"bnp/sprites/butterfly_yellow/butterfly_yellow.png",
+		//	"bnp/sprites/butterfly_yellow/butterfly_yellow.json"
 		//);
 		//butterfly2.add_component<Transform>(Transform{
 		//	glm::vec3(0.75, 0.2, 0),
@@ -160,8 +159,8 @@ namespace bnp {
 		//	});
 
 		//Node grass = load_sprite(
-		//	"bnp/resources/sprites/grass_blue_01/grass_blue_01.png",
-		//	"bnp/resources/sprites/grass_blue_01/grass_blue_01.json"
+		//	"bnp/sprites/grass_blue_01/grass_blue_01.png",
+		//	"bnp/sprites/grass_blue_01/grass_blue_01.json"
 		//);
 		//grass.add_component<Transform>(Transform{
 		//	glm::vec3(2, 0, 0),
@@ -171,8 +170,8 @@ namespace bnp {
 
 
 		//Node grass2 = load_sprite(
-		//	"bnp/resources/sprites/grass_blue_01/grass_blue_01.png",
-		//	"bnp/resources/sprites/grass_blue_01/grass_blue_01.json"
+		//	"bnp/sprites/grass_blue_01/grass_blue_01.png",
+		//	"bnp/sprites/grass_blue_01/grass_blue_01.json"
 		//);
 		//grass2.add_component<Transform>(Transform{
 		//	glm::vec3(2.4, 0, 0),
@@ -181,8 +180,8 @@ namespace bnp {
 		//	});
 
 		//Node bush = load_sprite(
-		//	"bnp/resources/sprites/bush_blue_01/bush_blue_01.png",
-		//	"bnp/resources/sprites/bush_blue_01/bush_blue_01.json"
+		//	"bnp/sprites/bush_blue_01/bush_blue_01.png",
+		//	"bnp/sprites/bush_blue_01/bush_blue_01.json"
 		//);
 		//bush.add_component<Transform>(Transform{
 		//	glm::vec3(1, 0, 0),
@@ -191,8 +190,8 @@ namespace bnp {
 		//	});
 
 		/*Node arch = load_sprite(
-			"bnp/resources/sprites/arch_01/arch_01.png",
-			"bnp/resources/sprites/arch_01/arch_01.json"
+			"bnp/sprites/arch_01/arch_01.png",
+			"bnp/sprites/arch_01/arch_01.json"
 		);
 		arch.add_component<Transform>(Transform{
 			glm::vec3(1, 0, 0),
@@ -206,7 +205,8 @@ namespace bnp {
 		Controller controller(registry, squirrel.get_entity_id());
 
 		std::filesystem::path root = PROJECT_ROOT;
-		script_factory.load_from_file(squirrel, root / "bnp/resources/scripts/log_test.lua");
+		root = root / "bnp";
+		script_factory.load_from_file(squirrel, root / "resources/scripts/log_test.lua");
 
 		while (window.open) {
 			float width = static_cast<float>(window.get_width()) / 240;

@@ -4,6 +4,7 @@
 #include <bnp/components/script.h>
 #include <bnp/components/hierarchy.h>
 #include <bnp/factories/sprite_factory.h>
+#include <bnp/managers/resource_manager.h>
 
 #include <filesystem>
 
@@ -47,12 +48,19 @@ namespace bnp {
 	int l_node_add_component_sprite(lua_State* L) {
 		// [node, "Sprite", params]
 		Node node = l_pop_script_node(L, 1);
+		// ["Sprite", params]
 
-		lua_getfield(L, 3, "spritesheet");
+		lua_getfield(L, -1, "path");
 
-		SpriteFactory sprite_factory;
-		sprite_factory.load_from_aseprite(node, lua_tostring(L, -1));
-		lua_pop(L, 3);
+		if (luaL_checkstring(L, -1)) {
+			SpriteFactory sprite_factory;
+			sprite_factory.load_from_aseprite(node, lua_tostring(L, -1));
+			lua_pop(L, 2);
+			// []
+		}
+		else {
+			return luaL_error(L, "`path` is required to load sprite");
+		}
 
 		l_push_script_node(L, node);
 		luaL_getmetatable(L, "bnp.Sprite");
@@ -96,6 +104,69 @@ namespace bnp {
 		return 1;
 	}
 
+	int l_node_add_component_texture(lua_State* L) {
+		// [node, "Texture", params]
+		Node node = l_pop_script_node(L, 1);
+		// ["Texture", params]
+
+		lua_pushlightuserdata(L, (void*)"resource_manager");
+		lua_gettable(L, LUA_REGISTRYINDEX);
+		// ["Texture", params, udata]
+		ResourceManager* resource_manager = static_cast<ResourceManager*>(lua_touserdata(L, -1));
+		lua_pop(L, 1);
+		// ["Texture", params]
+
+		lua_getfield(L, -1, "path");
+		std::filesystem::path path = lua_tostring(L, -1);
+
+		Texture texture = resource_manager->load_texture(path.string(), path);
+		node.add_component<Texture>(texture);
+
+		lua_pop(L, 2);
+
+		return 0;
+	}
+
+	int l_node_add_component_renderable(lua_State* L) {
+		// [node, "Renderable"]
+		Node node = l_pop_script_node(L, 1);
+		lua_pop(L, 1);
+		// []
+
+		node.add_component<Renderable>(true);
+
+		return 0;
+	}
+
+	int l_node_add_component_material(lua_State* L) {
+		// [node, "Material", params]
+		Node node = l_pop_script_node(L, 1);
+		// ["Material", params]
+
+		lua_pushlightuserdata(L, (void*)"resource_manager");
+		lua_gettable(L, LUA_REGISTRYINDEX);
+		// ["Material", params, udata]
+		ResourceManager* resource_manager = static_cast<ResourceManager*>(lua_touserdata(L, -1));
+		lua_pop(L, 1);
+		// ["Material", params]
+
+		if (lua_istable(L, -1)) {
+			std::unordered_map<ShaderType, std::filesystem::path> sources;
+
+			lua_getfield(L, -1, "vertex");
+			if (luaL_checkstring(L, -1)) sources.emplace(ShaderType::VertexShader, lua_tostring(L, -1));
+			lua_pop(L, 1);
+
+			lua_getfield(L, -1, "fragment");
+			if (luaL_checkstring(L, -1)) sources.emplace(ShaderType::FragmentShader, lua_tostring(L, -1));
+			lua_pop(L, 1);
+
+			node.add_component<Material>(resource_manager->load_material("abc", sources));
+		}
+
+		return 0;
+	}
+
 	int l_node_add_component(lua_State* L) {
 		// [node, component_name, ...]
 		const char* name = luaL_checkstring(L, 2);
@@ -106,8 +177,14 @@ namespace bnp {
 		else if (strcmp(name, "Transform") == 0) {
 			return l_node_add_component_transform(L);
 		}
-		else if (strcmp(name, "PhysicsBody2D") == 0) {
-			std::cout << "Adding PhysicsBody2D to entity\n";
+		else if (strcmp(name, "Texture") == 0) {
+			return l_node_add_component_texture(L);
+		}
+		else if (strcmp(name, "Renderable") == 0) {
+			return l_node_add_component_renderable(L);
+		}
+		else if (strcmp(name, "Material") == 0) {
+			return l_node_add_component_material(L);
 		}
 		else {
 			return luaL_error(L, "Unknown/disallowed component: %s", name);

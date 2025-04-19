@@ -12,7 +12,7 @@ using namespace std;
 namespace bnp {
 
 	ResourceManager::ResourceManager()
-		: root(PROJECT_ROOT)
+		: root(std::filesystem::path(PROJECT_ROOT) / "bnp")
 	{
 
 	}

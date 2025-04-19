@@ -3,11 +3,14 @@
 
 namespace bnp {
 
+	// todo: maybe this should fn go to resource manager
 	void SpriteFactory::load_from_aseprite(Node& node, const std::filesystem::path& json_path) {
-		std::ifstream file(json_path);
+		std::filesystem::path root = std::filesystem::path(PROJECT_ROOT) / "bnp";
+		std::filesystem::path path = root / json_path;
+		std::ifstream file(path);
 
 		if (!file.is_open()) {
-			throw std::runtime_error("Failed to open Aseprite JSON file: " + json_path.string());
+			throw std::runtime_error("Failed to open Aseprite JSON file: " + path.string());
 		}
 
 		nlohmann::json json;

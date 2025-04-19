@@ -60,6 +60,24 @@ namespace bnp {
 			}
 		}
 
+		if (node.has_component<Texture>()) {
+			if (ImGui::TreeNode("Texture")) {
+				SpriteInspector sprite_inspector(node);
+
+				sprite_inspector.render();
+				ImGui::TreePop();
+			}
+		}
+
+		if (node.has_component<Material>()) {
+			if (ImGui::TreeNode("Material")) {
+				SpriteInspector sprite_inspector(node);
+
+				sprite_inspector.render();
+				ImGui::TreePop();
+			}
+		}
+
 		// Add more components here...
 		// if (node.has_component<YourComponent>()) { ... }
 
