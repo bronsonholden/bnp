@@ -32,11 +32,7 @@ namespace bnp {
 
 		luaL_openlibs(L);
 
-		Script script{
-			L,
-			&node.get_registry(),
-			node.get_entity_id()
-		};
+		Script script{ L };
 
 		lua_pushlightuserdata(L, (void*)"registry");
 		lua_pushlightuserdata(L, &node.get_registry());
@@ -52,7 +48,7 @@ namespace bnp {
 
 		bind_metatables(script);
 		bind_use(script);
-		bind_node(script);
+		bind_node(node, script);
 
 
 		if (luaL_dofile(L, path.string().data()) != LUA_OK) {
@@ -127,9 +123,8 @@ namespace bnp {
 		}
 	}
 
-	void ScriptFactory::bind_node(Script& script) {
+	void ScriptFactory::bind_node(Node& node, Script& script) {
 		lua_State* L = script.L;
-		Node node = Node(*script.registry, script.entity);
 
 		l_push_script_node(L, node);
 		luaL_getmetatable(L, "bnp.Node");

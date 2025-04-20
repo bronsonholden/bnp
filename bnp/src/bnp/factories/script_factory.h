@@ -19,7 +19,7 @@ namespace bnp {
 	private:
 		static void bind_metatables(Script& script);
 		static void bind_use(Script& script);
-		static void bind_node(Script& script);
+		static void bind_node(Node& node, Script& script);
 		static void bind_log(Script& script);
 
 		ResourceManager& resource_manager;
