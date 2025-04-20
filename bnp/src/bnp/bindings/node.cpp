@@ -167,6 +167,22 @@ namespace bnp {
 		return 0;
 	}
 
+	int l_node_add_component_motility(lua_State* L) {
+		// [node, "Motility", params]
+		Node node = l_pop_script_node(L, 1);
+		// ["Motility", params]
+
+		Motility motility{ 1.0f };
+
+		lua_getfield(L, 2, "speed");
+		if (lua_isnumber(L, -1)) motility.speed = lua_tonumber(L, 2);
+		lua_pop(L, 1);
+
+		node.add_component<Motility>(motility);
+
+		return 0;
+	}
+
 	int l_node_add_component(lua_State* L) {
 		// [node, component_name, ...]
 		const char* name = luaL_checkstring(L, 2);
@@ -185,6 +201,9 @@ namespace bnp {
 		}
 		else if (strcmp(name, "Material") == 0) {
 			return l_node_add_component_material(L);
+		}
+		else if (strcmp(name, "Motility") == 0) {
+			return l_node_add_component_motility(L);
 		}
 		else {
 			return luaL_error(L, "Unknown/disallowed component: %s", name);
