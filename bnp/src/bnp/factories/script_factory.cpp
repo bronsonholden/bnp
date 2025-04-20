@@ -31,11 +31,10 @@ namespace bnp {
 		entt::registry& registry = node.get_registry();
 		Scripts& scripts = registry.get_or_emplace<Scripts>(node.get_entity_id(), Scripts{});
 
+		if (scripts.list.find(path) != scripts.list.end()) return;
+
 		lua_State* L = luaL_newstate();
-
 		luaL_openlibs(L);
-
-		Script script{ L };
 
 		lua_pushlightuserdata(L, (void*)"registry");
 		lua_pushlightuserdata(L, &node.get_registry());
@@ -49,10 +48,9 @@ namespace bnp {
 		lua_pushlightuserdata(L, &resource_manager);
 		lua_settable(L, LUA_REGISTRYINDEX);
 
-		bind_metatables(script);
-		bind_use(script);
-		bind_node(node, script);
-
+		bind_metatables(L);
+		bind_use(L);
+		bind_node(node, L);
 
 		if (luaL_dofile(L, path.string().data()) != LUA_OK) {
 			std::cerr << "Lua error: " << lua_tostring(L, -1) << "\n";
@@ -60,34 +58,27 @@ namespace bnp {
 			return;
 		}
 
-		node.add_component<Script>(script);
-
+		registry.patch<Scripts>(node.get_entity_id(), [&](Scripts& s) {
+			s.list.emplace(path, L);
+			});
 		scripts.list.emplace(path, L);
 	}
 
-	void ScriptFactory::bind_use(Script& script) {
-		lua_State* L = script.L;
+	void ScriptFactory::bind_use(lua_State* L) {
+		lua_pushcclosure(L, [](lua_State* L) -> int {
+			const char* name = luaL_checkstring(L, 1);
 
-		{
-			lua_pushlightuserdata(L, &script);
-			lua_pushcclosure(L, [](lua_State* L) -> int {
-				Script* script = static_cast<Script*>(lua_touserdata(L, lua_upvalueindex(1)));
-				const char* name = luaL_checkstring(L, 1);
+			if (strcmp(name, "log") == 0) {
+				bind_log(L);
+			}
 
-				if (strcmp(name, "log") == 0) {
-					bind_log(*script);
-				}
-
-				return 0;
-				}, 1);
-		}
+			return 0;
+			}, 0);
 
 		lua_setglobal(L, "use");
 	}
 
-	void ScriptFactory::bind_metatables(Script& script) {
-		lua_State* L = script.L;
-
+	void ScriptFactory::bind_metatables(lua_State* L) {
 		if (luaL_newmetatable(L, "bnp.Node")) {
 			lua_newtable(L);
 
@@ -128,17 +119,14 @@ namespace bnp {
 		}
 	}
 
-	void ScriptFactory::bind_node(Node& node, Script& script) {
-		lua_State* L = script.L;
-
+	void ScriptFactory::bind_node(Node& node, lua_State* L) {
 		l_push_script_node(L, node);
 		luaL_getmetatable(L, "bnp.Node");
 		lua_setmetatable(L, -2);
 		lua_setglobal(L, "node");
 	}
 
-	void ScriptFactory::bind_log(Script& script) {
-		lua_State* L = script.L;
+	void ScriptFactory::bind_log(lua_State* L) {
 		lua_newtable(L);
 		lua_pushcfunction(L, [](lua_State* L) -> int {
 			const char* msg = luaL_checkstring(L, 1);

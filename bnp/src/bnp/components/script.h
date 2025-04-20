@@ -12,10 +12,6 @@ extern "C" {
 
 namespace bnp {
 
-	struct Script {
-		lua_State* L;
-	};
-
 	struct Scripts {
 		std::unordered_map<std::filesystem::path, lua_State*> list;
 	};
