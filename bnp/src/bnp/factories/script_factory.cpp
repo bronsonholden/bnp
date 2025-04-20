@@ -49,7 +49,7 @@ namespace bnp {
 		lua_settable(L, LUA_REGISTRYINDEX);
 
 		bind_metatables(L);
-		bind_use(L);
+		bind_log(L);
 		bind_node(node, L);
 
 		if (luaL_dofile(L, path.string().data()) != LUA_OK) {
@@ -62,20 +62,6 @@ namespace bnp {
 			s.list.emplace(path, L);
 			});
 		scripts.list.emplace(path, L);
-	}
-
-	void ScriptFactory::bind_use(lua_State* L) {
-		lua_pushcclosure(L, [](lua_State* L) -> int {
-			const char* name = luaL_checkstring(L, 1);
-
-			if (strcmp(name, "log") == 0) {
-				bind_log(L);
-			}
-
-			return 0;
-			}, 0);
-
-		lua_setglobal(L, "use");
 	}
 
 	void ScriptFactory::bind_metatables(lua_State* L) {
