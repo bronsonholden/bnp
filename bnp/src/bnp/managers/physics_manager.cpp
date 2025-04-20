@@ -133,7 +133,7 @@ namespace bnp {
 				auto& body = bodies.get<PhysicsBody2D>(body_entity);
 				b2Vec2 velocity = body.body->GetLinearVelocity();
 				// less emphasis on horizontal movement
-				float speed = glm::length(glm::vec2(velocity.x / 4, velocity.y));
+				float speed = glm::length(glm::vec2(velocity.x / 2, velocity.y));
 				b2Fixture* fixture = body.body->GetFixtureList();
 				if (!fixture) continue;
 
@@ -159,7 +159,7 @@ namespace bnp {
 						float surface_y = water.height[i] + water_origin_y;
 
 						if (aabb_min_y < surface_y) {
-							water.velocity[i] += 0.1f * dt * speed * 0.75;
+							water.velocity[i] += 0.1f * dt * speed * 0.5f;
 						}
 					}
 				}
@@ -168,7 +168,7 @@ namespace bnp {
 						float surface_y = water.height[i] + water_origin_y;
 
 						if (aabb_min_y < surface_y) {
-							water.velocity[i] += 0.1f * dt * speed * 0.75;
+							water.velocity[i] += 0.1f * dt * speed * 0.5f;
 						}
 					}
 				}

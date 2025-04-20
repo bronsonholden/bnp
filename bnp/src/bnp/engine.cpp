@@ -107,7 +107,6 @@ namespace bnp {
 		FileBrowser file_browser;
 		SceneInspector scene_inspector(registry);
 
-
 		Node squirrel = load_sprite(
 			"resources/sprites/squirrel/squirrel.png",
 			"resources/sprites/squirrel/squirrel.json"
@@ -123,7 +122,7 @@ namespace bnp {
 
 		Node water = test_scene.create_node();
 		const int water_width = 100;
-		std::vector<float> water_heights(water_width, 0.18f);
+		std::vector<float> water_heights(water_width, 0.15f);
 		std::vector<float> water_velocities(water_width, 0.0f);
 		water.add_component<Water2D>(Water2D{
 			water_width,
@@ -209,8 +208,8 @@ namespace bnp {
 		script_factory.load_from_file(squirrel, root / "resources/scripts/log_test.lua");
 
 		while (window.open) {
-			float width = static_cast<float>(window.get_width()) / 240;
-			float height = static_cast<float>(window.get_height()) / 240;
+			float width = static_cast<float>(window.get_width()) / 144;
+			float height = static_cast<float>(window.get_height()) / 144;
 
 			Camera camera({
 				glm::vec3(0.0f, 0.0f, 500.0f),

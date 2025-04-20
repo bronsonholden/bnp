@@ -6,10 +6,11 @@
 
 namespace bnp {
 
+	// todo: add turbulence (random pockets of velocity change)
 	class Water2DManager {
 	public:
-		float tension = 0.12f;
-		float damping = 0.3f;
+		float tension = 0.11f;
+		float damping = 0.25f;
 		float spread = 0.5f;
 		int smoothing_passes = 5;
 
