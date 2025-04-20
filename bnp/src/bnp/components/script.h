@@ -3,6 +3,9 @@
 #include <bnp/core/node.hpp>
 #include <entt/entt.hpp>
 
+#include <filesystem>
+#include <unordered_map>
+
 extern "C" {
 #include <lua.h>
 }
@@ -11,6 +14,10 @@ namespace bnp {
 
 	struct Script {
 		lua_State* L;
+	};
+
+	struct Scripts {
+		std::unordered_map<std::filesystem::path, lua_State*> list;
 	};
 
 	struct ScriptNode {

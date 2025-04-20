@@ -28,6 +28,9 @@ namespace bnp {
 	}
 
 	void ScriptFactory::load_from_file(Node& node, const std::filesystem::path& path) {
+		entt::registry& registry = node.get_registry();
+		Scripts& scripts = registry.get_or_emplace<Scripts>(node.get_entity_id(), Scripts{});
+
 		lua_State* L = luaL_newstate();
 
 		luaL_openlibs(L);
@@ -58,6 +61,8 @@ namespace bnp {
 		}
 
 		node.add_component<Script>(script);
+
+		scripts.list.emplace(path, L);
 	}
 
 	void ScriptFactory::bind_use(Script& script) {
