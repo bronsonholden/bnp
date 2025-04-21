@@ -34,7 +34,6 @@ namespace bnp {
 		if (scripts.list.find(path) != scripts.list.end()) return;
 
 		lua_State* L = luaL_newstate();
-		luaL_openlibs(L);
 
 		lua_pushlightuserdata(L, (void*)"registry");
 		lua_pushlightuserdata(L, &node.get_registry());
