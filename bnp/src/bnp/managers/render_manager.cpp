@@ -60,34 +60,6 @@ namespace bnp {
 			}
 		}
 
-		{
-			glm::vec4 color(0.678, 0.847, 0.902, 1.0);
-			auto view = registry.view<Water2D, Transform>();
-
-			for (auto entity : view) {
-				auto& water = view.get<Water2D>(entity);
-				auto& transform = view.get<Transform>(entity);
-
-				float half_width = water.columns * water.column_width * 0.5f;
-
-				for (int i = 0; i < water.columns; ++i) {
-					float x = -half_width + (i + 0.5f) * water.column_width;
-
-					float surface_y = water.height[i];
-					float height = surface_y;
-
-					float center_y = height * 0.5f;
-
-					glm::mat4 local_transform = glm::translate(glm::mat4(1.0f), glm::vec3(x, center_y, 0.0f));
-					local_transform = glm::scale(local_transform, glm::vec3(water.column_width, height, 1.0f));
-
-					glm::mat4 world_transform = glm::translate(glm::mat4(1.0f), transform.position) * local_transform;
-
-					renderer.render_wireframe(camera, sprite_mesh, wireframe_material, world_transform, color, true);
-				}
-			}
-		}
-
 		// physics body wireframes
 		{
 			auto view = registry.view<Renderable, PhysicsBody2D>();
@@ -170,6 +142,35 @@ namespace bnp {
 			}
 
 			glEnable(GL_DEPTH_TEST);
+		}
+	}
+
+	void RenderManager::render_water2d(const entt::registry& registry, const Renderer& renderer, const Camera& camera) {
+		glm::vec4 color(0.678, 0.847, 0.902, 1.0);
+		auto view = registry.view<Water2D, Material, Transform>();
+
+		for (auto entity : view) {
+			auto& water = view.get<Water2D>(entity);
+			auto& transform = view.get<Transform>(entity);
+			auto& material = view.get<Material>(entity);
+
+			float half_width = water.columns * water.column_width * 0.5f;
+
+			for (int i = 0; i < water.columns; ++i) {
+				float x = -half_width + (i + 0.5f) * water.column_width;
+
+				float surface_y = water.height[i];
+				float height = surface_y;
+
+				float center_y = height * 0.5f;
+
+				glm::mat4 local_transform = glm::translate(glm::mat4(1.0f), glm::vec3(x, center_y, 0.0f));
+				local_transform = glm::scale(local_transform, glm::vec3(water.column_width, height, 1.0f));
+
+				glm::mat4 world_transform = glm::translate(glm::mat4(1.0f), transform.position) * local_transform;
+
+				renderer.render_wireframe(camera, sprite_mesh, material, world_transform, color, true);
+			}
 		}
 	}
 

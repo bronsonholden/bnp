@@ -15,6 +15,7 @@ namespace bnp {
 		void render_wireframes(const entt::registry& registry, const Renderer& renderer, const Camera& camera);
 		void render_instances(const entt::registry& registry, const Renderer& renderer, const Camera& camera);
 		void render_sprites(const entt::registry& registry, const Renderer& renderer, const Camera& camera);
+		void render_water2d(const entt::registry& registry, const Renderer& renderer, const Camera& camera);
 
 	private:
 		// built-in resources

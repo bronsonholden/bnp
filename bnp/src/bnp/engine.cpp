@@ -136,6 +136,10 @@ namespace bnp {
 			glm::quat(),
 			glm::vec3(1.0f)
 			});
+		water.add_component<Material>(resource_manager.load_material("water2d_material", {
+			{ShaderType::VertexShader, "resources/shaders/water2d_vertex_shader.glsl"},
+			{ShaderType::FragmentShader, "resources/shaders/water2d_fragment_shader.glsl"}
+			}));
 
 		//Node butterfly = load_sprite(
 		//	"bnp/sprites/butterfly_red/butterfly_red.png",
@@ -244,7 +248,6 @@ namespace bnp {
 			//cout << "fps: " << std::to_string(1.0f / dt) << endl;
 
 			// manager updates
-			water2d_manager.update(registry, dt);
 			sprite_animation_manager.update(registry, dt);
 			motility_manager.update(registry, dt);
 
@@ -259,6 +262,7 @@ namespace bnp {
 			//render_manager.render_instances(registry, renderer, camera);
 			render_manager.render_sprites(registry, renderer, camera);
 			render_manager.render_wireframes(registry, renderer, camera);
+			render_manager.render_water2d(registry, renderer, camera);
 
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplSDL2_NewFrame(window.get_sdl_window());
@@ -291,6 +295,7 @@ namespace bnp {
 	}
 
 	void Engine::fixed_update() {
+		water2d_manager.update(registry, time.fixed_delta_time());
 		physics_manager.update(registry, time.fixed_delta_time());
 	}
 }
