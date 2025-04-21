@@ -19,6 +19,7 @@ namespace bnp {
 	private:
 		static void bind_metatables(lua_State* L);
 		static void bind_use(lua_State* L);
+		static void bind_prefab(lua_State* L);
 		static void bind_node(Node& node, lua_State* L);
 		static void bind_log(lua_State* L);
 

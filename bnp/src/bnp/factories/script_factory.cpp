@@ -49,6 +49,7 @@ namespace bnp {
 
 		bind_metatables(L);
 		bind_log(L);
+		bind_prefab(L);
 		bind_node(node, L);
 
 		if (luaL_dofile(L, path.string().data()) != LUA_OK) {
@@ -119,6 +120,44 @@ namespace bnp {
 			});
 		lua_setfield(L, -2, "message");
 		lua_setglobal(L, "log");
+	}
+
+	void ScriptFactory::bind_prefab(lua_State* L) {
+		lua_newtable(L);
+		lua_pushcfunction(L, [](lua_State* L) -> int {
+			// [script]
+
+			lua_pushlightuserdata(L, (void*)"resource_manager");
+			lua_gettable(L, LUA_REGISTRYINDEX);
+			// [script, udata]
+			ResourceManager* resource_manager = static_cast<ResourceManager*>(lua_touserdata(L, -1));
+			lua_pop(L, 1);
+
+			lua_pushlightuserdata(L, (void*)"registry");
+			lua_gettable(L, LUA_REGISTRYINDEX);
+			// [script, udata]
+			entt::registry& registry = *static_cast<entt::registry*>(lua_touserdata(L, -1));
+			lua_pop(L, 1);
+
+			// [script]
+
+			ScriptFactory script_factory(*resource_manager);
+
+			Node node(registry);
+
+			std::filesystem::path root = PROJECT_ROOT;
+			std::filesystem::path path = root / "bnp" / lua_tostring(L, 1);
+			script_factory.load_from_file(node, path);
+
+			lua_pop(L, 1);
+			// []
+			l_push_script_node(L, node);
+			// [node]
+
+			return 1;
+			});
+		lua_setfield(L, -2, "load");
+		lua_setglobal(L, "prefab");
 	}
 
 }
