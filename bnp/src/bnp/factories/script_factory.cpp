@@ -61,7 +61,6 @@ namespace bnp {
 		registry.patch<Scripts>(node.get_entity_id(), [&](Scripts& s) {
 			s.list.emplace(path, L);
 			});
-		scripts.list.emplace(path, L);
 	}
 
 	void ScriptFactory::bind_metatables(lua_State* L) {
