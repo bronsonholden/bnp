@@ -48,6 +48,8 @@ namespace bnp {
 			glm::vec4 color(1.0f);
 
 			for (auto entity : view) {
+				if (!registry.any_of<Mesh, Sprite>(entity)) continue;
+
 				auto& transform = view.get<Transform>(entity);
 
 				if (registry.all_of<Mesh>(entity)) {

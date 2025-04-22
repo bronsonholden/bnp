@@ -14,7 +14,7 @@ namespace bnp {
 		ScriptFactory(ResourceManager& resource_manager);
 		~ScriptFactory();
 
-		void load_from_file(Node& node, const std::filesystem::path& path);
+		lua_State* load_from_file(Node& node, const std::filesystem::path& path, lua_State* L = nullptr);
 
 	private:
 		static void bind_metatables(lua_State* L);

@@ -152,6 +152,16 @@ namespace bnp {
 
 		if (lua_istable(L, -1)) {
 			std::unordered_map<ShaderType, std::filesystem::path> sources;
+			std::string resource_id;
+
+			lua_getfield(L, -1, "resourceId");
+			if (!luaL_checkstring(L, -1)) {
+				return luaL_error(L, "resourceId must be provided");
+			}
+			else {
+				resource_id = lua_tostring(L, -1);
+				lua_pop(L, 1);
+			}
 
 			lua_getfield(L, -1, "vertex");
 			if (luaL_checkstring(L, -1)) sources.emplace(ShaderType::VertexShader, lua_tostring(L, -1));
@@ -161,7 +171,7 @@ namespace bnp {
 			if (luaL_checkstring(L, -1)) sources.emplace(ShaderType::FragmentShader, lua_tostring(L, -1));
 			lua_pop(L, 1);
 
-			node.add_component<Material>(resource_manager->load_material("abc", sources));
+			node.add_component<Material>(resource_manager->load_material(resource_id, sources));
 		}
 
 		return 0;
@@ -181,6 +191,70 @@ namespace bnp {
 		node.add_component<Motility>(motility);
 
 		return 0;
+	}
+
+	int l_node_add_component_parent(lua_State* L) {
+		// [node, "Parent", parent]
+		Node node = l_pop_script_node(L, 1);
+		// ["Parent", params]
+		Node parent = l_pop_script_node(L, 2);
+		// ["Parent"]
+		lua_pop(L, 1);
+		// []
+
+		node.add_component<Parent>(Parent{ parent.get_entity_id() });
+
+		l_push_script_node(L, node);
+
+		return 1;
+	}
+
+	int l_node_add_component_water2d(lua_State* L) {
+		// [node, "Water2D", params]
+		Node node = l_pop_script_node(L, 1);
+		// ["Water2D", params]
+
+		lua_getfield(L, 2, "columns");
+		lua_getfield(L, 2, "columnWidth");
+		lua_getfield(L, 2, "height");
+		// ["Water2D", params, columns, columnWidth, height]
+
+		int columns = 0;
+		float column_width = 0;
+		float height = 0;
+
+		{
+			if (!lua_isinteger(L, -3)) return luaL_error(L, "columns must be an integer");
+			columns = lua_tointeger(L, -3);
+			if (columns < 1) return luaL_error(L, "columns must be greater than zero");
+		}
+
+		{
+			if (!lua_isnumber(L, -2)) return luaL_error(L, "column width must be a number");
+			column_width = lua_tonumber(L, -2);
+			if (column_width < 0) return luaL_error(L, "column width must be greater than zero");
+		}
+
+		{
+			if (!lua_isnumber(L, -1)) return luaL_error(L, "height must be a number");
+			height = lua_tonumber(L, -1);
+			if (height < 0) return luaL_error(L, "height must be greater than zero");
+		}
+
+		lua_pop(L, 5);
+		// []
+
+		node.add_component<Water2D>(
+			columns,
+			column_width,
+			std::vector<float>(columns, height),
+			std::vector<float>(columns, 0.0f),
+			std::vector<float>(columns, height)
+		);
+
+		l_push_script_node(L, node);
+
+		return 1;
 	}
 
 	int l_node_add_component(lua_State* L) {
@@ -204,6 +278,12 @@ namespace bnp {
 		}
 		else if (strcmp(name, "Motility") == 0) {
 			return l_node_add_component_motility(L);
+		}
+		else if (strcmp(name, "Parent") == 0) {
+			return l_node_add_component_parent(L);
+		}
+		else if (strcmp(name, "Water2D") == 0) {
+			return l_node_add_component_water2d(L);
 		}
 		else {
 			return luaL_error(L, "Unknown/disallowed component: %s", name);

@@ -120,27 +120,6 @@ namespace bnp {
 		squirrel.add_component<Motility>(Motility{ 2.5 });
 		squirrel.add_component<Controllable>(Controllable{ true });
 
-		Node water = test_scene.create_node();
-		const int water_width = 100;
-		std::vector<float> water_heights(water_width, 0.15f);
-		std::vector<float> water_velocities(water_width, 0.0f);
-		water.add_component<Water2D>(Water2D{
-			water_width,
-			0.1f,
-			water_heights,
-			water_velocities,
-			water_heights
-			});
-		water.add_component<Transform>(Transform{
-			glm::vec3(0),
-			glm::quat(),
-			glm::vec3(1.0f)
-			});
-		water.add_component<Material>(resource_manager.load_material("water2d_material", {
-			{ShaderType::VertexShader, "resources/shaders/water2d_vertex_shader.glsl"},
-			{ShaderType::FragmentShader, "resources/shaders/water2d_fragment_shader.glsl"}
-			}));
-
 		//Node butterfly = load_sprite(
 		//	"bnp/sprites/butterfly_red/butterfly_red.png",
 		//	"bnp/sprites/butterfly_red/butterfly_red.json"
