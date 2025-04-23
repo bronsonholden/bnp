@@ -23,7 +23,7 @@ namespace bnp {
 		int current_frame = 0;
 
 		if (node.has_component<SpriteAnimator>()) {
-			current_frame = node.get_component<SpriteAnimator>().current_frame_index;
+			current_frame = node.get_component<SpriteAnimator>().current_framelist_index;
 		}
 
 		std::string slice_name = luaL_checkstring(L, -1);

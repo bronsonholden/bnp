@@ -46,7 +46,7 @@ namespace  bnp {
 				}
 
 				if (new_animation != animator.current_animation) {
-					animator.current_frame_index = 0;
+					animator.current_framelist_index = 0;
 					animator.time = 0;
 					animator.current_animation = new_animation;
 				}
@@ -66,9 +66,9 @@ namespace  bnp {
 
 			auto& sprite = view.get<Sprite>(entity);
 			const auto& animation = sprite.animations.at(animator.current_animation);
-			const auto& frame = animation.frames.at(animator.current_frame_index);
+			const auto& frame = sprite.frames.at(animation.framelist.at(animator.current_framelist_index));
 
-			size_t new_frame_index = animator.current_frame_index;
+			size_t new_frame_index = animator.current_framelist_index;
 			float new_time = animator.time + dt;
 			bool new_done = false;
 
@@ -77,18 +77,18 @@ namespace  bnp {
 				new_frame_index += 1;
 			}
 
-			if (new_frame_index >= animation.frames.size()) {
+			if (new_frame_index >= animation.framelist.size()) {
 				if (animation.repeat == 0) {
 					new_frame_index = 0;
 				}
 				else {
 					new_done = true;
-					new_frame_index = animation.frames.size() - 1;
+					new_frame_index = animation.framelist.size() - 1;
 				}
 			}
 
-			if (new_frame_index != animator.current_frame_index) {
-				auto& new_frame = animation.frames.at(new_frame_index);
+			if (new_frame_index != animator.current_framelist_index) {
+				auto& new_frame = sprite.frames.at(new_frame_index);
 
 				// activate colliders for the frame
 
@@ -124,8 +124,8 @@ namespace  bnp {
 				//}
 			}
 
-			registry.patch<SpriteAnimator>(entity, [=](SpriteAnimator& sa) {
-				sa.current_frame_index = new_frame_index;
+			registry.patch<SpriteAnimator>(entity, [&](SpriteAnimator& sa) {
+				sa.current_framelist_index = new_frame_index;
 				sa.time = new_time;
 				sa.done = new_done;
 				});

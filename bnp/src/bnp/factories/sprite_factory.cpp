@@ -27,6 +27,26 @@ namespace bnp {
 		const auto& frames = json["frames"];
 		if (frames.empty()) throw std::runtime_error("No frames in Aseprite JSON.");
 
+		for (int i = 0; i < frames.size(); ++i) {
+			const auto& frame_data = frames.at(i);
+			auto duration = frame_data["duration"].get<float>() / 1000.0f;
+
+			auto x = frame_data["frame"]["x"].get<int>();
+			auto y = frame_data["frame"]["y"].get<int>();
+			auto w = frame_data["frame"]["w"].get<int>();
+			auto h = frame_data["frame"]["h"].get<int>();
+
+			SpriteFrame frame;
+			frame.frame_index = i;
+			frame.duration = duration;
+			frame.size = { w, h };
+			frame.uv0 = glm::vec2((float)x / sprite.spritesheet_width, (float)(y + h) / sprite.spritesheet_height);
+			frame.uv1 = glm::vec2((float)(x + w) / sprite.spritesheet_width, (float)(y) / sprite.spritesheet_height);
+			frame.coords = glm::ivec4(x, y, w, h);
+
+			sprite.frames.push_back(frame);
+		}
+
 		// preload collider slices
 		std::unordered_map<int, glm::ivec4> collider_by_frame;
 
@@ -42,7 +62,7 @@ namespace bnp {
 
 				SpriteAnimation anim;
 				anim.name = name;
-				anim.frames.reserve(to - from + 1);
+				anim.framelist.reserve(to - from + 1);
 
 				// todo: support actual repeat count
 				if (tag.contains("repeat")) {
@@ -66,7 +86,7 @@ namespace bnp {
 					frame.uv1 = glm::vec2((float)(x + w) / sprite.spritesheet_width, (float)(y) / sprite.spritesheet_height);
 					frame.coords = glm::ivec4(x, y, w, h);
 
-					anim.frames.push_back(frame);
+					anim.framelist.push_back(i);
 				}
 
 				sprite.animations[name] = anim;
@@ -91,10 +111,26 @@ namespace bnp {
 			}
 		}
 
+		uint32_t i = 0;
+		for (const auto& layer : meta["layers"]) {
+			std::string name = layer["name"];
+
+			sprite.layers.push_back(SpriteLayer{
+				name,
+				i,
+				i == 0
+				});
+
+			++i;
+		}
+
+		sprite.frame_count = frames.size() / meta["layers"].size();
+
 		// Store frame size from the first parsed frame. todo: probably fix, but might
 		// use consistent frame sizes for all spritesheets anyways
 		if (!sprite.animations.empty()) {
-			sprite.default_frame = sprite.animations.begin()->second.frames.front();
+			uint32_t frame_index = sprite.animations.begin()->second.framelist.front();
+			sprite.default_frame = sprite.frames.at(frame_index);
 			glm::ivec2 size = sprite.default_frame.size;
 			sprite.frame_width = size.x;
 			sprite.frame_height = size.y;
@@ -117,7 +153,7 @@ namespace bnp {
 		SpriteAnimator animator;
 		if (!sprite.animations.empty()) {
 			animator.current_animation = sprite.animations.begin()->first;
-			animator.current_frame_index = 0;
+			animator.current_framelist_index = 0;
 			animator.playing = true;
 			node.add_component<SpriteAnimator>(animator);
 		}

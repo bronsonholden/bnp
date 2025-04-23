@@ -117,33 +117,45 @@ namespace bnp {
 			auto& renderable = view.get<Renderable>(entity);
 			auto& texture = view.get<Texture>(entity);
 
-			// maybe todo: split into render animated vs static sprites, so we can use a ref here
-			SpriteFrame sprite_frame;
+			if (!renderable.value) continue;
 
-			if (registry.all_of<SpriteAnimator>(entity)) {
-				auto& animator = registry.get<SpriteAnimator>(entity);
-				auto& animation = sprite.animations.at(animator.current_animation);
+			for (auto& layer : sprite.layers) {
+				if (!layer.visible) continue;
 
-				sprite_frame = animation.frames.at(animator.current_frame_index);
-			}
-			else {
-				sprite_frame = sprite.default_frame;
-			}
+				// maybe todo: split into render animated vs static sprites, so we can use a ref here
+				SpriteFrame sprite_frame;
 
-			glDisable(GL_DEPTH_TEST);
+				if (registry.all_of<SpriteAnimator>(entity)) {
+					auto& animator = registry.get<SpriteAnimator>(entity);
+					auto& animation = sprite.animations.at(animator.current_animation);
 
-			glm::vec3 scalar = glm::vec3(
-				static_cast<float>(sprite.mirror.x),
-				static_cast<float>(sprite.mirror.y),
-				1.0f
-			);
-			glm::mat4 world_transform = transform.world_transform * glm::scale(glm::mat4(1.0f), scalar);
+					// since all layers and frames are split out and listed in the sprite's frame
+					// vector sequentially, we can render a different layer by applying an offset to
+					// the canonical frame to render.
+					//
+					// todo: expand sprite layers to include the actual underlying frames so we can
+					// directly render them
+					uint32_t frame_index = animation.framelist.at(animator.current_framelist_index);
+					uint32_t layer_offset = layer.layer_index * sprite.frame_count;
+					sprite_frame = sprite.frames.at(frame_index + layer_offset);
+				}
+				else {
+					sprite_frame = sprite.default_frame;
+				}
 
-			if (renderable.value) {
+				glDisable(GL_DEPTH_TEST);
+
+				glm::vec3 scalar = glm::vec3(
+					static_cast<float>(sprite.mirror.x),
+					static_cast<float>(sprite.mirror.y),
+					1.0f
+				);
+				glm::mat4 world_transform = transform.world_transform * glm::scale(glm::mat4(1.0f), scalar);
+
 				renderer.render_sprite(camera, sprite, sprite_frame, sprite_mesh, material, texture, world_transform);
-			}
 
-			glEnable(GL_DEPTH_TEST);
+				glEnable(GL_DEPTH_TEST);
+			}
 		}
 	}
 

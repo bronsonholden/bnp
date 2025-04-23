@@ -37,9 +37,17 @@ namespace bnp {
 		glm::ivec4 coords;
 	};
 
+	struct SpriteLayer {
+		std::string name;
+		uint32_t layer_index;
+		bool visible;
+	};
+
 	struct SpriteAnimation {
 		std::string name;
-		std::vector<SpriteFrame> frames;
+
+		// which frames are included in the animation
+		std::vector<uint32_t> framelist;
 
 		// currently: if 0, loop, otherwise play once. todo
 		uint32_t repeat = 0;
@@ -55,11 +63,17 @@ namespace bnp {
 		glm::ivec2 mirror = { 1, 1 };
 		std::unordered_map<std::string, SpriteAnimation> animations;
 		std::unordered_map<std::string, std::unordered_map<uint32_t, glm::ivec4>> slices;
+		std::vector<SpriteLayer> layers;
+		uint32_t frame_count;
+		std::vector<SpriteFrame> frames;
 	};
 
 	struct SpriteAnimator {
 		std::string current_animation;
-		size_t current_frame_index = 0;
+
+		// which framelist index is currently being displayed
+		size_t current_framelist_index = 0;
+
 		float time = 0.0f;
 		bool playing = true;
 
