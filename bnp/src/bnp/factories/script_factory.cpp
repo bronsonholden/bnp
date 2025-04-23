@@ -17,7 +17,7 @@ extern "C" {
 
 namespace bnp {
 
-	void copy_table(lua_State* from, lua_State* to, int index_from) {
+	static void copy_table(lua_State* from, lua_State* to, int index_from) {
 		// Make sure the index is absolute
 		if (index_from < 0) {
 			index_from = lua_gettop(from) + index_from + 1;
