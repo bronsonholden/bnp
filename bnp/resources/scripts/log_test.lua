@@ -8,3 +8,5 @@ water = prefab.load("resources/scripts/water_prefab.lua", {
 	columnWidth = 0.1,
 	height = 0.15
 })
+
+bee = prefab.load("resources/scripts/bee_prefab.lua")
