@@ -86,4 +86,60 @@ namespace bnp {
 		return 0;
 	}
 
+	int l_transform_get_scale(lua_State* L) {
+		// [transform]
+		Node node = l_pop_script_node(L, 1);
+		// []
+
+		glm::vec3 scale = node.get_component<Transform>().scale;
+
+		lua_newtable(L);
+		// [resp]
+		lua_pushnumber(L, scale.x);
+		lua_setfield(L, -2, "x");
+		lua_pushnumber(L, scale.y);
+		lua_setfield(L, -2, "y");
+		lua_pushnumber(L, scale.z);
+		lua_setfield(L, -2, "z");
+		// [resp]
+
+		return 1;
+	}
+
+	int l_transform_set_scale(lua_State* L) {
+		// [transform, params]
+		Node node = l_pop_script_node(L, 1);
+		// [params]
+
+		glm::vec3 scale = node.get_component<Transform>().scale;
+
+		lua_getfield(L, -1, "x");
+		// [params, x]
+		scale.x = lua_tonumber(L, -1);
+		lua_pop(L, 1);
+		// [params]
+
+		lua_getfield(L, -1, "y");
+		// [params, y]
+		scale.y = lua_tonumber(L, -1);
+		lua_pop(L, 1);
+		// [params]
+
+		lua_getfield(L, -1, "z");
+		// [params, z]
+		scale.z = lua_tonumber(L, -1);
+		lua_pop(L, 1);
+		// [params]
+
+		lua_pop(L, 1);
+		// []
+
+		node.get_registry().patch<Transform>(node.get_entity_id(), [&](Transform& t) {
+			t.scale = scale;
+			t.dirty = true;
+			});
+
+		return 0;
+	}
+
 }
