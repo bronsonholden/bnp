@@ -1,5 +1,6 @@
 #include <bnp/factories/script_factory.h>
 #include <bnp/components/physics.h>
+#include <bnp/bindings/physics.h>
 #include <bnp/bindings/transform.h>
 #include <bnp/bindings/sprite.h>
 #include <bnp/bindings/node.h>
@@ -150,6 +151,22 @@ namespace bnp {
 
 			lua_pushcfunction(L, l_transform_set_position);
 			lua_setfield(L, -2, "SetPosition");
+
+			lua_setfield(L, -2, "__index");
+			lua_pop(L, 1);
+		}
+
+		if (luaL_newmetatable(L, "bnp.PhysicsBody2D")) {
+			lua_newtable(L);
+
+			lua_pushcfunction(L, l_physics_body_2d_get_position);
+			lua_setfield(L, -2, "GetPosition");
+
+			lua_pushcfunction(L, l_physics_body_2d_set_position);
+			lua_setfield(L, -2, "SetPosition");
+
+			lua_pushcfunction(L, l_physics_body_2d_get_velocity);
+			lua_setfield(L, -2, "GetVelocity");
 
 			lua_setfield(L, -2, "__index");
 			lua_pop(L, 1);

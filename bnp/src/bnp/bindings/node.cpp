@@ -257,6 +257,16 @@ namespace bnp {
 		return 1;
 	}
 
+	int l_node_add_component_physics_body_2d(lua_State* L) {
+		Node node = l_pop_script_node(L, 1);
+
+		l_push_script_node(L, node);
+		luaL_getmetatable(L, "bnp.PhysicsBody2D");
+		lua_setmetatable(L, -2);
+
+		return 1;
+	}
+
 	int l_node_add_component(lua_State* L) {
 		// [node, component_name, ...]
 		const char* name = luaL_checkstring(L, 2);
@@ -284,6 +294,9 @@ namespace bnp {
 		}
 		else if (strcmp(name, "Water2D") == 0) {
 			return l_node_add_component_water2d(L);
+		}
+		else if (strcmp(name, "PhysicsBody2D") == 0) {
+			return l_node_add_component_physics_body_2d(L);
 		}
 		else {
 			return luaL_error(L, "Unknown/disallowed component: %s", name);
@@ -319,8 +332,20 @@ namespace bnp {
 
 			return 1;
 		}
+		else if (strcmp(name, "PhysicsBody2D") == 0) {
+			if (!node.has_component<PhysicsBody2D>()) {
+				lua_pushnil(L);
+			}
+			else {
+				l_push_script_node(L, node);
+				luaL_getmetatable(L, "bnp.PhysicsBody2D");
+				lua_setmetatable(L, -2);
+			}
+		}
+		else {
 
-		return luaL_error(L, "Unknown/disallowed component: %s", name);
+			return luaL_error(L, "Unknown/disallowed component: %s", name);
+		}
 	}
 
 }

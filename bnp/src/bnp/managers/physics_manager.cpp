@@ -14,7 +14,7 @@ namespace bnp {
 
 		// Create a box shape for the ground
 		b2PolygonShape groundBox;
-		groundBox.SetAsBox(50.0f, 0.5f);  // Width, Height (flat platform)
+		groundBox.SetAsBox(10.0f, 0.5f);  // Width, Height (flat platform)
 
 		// Attach the shape to the ground body
 		groundBody->CreateFixture(&groundBox, 0.0f);
