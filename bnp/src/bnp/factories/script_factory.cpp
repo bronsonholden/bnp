@@ -152,6 +152,12 @@ namespace bnp {
 			lua_pushcfunction(L, l_transform_set_position);
 			lua_setfield(L, -2, "SetPosition");
 
+			lua_pushcfunction(L, l_transform_get_scale);
+			lua_setfield(L, -2, "GetScale");
+
+			lua_pushcfunction(L, l_transform_set_scale);
+			lua_setfield(L, -2, "SetScale");
+
 			lua_setfield(L, -2, "__index");
 			lua_pop(L, 1);
 		}
