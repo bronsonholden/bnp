@@ -1,6 +1,6 @@
 { "frames": [
    {
-    "filename": "squirrel 0.aseprite",
+    "filename": "squirrel (Squirrel) 0.aseprite",
     "frame": { "x": 0, "y": 0, "w": 48, "h": 48 },
     "rotated": false,
     "trimmed": false,
@@ -9,7 +9,7 @@
     "duration": 400
    },
    {
-    "filename": "squirrel 1.aseprite",
+    "filename": "squirrel (Squirrel) 1.aseprite",
     "frame": { "x": 48, "y": 0, "w": 48, "h": 48 },
     "rotated": false,
     "trimmed": false,
@@ -18,7 +18,7 @@
     "duration": 400
    },
    {
-    "filename": "squirrel 2.aseprite",
+    "filename": "squirrel (Squirrel) 2.aseprite",
     "frame": { "x": 96, "y": 0, "w": 48, "h": 48 },
     "rotated": false,
     "trimmed": false,
@@ -27,7 +27,7 @@
     "duration": 400
    },
    {
-    "filename": "squirrel 3.aseprite",
+    "filename": "squirrel (Squirrel) 3.aseprite",
     "frame": { "x": 144, "y": 0, "w": 48, "h": 48 },
     "rotated": false,
     "trimmed": false,
@@ -36,7 +36,16 @@
     "duration": 400
    },
    {
-    "filename": "squirrel 4.aseprite",
+    "filename": "squirrel (Squirrel) 4.aseprite",
+    "frame": { "x": 192, "y": 0, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 400
+   },
+   {
+    "filename": "squirrel (Squirrel) 5.aseprite",
     "frame": { "x": 0, "y": 48, "w": 48, "h": 48 },
     "rotated": false,
     "trimmed": false,
@@ -45,17 +54,8 @@
     "duration": 400
    },
    {
-    "filename": "squirrel 5.aseprite",
+    "filename": "squirrel (Squirrel) 6.aseprite",
     "frame": { "x": 48, "y": 48, "w": 48, "h": 48 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
-    "sourceSize": { "w": 48, "h": 48 },
-    "duration": 400
-   },
-   {
-    "filename": "squirrel 6.aseprite",
-    "frame": { "x": 96, "y": 48, "w": 48, "h": 48 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
@@ -63,7 +63,16 @@
     "duration": 120
    },
    {
-    "filename": "squirrel 7.aseprite",
+    "filename": "squirrel (Squirrel) 7.aseprite",
+    "frame": { "x": 96, "y": 48, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 180
+   },
+   {
+    "filename": "squirrel (Squirrel) 8.aseprite",
     "frame": { "x": 144, "y": 48, "w": 48, "h": 48 },
     "rotated": false,
     "trimmed": false,
@@ -72,7 +81,16 @@
     "duration": 180
    },
    {
-    "filename": "squirrel 8.aseprite",
+    "filename": "squirrel (Squirrel) 9.aseprite",
+    "frame": { "x": 192, "y": 48, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 120
+   },
+   {
+    "filename": "squirrel (Squirrel) 10.aseprite",
     "frame": { "x": 0, "y": 96, "w": 48, "h": 48 },
     "rotated": false,
     "trimmed": false,
@@ -81,7 +99,7 @@
     "duration": 180
    },
    {
-    "filename": "squirrel 9.aseprite",
+    "filename": "squirrel (Squirrel) 11.aseprite",
     "frame": { "x": 48, "y": 96, "w": 48, "h": 48 },
     "rotated": false,
     "trimmed": false,
@@ -90,26 +108,8 @@
     "duration": 120
    },
    {
-    "filename": "squirrel 10.aseprite",
+    "filename": "squirrel (Squirrel) 12.aseprite",
     "frame": { "x": 96, "y": 96, "w": 48, "h": 48 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
-    "sourceSize": { "w": 48, "h": 48 },
-    "duration": 180
-   },
-   {
-    "filename": "squirrel 11.aseprite",
-    "frame": { "x": 144, "y": 96, "w": 48, "h": 48 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
-    "sourceSize": { "w": 48, "h": 48 },
-    "duration": 120
-   },
-   {
-    "filename": "squirrel 12.aseprite",
-    "frame": { "x": 0, "y": 144, "w": 48, "h": 48 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
@@ -117,7 +117,133 @@
     "duration": 190
    },
    {
-    "filename": "squirrel 13.aseprite",
+    "filename": "squirrel (Squirrel) 13.aseprite",
+    "frame": { "x": 144, "y": 96, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 160
+   },
+   {
+    "filename": "squirrel (Straw) 0.aseprite",
+    "frame": { "x": 192, "y": 96, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 400
+   },
+   {
+    "filename": "squirrel (Straw) 1.aseprite",
+    "frame": { "x": 0, "y": 144, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 400
+   },
+   {
+    "filename": "squirrel (Straw) 2.aseprite",
+    "frame": { "x": 48, "y": 144, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 400
+   },
+   {
+    "filename": "squirrel (Straw) 3.aseprite",
+    "frame": { "x": 48, "y": 144, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 400
+   },
+   {
+    "filename": "squirrel (Straw) 4.aseprite",
+    "frame": { "x": 48, "y": 144, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 400
+   },
+   {
+    "filename": "squirrel (Straw) 5.aseprite",
+    "frame": { "x": 48, "y": 144, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 400
+   },
+   {
+    "filename": "squirrel (Straw) 6.aseprite",
+    "frame": { "x": 48, "y": 144, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 120
+   },
+   {
+    "filename": "squirrel (Straw) 7.aseprite",
+    "frame": { "x": 48, "y": 144, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 180
+   },
+   {
+    "filename": "squirrel (Straw) 8.aseprite",
+    "frame": { "x": 48, "y": 144, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 180
+   },
+   {
+    "filename": "squirrel (Straw) 9.aseprite",
+    "frame": { "x": 48, "y": 144, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 120
+   },
+   {
+    "filename": "squirrel (Straw) 10.aseprite",
+    "frame": { "x": 48, "y": 144, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 180
+   },
+   {
+    "filename": "squirrel (Straw) 11.aseprite",
+    "frame": { "x": 48, "y": 144, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 120
+   },
+   {
+    "filename": "squirrel (Straw) 12.aseprite",
+    "frame": { "x": 48, "y": 144, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 190
+   },
+   {
+    "filename": "squirrel (Straw) 13.aseprite",
     "frame": { "x": 48, "y": 144, "w": 48, "h": 48 },
     "rotated": false,
     "trimmed": false,
@@ -131,7 +257,7 @@
   "version": "1.3.13-x64",
   "image": "squirrel.png",
   "format": "RGBA8888",
-  "size": { "w": 192, "h": 192 },
+  "size": { "w": 240, "h": 192 },
   "scale": "1",
   "frameTags": [
    { "name": "Idle", "from": 0, "to": 5, "direction": "forward", "color": "#000000ff" },
@@ -140,11 +266,13 @@
    { "name": "Jump", "from": 11, "to": 13, "direction": "forward", "repeat": "1", "color": "#000000ff" }
   ],
   "layers": [
-   { "name": "Sprite", "opacity": 255, "blendMode": "normal" }
+   { "name": "Squirrel", "opacity": 255, "blendMode": "normal" },
+   { "name": "Straw", "opacity": 255, "blendMode": "normal" }
   ],
   "slices": [
    { "name": "Eyes", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 31, "y": 19, "w": 2, "h": 2 } }, { "frame": 1, "bounds": {"x": 31, "y": 20, "w": 2, "h": 2 } }, { "frame": 2, "bounds": {"x": 31, "y": 19, "w": 2, "h": 2 } }, { "frame": 3, "bounds": {"x": 31, "y": 20, "w": 2, "h": 2 } }, { "frame": 4, "bounds": {"x": 31, "y": 19, "w": 2, "h": 2 } }, { "frame": 5, "bounds": {"x": 31, "y": 20, "w": 2, "h": 2 } }, { "frame": 6, "bounds": {"x": 34, "y": 19, "w": 2, "h": 2 } }, { "frame": 7, "bounds": {"x": 37, "y": 18, "w": 2, "h": 2 } }, { "frame": 8, "bounds": {"x": 37, "y": 20, "w": 2, "h": 2 } }, { "frame": 9, "bounds": {"x": 32, "y": 20, "w": 2, "h": 2 } }, { "frame": 10, "bounds": {"x": 32, "y": 24, "w": 2, "h": 2 } }, { "frame": 11, "bounds": {"x": 32, "y": 17, "w": 2, "h": 2 } }, { "frame": 12, "bounds": {"x": 32, "y": 16, "w": 2, "h": 2 } }, { "frame": 13, "bounds": {"x": 31, "y": 20, "w": 2, "h": 2 } }] },
-   { "name": "Body", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 13, "y": 17, "w": 23, "h": 13 } }] }
+   { "name": "Body", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 13, "y": 17, "w": 23, "h": 13 } }, { "frame": 1, "bounds": {"x": 13, "y": 17, "w": 23, "h": 13 } }] },
+   { "name": "Nose", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 35, "y": 21, "w": 1, "h": 1 } }, { "frame": 1, "bounds": {"x": 35, "y": 22, "w": 1, "h": 1 } }, { "frame": 2, "bounds": {"x": 35, "y": 21, "w": 1, "h": 1 } }, { "frame": 3, "bounds": {"x": 35, "y": 22, "w": 1, "h": 1 } }, { "frame": 4, "bounds": {"x": 35, "y": 21, "w": 1, "h": 1 } }, { "frame": 5, "bounds": {"x": 35, "y": 22, "w": 1, "h": 1 } }, { "frame": 6, "bounds": {"x": 38, "y": 21, "w": 1, "h": 1 } }, { "frame": 7, "bounds": {"x": 41, "y": 20, "w": 1, "h": 1 } }, { "frame": 8, "bounds": {"x": 41, "y": 22, "w": 1, "h": 1 } }, { "frame": 9, "bounds": {"x": 36, "y": 22, "w": 1, "h": 1 } }, { "frame": 10, "bounds": {"x": 36, "y": 26, "w": 1, "h": 1 } }, { "frame": 11, "bounds": {"x": 36, "y": 18, "w": 1, "h": 1 } }, { "frame": 12, "bounds": {"x": 36, "y": 16, "w": 1, "h": 1 } }, { "frame": 13, "bounds": {"x": 35, "y": 21, "w": 1, "h": 1 } }] }
   ]
  }
 }
