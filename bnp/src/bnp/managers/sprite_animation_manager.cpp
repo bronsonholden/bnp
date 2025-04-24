@@ -66,7 +66,7 @@ namespace  bnp {
 
 			auto& sprite = view.get<Sprite>(entity);
 			const auto& animation = sprite.animations.at(animator.current_animation);
-			const auto& frame = sprite.frames.at(animation.framelist.at(animator.current_framelist_index));
+			const auto& frame = sprite.layers.at(0).frames.at(animation.framelist.at(animator.current_framelist_index));
 
 			size_t new_frame_index = animator.current_framelist_index;
 			float new_time = animator.time + dt;
@@ -88,7 +88,7 @@ namespace  bnp {
 			}
 
 			if (new_frame_index != animator.current_framelist_index) {
-				auto& new_frame = sprite.frames.at(new_frame_index);
+				auto& new_frame = sprite.layers.at(0).frames.at(new_frame_index);
 
 				// activate colliders for the frame
 

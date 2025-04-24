@@ -136,11 +136,10 @@ namespace bnp {
 					// todo: expand sprite layers to include the actual underlying frames so we can
 					// directly render them
 					uint32_t frame_index = animation.framelist.at(animator.current_framelist_index);
-					uint32_t layer_offset = layer.layer_index * sprite.frame_count;
-					sprite_frame = sprite.frames.at(frame_index + layer_offset);
+					sprite_frame = layer.frames.at(frame_index);
 				}
 				else {
-					sprite_frame = sprite.default_frame;
+					sprite_frame = sprite.layers.at(0).frames.at(0);
 				}
 
 				glDisable(GL_DEPTH_TEST);

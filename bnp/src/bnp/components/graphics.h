@@ -41,6 +41,7 @@ namespace bnp {
 		std::string name;
 		uint32_t layer_index;
 		bool visible;
+		std::vector<SpriteFrame> frames;
 	};
 
 	struct SpriteAnimation {
@@ -54,7 +55,7 @@ namespace bnp {
 	};
 
 	struct Sprite {
-		int layer = 0;
+		int z = 0;
 		SpriteFrame default_frame;
 		uint32_t spritesheet_width;
 		uint32_t spritesheet_height;
@@ -65,7 +66,6 @@ namespace bnp {
 		std::unordered_map<std::string, std::unordered_map<uint32_t, glm::ivec4>> slices;
 		std::vector<SpriteLayer> layers;
 		uint32_t frame_count;
-		std::vector<SpriteFrame> frames;
 	};
 
 	struct SpriteAnimator {

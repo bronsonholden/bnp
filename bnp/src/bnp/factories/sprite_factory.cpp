@@ -27,6 +27,8 @@ namespace bnp {
 		const auto& frames = json["frames"];
 		if (frames.empty()) throw std::runtime_error("No frames in Aseprite JSON.");
 
+		std::vector<SpriteFrame> all_frames;
+
 		for (int i = 0; i < frames.size(); ++i) {
 			const auto& frame_data = frames.at(i);
 			auto duration = frame_data["duration"].get<float>() / 1000.0f;
@@ -44,12 +46,10 @@ namespace bnp {
 			frame.uv1 = glm::vec2((float)(x + w) / sprite.spritesheet_width, (float)(y) / sprite.spritesheet_height);
 			frame.coords = glm::ivec4(x, y, w, h);
 
-			sprite.frames.push_back(frame);
+			all_frames.push_back(frame);
 		}
 
-		// preload collider slices
-		std::unordered_map<int, glm::ivec4> collider_by_frame;
-
+		// todo: body generation should be done by prefabs/scripts
 		// if no body slice defined
 		glm::ivec4 body = load_body_slice(meta);
 
@@ -111,26 +111,28 @@ namespace bnp {
 			}
 		}
 
+		sprite.frame_count = frames.size() / meta["layers"].size();
+
 		uint32_t i = 0;
 		for (const auto& layer : meta["layers"]) {
 			std::string name = layer["name"];
+			auto it = all_frames.begin();
 
 			sprite.layers.push_back(SpriteLayer{
 				name,
 				i,
-				i == 0
+				true || i == 0,
+				std::vector<SpriteFrame>(it + (i * sprite.frame_count), it + ((i + 1) * sprite.frame_count))
 				});
 
 			++i;
 		}
 
-		sprite.frame_count = frames.size() / meta["layers"].size();
-
 		// Store frame size from the first parsed frame. todo: probably fix, but might
 		// use consistent frame sizes for all spritesheets anyways
 		if (!sprite.animations.empty()) {
 			uint32_t frame_index = sprite.animations.begin()->second.framelist.front();
-			sprite.default_frame = sprite.frames.at(frame_index);
+			sprite.default_frame = sprite.layers.at(0).frames.at(frame_index);
 			glm::ivec2 size = sprite.default_frame.size;
 			sprite.frame_width = size.x;
 			sprite.frame_height = size.y;

@@ -10,12 +10,12 @@ namespace bnp {
 	void SpriteInspector::render() {
 		auto& sprite = node.get_component<Sprite>();
 
-		int layer = sprite.layer;
+		int z = sprite.z;
 
-		ImGui::InputInt("Layer", &layer, 1, 10);
+		ImGui::InputInt("Z-index", &z, 1, 10);
 
 		node.get_registry().patch<Sprite>(node.get_entity_id(), [=](Sprite& s) {
-			s.layer = layer;
+			s.z = z;
 			});
 	}
 
