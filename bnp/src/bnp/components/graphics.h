@@ -28,7 +28,6 @@ namespace bnp {
 	};
 
 	struct SpriteFrame {
-		uint32_t frame_index;
 		float duration = 0.0f;
 		glm::vec2 uv0;
 		glm::vec2 uv1;
@@ -45,8 +44,6 @@ namespace bnp {
 	};
 
 	struct SpriteAnimation {
-		std::string name;
-
 		// which frames are included in the animation
 		std::vector<uint32_t> framelist;
 
@@ -59,8 +56,6 @@ namespace bnp {
 		SpriteFrame default_frame;
 		uint32_t spritesheet_width;
 		uint32_t spritesheet_height;
-		uint32_t frame_width;
-		uint32_t frame_height;
 		glm::ivec2 mirror = { 1, 1 };
 		std::unordered_map<std::string, SpriteAnimation> animations;
 		std::unordered_map<std::string, std::unordered_map<uint32_t, glm::ivec4>> slices;

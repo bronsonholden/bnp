@@ -73,8 +73,9 @@ namespace bnp {
 
 			auto& transform = view.get<Transform>(entity);
 
-			float half_width = static_cast<float>(coords.z) / (sprite.frame_width * 2);
-			float half_height = static_cast<float>(coords.w) / (sprite.frame_height * 2);
+			// todo: we shouldn't auto generate bodies, so this first-layer-first-frame hack works for now
+			float half_width = static_cast<float>(coords.z) / (sprite.layers.at(0).frames.at(0).size.x * 2);
+			float half_height = static_cast<float>(coords.w) / (sprite.layers.at(0).frames.at(0).size.y * 2);
 
 			b2BodyDef body_def;
 			b2PolygonShape body_shape;

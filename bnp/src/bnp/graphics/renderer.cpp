@@ -25,8 +25,8 @@ namespace bnp {
 	void Renderer::render_sprite(const Camera& camera, const Sprite& sprite, const SpriteFrame& sprite_frame, const Mesh& mesh, const Material& material, const Texture& texture, const glm::mat4& transform) const {
 		glUseProgram(material.shader_id);
 
-		if (texture.channels == 4) {
-			glEnable(GL_BLEND);
+		if (texture.channels < 4) {
+			glDisable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
 
@@ -65,8 +65,8 @@ namespace bnp {
 
 		glDrawElements(GL_TRIANGLES, mesh.vertex_count, GL_UNSIGNED_INT, 0);
 
-		if (texture.channels == 4) {
-			glDisable(GL_BLEND);
+		if (texture.channels < 4) {
+			glEnable(GL_BLEND);
 		}
 	}
 

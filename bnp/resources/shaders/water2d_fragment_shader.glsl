@@ -14,6 +14,6 @@ void main() {
     if (tex_coords.y > 0.85f) {
         frag_color = vec4(1);
     } else {
-        frag_color = vec4(0.678, 0.847, 0.902, 1.0);
+        frag_color = vec4(0.678, 0.847, 0.902, 0.75);
     }
 }

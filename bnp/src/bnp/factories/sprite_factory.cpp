@@ -39,7 +39,6 @@ namespace bnp {
 			auto h = frame_data["frame"]["h"].get<int>();
 
 			SpriteFrame frame;
-			frame.frame_index = i;
 			frame.duration = duration;
 			frame.size = { w, h };
 			frame.uv0 = glm::vec2((float)x / sprite.spritesheet_width, (float)(y + h) / sprite.spritesheet_height);
@@ -57,11 +56,10 @@ namespace bnp {
 		if (meta.contains("frameTags")) {
 			for (const auto& tag : meta["frameTags"]) {
 				std::string name = tag["name"];
-				int from = tag["from"];
-				int to = tag["to"];
+				uint32_t from = tag["from"].get<uint32_t>();
+				uint32_t to = tag["to"].get<uint32_t>();
 
 				SpriteAnimation anim;
-				anim.name = name;
 				anim.framelist.reserve(to - from + 1);
 
 				// todo: support actual repeat count
@@ -79,7 +77,6 @@ namespace bnp {
 					auto h = frame_data["frame"]["h"].get<int>();
 
 					SpriteFrame frame;
-					frame.frame_index = i;
 					frame.duration = duration;
 					frame.size = { w, h };
 					frame.uv0 = glm::vec2((float)x / sprite.spritesheet_width, (float)(y + h) / sprite.spritesheet_height);
@@ -126,28 +123,6 @@ namespace bnp {
 				});
 
 			++i;
-		}
-
-		// Store frame size from the first parsed frame. todo: probably fix, but might
-		// use consistent frame sizes for all spritesheets anyways
-		if (!sprite.animations.empty()) {
-			uint32_t frame_index = sprite.animations.begin()->second.framelist.front();
-			sprite.default_frame = sprite.layers.at(0).frames.at(frame_index);
-			glm::ivec2 size = sprite.default_frame.size;
-			sprite.frame_width = size.x;
-			sprite.frame_height = size.y;
-		}
-		else {
-			sprite.frame_width = sprite.spritesheet_width;
-			sprite.frame_height = sprite.spritesheet_width;
-			sprite.default_frame = SpriteFrame{
-				0,
-				0.0f,
-				{ 0.0f, 1.0f },
-				{ 1.0f, 0.0f },
-				glm::ivec2{},
-				glm::ivec2{ sprite.spritesheet_width, sprite.spritesheet_height }
-			};
 		}
 
 		node.add_component<Sprite>(sprite);
