@@ -117,6 +117,15 @@ namespace bnp {
 			glm::vec3(1)
 			});
 
+		Node repulsor_field = test_scene.create_node();
+		repulsor_field.add_component<Parent>(Parent{ squirrel.get_entity_id() });
+		repulsor_field.add_component<Transform>(Transform{ glm::vec3(0) });
+		repulsor_field.add_component<FlowField2D>(FlowField2D{
+			0.25f,
+			{ 15, 15 },
+			{ 0, 0 }
+			});
+
 		squirrel.add_component<Motility>(Motility{ 2.5 });
 		squirrel.add_component<Controllable>(Controllable{ true });
 
@@ -229,6 +238,7 @@ namespace bnp {
 			// manager updates
 			sprite_animation_manager.update(registry, dt);
 			motility_manager.update(registry, dt);
+			behavior_manager.update(registry, dt);
 
 			// only apply transforms after all game updates have completed
 			// so we have the most correct transforms
@@ -242,6 +252,7 @@ namespace bnp {
 			render_manager.render_sprites(registry, renderer, camera);
 			render_manager.render_wireframes(registry, renderer, camera);
 			render_manager.render_water2d(registry, renderer, camera);
+			render_manager.render_flow_field_2ds(registry, renderer, camera);
 
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplSDL2_NewFrame(window.get_sdl_window());

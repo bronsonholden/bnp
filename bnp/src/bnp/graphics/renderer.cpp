@@ -22,6 +22,39 @@ namespace bnp {
 		glDisable(GL_CULL_FACE);
 	}
 
+	void Renderer::render_line(const Camera& camera, const Mesh& mesh, const Material& material, const glm::mat4& world_transform) const {
+		glUseProgram(material.shader_id);
+
+		GLint viewport[4];
+		glGetIntegerv(GL_VIEWPORT, viewport);
+
+		float aspect = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
+
+		glm::mat4 view = glm::lookAt(camera.position, camera.target, camera.up);
+		glm::mat4 projection = camera.perspective;
+
+		// Set the transform matrices
+		GLuint model_loc = glGetUniformLocation(material.shader_id, "model");
+		GLuint view_loc = glGetUniformLocation(material.shader_id, "view");
+		GLuint proj_loc = glGetUniformLocation(material.shader_id, "projection");
+		GLuint color_loc = glGetUniformLocation(material.shader_id, "color");
+
+		glm::vec4 color(1, 0, 0, 1);
+
+		glUniformMatrix4fv(model_loc, 1, GL_FALSE, &world_transform[0][0]);
+		glUniformMatrix4fv(view_loc, 1, GL_FALSE, &view[0][0]);
+		glUniformMatrix4fv(proj_loc, 1, GL_FALSE, &projection[0][0]);
+		glUniform4fv(color_loc, 1, &color[0]);
+
+		glBindVertexArray(mesh.va_id);
+
+		if (mesh.eb_id) {
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.eb_id);
+		}
+
+		glDrawArrays(GL_LINES, 0, 2);
+	}
+
 	void Renderer::render_sprite(const Camera& camera, const Sprite& sprite, const SpriteFrame& sprite_frame, const Mesh& mesh, const Material& material, const Texture& texture, const glm::mat4& transform) const {
 		glUseProgram(material.shader_id);
 

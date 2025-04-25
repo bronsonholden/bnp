@@ -50,4 +50,25 @@ namespace bnp {
 		return 1;
 	}
 
+	int l_sprite_set_layer_visible(lua_State* L) {
+		// [sprite, name, visibility]
+		Node node = l_pop_script_node(L, 1);
+		// [name, visibility]
+
+		std::string name = lua_tostring(L, 1);
+		bool visible = lua_toboolean(L, 2);
+
+
+		node.get_registry().patch<Sprite>(node.get_entity_id(), [&](Sprite& sprite) {
+			for (auto& layer : sprite.layers) {
+				if (layer.name != name) continue;
+
+				layer.visible = visible;
+				break;
+			}
+			});
+
+		return 0;
+	}
+
 }

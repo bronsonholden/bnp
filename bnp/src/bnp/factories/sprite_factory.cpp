@@ -118,7 +118,7 @@ namespace bnp {
 			sprite.layers.push_back(SpriteLayer{
 				name,
 				i,
-				true || i == 0,
+				i == 0,
 				std::vector<SpriteFrame>(it + (i * sprite.frame_count), it + ((i + 1) * sprite.frame_count))
 				});
 

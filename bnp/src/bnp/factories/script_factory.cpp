@@ -139,6 +139,9 @@ namespace bnp {
 			lua_pushcfunction(L, l_sprite_get_slice);
 			lua_setfield(L, -2, "GetSlice");
 
+			lua_pushcfunction(L, l_sprite_set_layer_visible);
+			lua_setfield(L, -2, "SetLayerVisible");
+
 			lua_setfield(L, -2, "__index");
 			lua_pop(L, 1);
 		}

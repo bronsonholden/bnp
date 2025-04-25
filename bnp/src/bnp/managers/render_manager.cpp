@@ -1,5 +1,6 @@
 #include <bnp/factories/mesh_factory.h>
 #include <bnp/managers/render_manager.h>
+#include <bnp/components/behavior.h>
 #include <bnp/components/transform.h>
 #include <bnp/components/graphics.h>
 #include <bnp/components/physics.h>
@@ -13,6 +14,7 @@ namespace bnp {
 
 	RenderManager::RenderManager()
 		: sprite_mesh(MeshFactory().box()),
+		line_mesh(MeshFactory().line()),
 		wireframe_material(MaterialFactory().wireframe_material())
 	{
 	}
@@ -37,6 +39,41 @@ namespace bnp {
 				}
 			}
 		}
+	}
+
+	// todo: render instanced lines
+	void RenderManager::render_flow_field_2ds(const entt::registry& registry, const Renderer& renderer, const Camera& camera) {
+		glDisable(GL_DEPTH_TEST);
+
+		auto view = registry.view<FlowField2D, Transform>();
+
+		for (auto entity : view) {
+			auto& transform = view.get<Transform>(entity);
+			auto& field = view.get<FlowField2D>(entity);
+
+			for (int y = 0; y < field.grid_size.y; ++y) {
+				for (int x = 0; x < field.grid_size.x; ++x) {
+					glm::vec2 dir = field.direction_field.at(y * field.grid_size.x + x);
+					float angle_rad = atan2(dir.x, dir.y);
+					glm::vec2 cell_offset = glm::vec2(field.cell_size / 2, -field.cell_size / 2);
+					glm::vec2 position = field.origin + cell_offset + glm::vec2(x * field.cell_size, -y * field.cell_size);
+					glm::vec3 origin_offset(
+						field.cell_size * (-field.grid_size.x / 2.0f),
+						field.cell_size * (field.grid_size.y / 2.0f),
+						0
+					);
+
+					glm::mat4 world_transform = transform.world_transform;
+					world_transform = glm::translate(world_transform, origin_offset + glm::vec3(position, 0));
+					world_transform = glm::rotate(world_transform, angle_rad, glm::vec3(0, 0, 1));
+					world_transform = glm::scale(world_transform, glm::vec3(1.0f, 0.1f, 1.0f));
+
+					renderer.render_line(camera, line_mesh, wireframe_material, world_transform);
+				}
+			}
+		}
+
+		glEnable(GL_DEPTH_TEST);
 	}
 
 	void RenderManager::render_wireframes(const entt::registry& registry, const Renderer& renderer, const Camera& camera) {

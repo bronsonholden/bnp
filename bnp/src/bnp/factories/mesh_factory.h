@@ -15,6 +15,7 @@ namespace bnp {
 		void create_box(std::vector<Vertex>& out_vertices, std::vector<uint32_t>& out_indices);
 		Mesh cube(float size);
 		Mesh box();
+		Mesh line();
 	};
 
 }

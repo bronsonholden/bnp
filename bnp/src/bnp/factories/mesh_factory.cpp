@@ -126,4 +126,14 @@ namespace bnp {
 		return create(vertices, indices);
 	}
 
+	Mesh MeshFactory::line() {
+		std::vector<uint32_t> indices{ 0, 1 };
+		std::vector<Vertex> vertices{
+			{ { 0, 0, 0 }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f } },
+			{ { 0, 1, 0 }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 0.0f } }
+		};
+
+		return create(vertices, indices);
+	}
+
 }

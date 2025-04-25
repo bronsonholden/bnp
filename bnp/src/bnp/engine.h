@@ -16,6 +16,7 @@
 #include <bnp/managers/motility_manager.h>
 #include <bnp/managers/hierarchy_manager.h>
 #include <bnp/managers/water2d_manager.h>
+#include <bnp/managers/behavior_manager.h>
 
 #include <entt/entt.hpp>
 
@@ -47,6 +48,7 @@ namespace bnp {
 		MotilityManager motility_manager;
 		HierarchyManager hierarchy_manager;
 		Water2DManager water2d_manager;
+		BehaviorManager behavior_manager;
 
 		void update(float dt);
 		void fixed_update();
