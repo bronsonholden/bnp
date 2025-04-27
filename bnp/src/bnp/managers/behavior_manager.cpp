@@ -7,15 +7,6 @@
 
 namespace bnp {
 
-	struct CellQueryCallback : public b2QueryCallback {
-		bool hit = false;
-
-		bool ReportFixture(b2Fixture* fixture) override {
-			hit = hit || fixture->GetBody()->GetType() == b2_staticBody;
-			return false;
-		}
-	};
-
 	BehaviorManager::BehaviorManager(PhysicsManager& _physics_manager)
 		: physics_manager(_physics_manager)
 	{
