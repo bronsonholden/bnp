@@ -6,18 +6,6 @@ namespace bnp {
 	PhysicsManager::PhysicsManager()
 		: world(b2Vec2(0.0f, -9.8))
 	{
-		b2BodyDef groundBodyDef;
-		groundBodyDef.position.Set(0.0f, -0.5f);  // Set Y to your desired "floor"
-		groundBodyDef.type = b2_staticBody;
-
-		b2Body* groundBody = world.CreateBody(&groundBodyDef);
-
-		// Create a box shape for the ground
-		b2PolygonShape groundBox;
-		groundBox.SetAsBox(10.0f, 0.5f);  // Width, Height (flat platform)
-
-		// Attach the shape to the ground body
-		groundBody->CreateFixture(&groundBox, 0.0f);
 	}
 
 	void PhysicsManager::update(entt::registry& registry, float dt) {

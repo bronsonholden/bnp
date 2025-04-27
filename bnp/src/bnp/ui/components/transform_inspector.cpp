@@ -15,22 +15,23 @@ namespace bnp {
 
 		bool changed = false;
 		float pos[3] = { transform.position.x, transform.position.y, transform.position.z };
+		float step = 0.05f;
 
-		if (ImGui::Button("+X")) { pos[0] += 1.0f; changed = true; }
+		if (ImGui::Button("+X")) { pos[0] += step; changed = true; }
 		ImGui::SameLine();
-		if (ImGui::Button("+Y")) { pos[1] += 1.0f; changed = true; }
+		if (ImGui::Button("+Y")) { pos[1] += step; changed = true; }
 		ImGui::SameLine();
-		if (ImGui::Button("+Z")) { pos[2] += 1.0f; changed = true; }
+		if (ImGui::Button("+Z")) { pos[2] += step; changed = true; }
 
 		if (ImGui::InputFloat3("Position", pos, "%.3f", ImGuiInputTextFlags_CharsScientific)) {
 			changed = true;
 		}
 
-		if (ImGui::Button("-X")) { pos[0] -= 1.0f; changed = true; }
+		if (ImGui::Button("-X")) { pos[0] -= step; changed = true; }
 		ImGui::SameLine();
-		if (ImGui::Button("-Y")) { pos[1] -= 1.0f; changed = true; }
+		if (ImGui::Button("-Y")) { pos[1] -= step; changed = true; }
 		ImGui::SameLine();
-		if (ImGui::Button("-Z")) { pos[2] -= 1.0f; changed = true; }
+		if (ImGui::Button("-Z")) { pos[2] -= step; changed = true; }
 
 		// --- Scale (Input fields) ---
 		float scale[3] = { transform.scale.x, transform.scale.y, transform.scale.z };

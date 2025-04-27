@@ -45,33 +45,34 @@ namespace bnp {
 	void RenderManager::render_flow_field_2ds(const entt::registry& registry, const Renderer& renderer, const Camera& camera) {
 		glDisable(GL_DEPTH_TEST);
 
-		auto view = registry.view<FlowField2D, Transform>();
+		auto view = registry.view<FlowField2D>();
 
 		for (auto entity : view) {
-			auto& transform = view.get<Transform>(entity);
 			auto& field = view.get<FlowField2D>(entity);
 
 			for (int y = 0; y < field.grid_size.y; ++y) {
 				for (int x = 0; x < field.grid_size.x; ++x) {
 					glm::vec2 dir = field.direction_field.at(y * field.grid_size.x + x);
+					if (glm::length(dir) < 0.001f) continue;
 					float angle_rad = atan2(dir.x, dir.y);
-					glm::vec2 cell_offset = glm::vec2(field.cell_size / 2, -field.cell_size / 2);
-					glm::vec2 position = field.origin + cell_offset + glm::vec2(x * field.cell_size, -y * field.cell_size);
-					glm::vec3 origin_offset(
-						field.cell_size * (-field.grid_size.x / 2.0f),
-						field.cell_size * (field.grid_size.y / 2.0f),
-						0
-					);
 
-					glm::mat4 world_transform = transform.world_transform;
-					world_transform = glm::translate(world_transform, origin_offset + glm::vec3(position, 0));
-					world_transform = glm::rotate(world_transform, angle_rad, glm::vec3(0, 0, 1));
+					glm::vec2 cell_offset = glm::vec2(field.cell_size / 2, field.cell_size / 2);
+					glm::vec2 position = field.origin + cell_offset + glm::vec2(x * field.cell_size, y * field.cell_size);
+
+					glm::mat4 world_transform = glm::mat4(1.0f);
+					world_transform = glm::translate(world_transform, glm::vec3(position, 0));
+					glm::mat4 cell_world_transform = glm::scale(world_transform, glm::vec3(field.cell_size, field.cell_size, 1.0f));
+					world_transform = glm::rotate(world_transform, angle_rad, glm::vec3(0, 0, -1));
 					world_transform = glm::scale(world_transform, glm::vec3(1.0f, 0.1f, 1.0f));
 
+
+					glm::vec4 color(0.0f, 1.0f, 0.0f, 1.0f);
+					renderer.render_wireframe(camera, sprite_mesh, wireframe_material, cell_world_transform, color);
 					renderer.render_line(camera, line_mesh, wireframe_material, world_transform);
 				}
 			}
 		}
+
 
 		glEnable(GL_DEPTH_TEST);
 	}

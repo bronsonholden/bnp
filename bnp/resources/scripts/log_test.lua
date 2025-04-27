@@ -1,4 +1,3 @@
-node:GetComponent("Transform"):SetPosition({ x = 3.0, y = 3.0 })
 node:GetComponent("Sprite"):SetLayerVisible("Straw", true)
 
 sprite = node:GetComponent("Sprite")

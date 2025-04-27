@@ -51,7 +51,8 @@ namespace bnp {
 	Engine::Engine()
 		: archive_manager(std::filesystem::path(PROJECT_ROOT) / "bnp/data"),
 		test_scene(registry),
-		script_factory(resource_manager)
+		script_factory(resource_manager),
+		behavior_manager(physics_manager)
 	{
 		renderer.initialize();
 		archive_manager.load();
@@ -122,12 +123,73 @@ namespace bnp {
 		repulsor_field.add_component<Transform>(Transform{ glm::vec3(0) });
 		repulsor_field.add_component<FlowField2D>(FlowField2D{
 			0.25f,
-			{ 15, 15 },
+			{ 50, 50 },
 			{ 0, 0 }
 			});
 
-		squirrel.add_component<Motility>(Motility{ 2.5 });
+		squirrel.add_component<Motility>(Motility{ 2.5f });
 		squirrel.add_component<Controllable>(Controllable{ true });
+
+		{
+			Node ground = test_scene.create_node();
+
+			b2BodyDef body_def;
+			body_def.position.Set(0.0f, -0.5f);  // Set Y to your desired "floor"
+			body_def.type = b2_staticBody;
+
+			// Create a box shape for the ground
+			b2PolygonShape box;
+			box.SetAsBox(10.0f, 0.5f);  // Width, Height (flat platform)
+
+			b2FixtureDef fixture_def;
+			fixture_def.shape = &box;
+
+			// Attach the shape to the ground body
+			physics_manager.add_body(ground, body_def, fixture_def);
+
+			ground.add_component<Renderable>(true);
+		}
+
+		{
+			Node ceiling = test_scene.create_node();
+
+			b2BodyDef body_def;
+			body_def.position.Set(0.0f, 1.5f);  // Set Y to your desired "floor"
+			body_def.type = b2_staticBody;
+
+			// Create a box shape for the ground
+			b2PolygonShape box;
+			box.SetAsBox(1.5f, 0.15f);  // Width, Height (flat platform)
+
+			b2FixtureDef fixture_def;
+			fixture_def.shape = &box;
+
+			// Attach the shape to the ground body
+			physics_manager.add_body(ceiling, body_def, fixture_def);
+
+			ceiling.add_component<Renderable>(true);
+		}
+
+		{
+			Node pillar = test_scene.create_node();
+
+			b2BodyDef body_def;
+			body_def.position.Set(-2.0f, 4.5f);  // Set Y to your desired "floor"
+			body_def.type = b2_staticBody;
+
+			// Create a box shape for the ground
+			b2PolygonShape box;
+			box.SetAsBox(0.15f, 3.0f);  // Width, Height (flat platform)
+
+			b2FixtureDef fixture_def;
+			fixture_def.shape = &box;
+
+			// Attach the shape to the ground body
+			physics_manager.add_body(pillar, body_def, fixture_def);
+
+			pillar.add_component<Renderable>(true);
+		}
+
 
 		//Node butterfly = load_sprite(
 		//	"bnp/sprites/butterfly_red/butterfly_red.png",
@@ -238,11 +300,13 @@ namespace bnp {
 			// manager updates
 			sprite_animation_manager.update(registry, dt);
 			motility_manager.update(registry, dt);
-			behavior_manager.update(registry, dt);
 
 			// only apply transforms after all game updates have completed
 			// so we have the most correct transforms
 			hierarchy_manager.update(registry);
+
+			// update behaviors with a clean transform hierarchy
+			behavior_manager.update(registry, dt);
 
 			window.clear();
 
