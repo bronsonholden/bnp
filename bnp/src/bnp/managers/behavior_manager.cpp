@@ -124,7 +124,10 @@ namespace bnp {
 
 			float weight = std::exp(-delta * FALLOFF);
 			glm::vec2 dir = glm::normalize(glm::vec2(offset));
-			smoothed_result += dir * weight;
+
+			if (glm::length(smoothed_result) < glm::length(smoothed_result + dir * weight * 1.1f)) {
+				smoothed_result += dir * weight;
+			}
 
 			if (neighbor_cost < best_neighbor_cost) {
 				best_neighbor_cost = neighbor_cost;
