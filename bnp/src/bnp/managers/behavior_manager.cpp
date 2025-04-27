@@ -83,10 +83,15 @@ namespace bnp {
 		}
 	}
 
-	glm::vec2 BehaviorManager::smooth_direction(int x, int y, const std::vector<float>& cost_field, glm::ivec2 grid_size) {
-		constexpr float MAX_DELTA = 5.0f;      // Max allowed cost delta
-		constexpr float FALLOFF = 1.1f;         // Exponential falloff sharpness
-		constexpr int MIN_GOOD_NEIGHBORS = 8;   // Require at least 3 good neighbors to smooth
+	glm::vec2 BehaviorManager::smooth_direction(
+		int x, int y,
+		const std::vector<float>& cost_field,
+		glm::ivec2 grid_size,
+		bool attract
+	) {
+		constexpr float MAX_DELTA = 5.0f;    // Max allowed delta difference
+		constexpr float FALLOFF = 1.1f;       // Exponential falloff sharpness
+		constexpr int MIN_GOOD_NEIGHBORS = 8; // Require at least this many for smoothing
 
 		const glm::ivec2 offsets[] = {
 		    { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 },
@@ -95,7 +100,10 @@ namespace bnp {
 
 		glm::vec2 smoothed_result(0.0f);
 		glm::vec2 best_direction(0.0f);
-		float best_neighbor_cost = std::numeric_limits<float>::infinity();
+		float best_neighbor_cost = attract
+			? std::numeric_limits<float>::infinity()    // if attract: look for smaller cost
+			: -std::numeric_limits<float>::infinity();  // if repel: look for bigger cost
+
 		int good_neighbors = 0;
 
 		float base_cost = cost_field[y * grid_size.x + x];
@@ -109,18 +117,30 @@ namespace bnp {
 			if (neighbor_cost == std::numeric_limits<float>::infinity()) continue;
 
 			float delta = neighbor_cost - base_cost;
-			if (delta > MAX_DELTA) continue;
+
+			// Check if neighbor is valid based on mode
+			bool valid = attract ? (delta < MAX_DELTA)    // attract: prefer lower neighbor
+				: (-delta < MAX_DELTA);  // repel: prefer higher neighbor
+			if (!valid) continue;
 
 			good_neighbors++;
 
-			float weight = std::exp(-delta * FALLOFF);
+			float weight = attract
+				? std::exp(-delta * FALLOFF)
+				: std::exp(delta * FALLOFF);
+
 			glm::vec2 dir = glm::normalize(glm::vec2(offset));
 
+			// Only smooth if adding this direction makes smoothed result grow meaningfully
 			if (glm::length(smoothed_result) < glm::length(smoothed_result + dir * weight * 1.1f)) {
 				smoothed_result += dir * weight;
 			}
 
-			if (neighbor_cost < best_neighbor_cost) {
+			// Pick best single neighbor
+			bool better = attract ? (neighbor_cost < best_neighbor_cost)
+				: (neighbor_cost > best_neighbor_cost);
+
+			if (better) {
 				best_neighbor_cost = neighbor_cost;
 				best_direction = dir;
 			}
@@ -131,13 +151,15 @@ namespace bnp {
 			return best_direction;
 		}
 
-		return glm::length(smoothed_result) > 0.001f ? glm::normalize(smoothed_result) : glm::vec2(0.0f);
+		return glm::length(smoothed_result) > 0.001f ? glm::normalize(smoothed_result) : best_direction;
 	}
+
 
 	void BehaviorManager::generate_direction_field(entt::registry& registry, FlowField2D& field) {
 		const int width = field.grid_size.x;
 		const int height = field.grid_size.y;
 		field.direction_field.resize(width * height, glm::vec2(0.0f));
+		field.reverse_field.resize(width * height, glm::vec2(0.0f));
 
 		auto index = [&](int x, int y) {
 			return y * width + x;
@@ -156,10 +178,9 @@ namespace bnp {
 					continue;
 				}
 
-				// todo: if not enough neighbors (e.g. a thin hall) don't use any smoothing
-				glm::vec2 dir = smooth_direction(x, y, field.cost_field, field.grid_size);
 
-				field.direction_field[i] = dir;
+				field.direction_field[i] = smooth_direction(x, y, field.cost_field, field.grid_size, true);
+				field.reverse_field[i] = smooth_direction(x, y, field.cost_field, field.grid_size, false);
 			}
 		}
 

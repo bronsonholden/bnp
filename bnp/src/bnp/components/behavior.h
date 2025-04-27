@@ -19,7 +19,12 @@ namespace bnp {
 		bool dirty = true;
 
 		std::vector<float> cost_field;
+
+		// direction vectors for attraction
 		std::vector<glm::vec2> direction_field;
+		// direction vectors for repulsion.
+		// todo: might remove and just use steering to handle repulsion
+		std::vector<glm::vec2> reverse_field;
 	};
 
 }
