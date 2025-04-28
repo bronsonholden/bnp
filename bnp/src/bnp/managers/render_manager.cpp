@@ -67,7 +67,7 @@ namespace bnp {
 
 
 					glm::vec4 color(0.0f, 1.0f, 0.0f, 1.0f);
-					renderer.render_wireframe(camera, sprite_mesh, wireframe_material, cell_world_transform, color);
+					//renderer.render_wireframe(camera, sprite_mesh, wireframe_material, cell_world_transform, color);
 					renderer.render_line(camera, line_mesh, wireframe_material, world_transform);
 				}
 			}

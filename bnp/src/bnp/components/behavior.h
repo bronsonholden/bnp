@@ -27,4 +27,9 @@ namespace bnp {
 		std::vector<glm::vec2> reverse_field;
 	};
 
+	struct BeeBehavior {
+		// how close an enemy can be before fleeing
+		float min_distance;
+	};
+
 }

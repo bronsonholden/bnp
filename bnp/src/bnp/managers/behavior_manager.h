@@ -8,6 +8,7 @@
 
 namespace bnp {
 
+	// todo: move flow field management to its own manager?
 	class BehaviorManager {
 	public:
 		BehaviorManager(PhysicsManager& hysics_manager);
@@ -17,6 +18,9 @@ namespace bnp {
 
 		// set target to parent position
 		void update_targets(entt::registry& registry, float dt);
+
+		// behaviors
+		void update_bee_behaviors(entt::registry& registry, float dt);
 
 		void regenerate_if_stale(entt::registry& registry, float dt);
 		glm::vec2 smooth_direction(int x, int y, const std::vector<float>& cost_field, glm::ivec2 grid_size, bool attract);

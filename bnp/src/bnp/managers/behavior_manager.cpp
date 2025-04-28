@@ -17,9 +17,52 @@ namespace bnp {
 
 	}
 
+	void BehaviorManager::update_bee_behaviors(entt::registry& registry, float dt) {
+		auto view = registry.view<BeeBehavior, Transform>();
+
+		for (auto entity : view) {
+			auto potential_threats = registry.view<FlowField2D>();
+			auto& behavior = view.get<BeeBehavior>(entity);
+			auto& transform = view.get<Transform>(entity);
+
+			std::vector<entt::entity> threats;
+
+			for (auto pt : potential_threats) {
+				auto& f = potential_threats.get<FlowField2D>(pt);
+
+				if (glm::length(f.target - glm::vec2(transform.position)) < 1.0f) {
+					threats.push_back(pt);
+				}
+			}
+
+			for (auto threat : threats) {
+				auto& field = potential_threats.get<FlowField2D>(threat);
+
+				glm::vec2 local = glm::vec2(transform.position) - field.origin;
+
+				int fx = std::floor(local.x / field.cell_size);
+				int fy = std::floor(local.y / field.cell_size);
+
+				if (fx < 0 || fx >= field.grid_size.x || fy < 0 || fy >= field.grid_size.y) {
+					continue;
+				}
+
+				glm::vec2 dir = field.direction_field.at(fy * field.grid_size.x + fx);
+
+				registry.patch<Transform>(entity, [&](Transform& t) {
+					t.position.x -= dir.x * dt;
+					t.position.y -= dir.y * dt;
+					t.dirty = true;
+					});
+			}
+		}
+	}
+
 	void BehaviorManager::update(entt::registry& registry, float dt) {
 		update_targets(registry, dt);
 		regenerate_if_stale(registry, dt);
+
+		update_bee_behaviors(registry, dt);
 	}
 
 	void BehaviorManager::update_targets(entt::registry& registry, float dt) {

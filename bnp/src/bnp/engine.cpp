@@ -154,7 +154,7 @@ namespace bnp {
 			Node ceiling = test_scene.create_node();
 
 			b2BodyDef body_def;
-			body_def.position.Set(0.0f, 1.5f);  // Set Y to your desired "floor"
+			body_def.position.Set(0.0f, 1.0f);  // Set Y to your desired "floor"
 			body_def.type = b2_staticBody;
 
 			// Create a box shape for the ground
@@ -174,7 +174,7 @@ namespace bnp {
 			Node pillar = test_scene.create_node();
 
 			b2BodyDef body_def;
-			body_def.position.Set(-2.0f, 4.5f);  // Set Y to your desired "floor"
+			body_def.position.Set(-2.0f, 4.0f);  // Set Y to your desired "floor"
 			body_def.type = b2_staticBody;
 
 			// Create a box shape for the ground
@@ -190,6 +190,7 @@ namespace bnp {
 			pillar.add_component<Renderable>(true);
 		}
 
+		registry.emplace<BeeBehavior>(static_cast<entt::entity>(7), BeeBehavior{});
 
 		//Node butterfly = load_sprite(
 		//	"bnp/sprites/butterfly_red/butterfly_red.png",
