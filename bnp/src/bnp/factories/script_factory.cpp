@@ -68,8 +68,9 @@ namespace bnp {
 		}
 	}
 
-	ScriptFactory::ScriptFactory(ResourceManager& _resource_manager)
-		: resource_manager(_resource_manager)
+	ScriptFactory::ScriptFactory(ResourceManager& _resource_manager, PhysicsManager& _physics_manager)
+		: resource_manager(_resource_manager),
+		physics_manager(_physics_manager)
 	{
 
 	}
@@ -96,6 +97,10 @@ namespace bnp {
 
 		lua_pushlightuserdata(L, (void*)"resource_manager");
 		lua_pushlightuserdata(L, &resource_manager);
+		lua_settable(L, LUA_REGISTRYINDEX);
+
+		lua_pushlightuserdata(L, (void*)"physics_manager");
+		lua_pushlightuserdata(L, &physics_manager);
 		lua_settable(L, LUA_REGISTRYINDEX);
 
 		bind_metatables(L);
@@ -177,6 +182,9 @@ namespace bnp {
 			lua_pushcfunction(L, l_physics_body_2d_get_velocity);
 			lua_setfield(L, -2, "GetVelocity");
 
+			lua_pushcfunction(L, l_physics_body_2d_create_box_fixture);
+			lua_setfield(L, -2, "CreateBoxFixture");
+
 			lua_setfield(L, -2, "__index");
 			lua_pop(L, 1);
 		}
@@ -211,6 +219,11 @@ namespace bnp {
 			// [script, params, udata]
 			ResourceManager* resource_manager = static_cast<ResourceManager*>(lua_touserdata(L, -1));
 			lua_pop(L, 1);
+			lua_pushlightuserdata(L, (void*)"physics_manager");
+			lua_gettable(L, LUA_REGISTRYINDEX);
+			// [script, params, udata]
+			PhysicsManager* physics_manager = static_cast<PhysicsManager*>(lua_touserdata(L, -1));
+			lua_pop(L, 1);
 			// [script, params]
 			lua_pushlightuserdata(L, (void*)"registry");
 			lua_gettable(L, LUA_REGISTRYINDEX);
@@ -219,7 +232,7 @@ namespace bnp {
 			lua_pop(L, 1);
 			// [script, params]
 
-			ScriptFactory script_factory(*resource_manager);
+			ScriptFactory script_factory(*resource_manager, *physics_manager);
 			lua_State* L2 = luaL_newstate();
 			Node node(registry);
 

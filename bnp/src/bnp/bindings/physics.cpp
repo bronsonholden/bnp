@@ -66,4 +66,38 @@ namespace bnp {
 		return 1;
 	}
 
+	int l_physics_body_2d_create_box_fixture(lua_State* L) {
+		// [node, params]
+		Node node = l_pop_script_node(L, 1);
+		// [params]
+
+		const PhysicsBody2D& body = node.get_component<PhysicsBody2D>();
+
+		b2FixtureDef fixture_def;
+		b2PolygonShape body_shape;
+
+		lua_getfield(L, 1, "w");
+		float hw = lua_tonumber(L, -1) / 2.0f;
+		lua_pop(L, 1);
+		// [params]
+
+		lua_getfield(L, 1, "h");
+		float hh = lua_tonumber(L, -1) / 2.0f;
+		lua_pop(L, 1);
+		// [params]
+
+		body_shape.SetAsBox(hw, hh);
+		fixture_def.shape = &body_shape;
+		fixture_def.density = 1.0f;
+		fixture_def.friction = 0.3f;
+		fixture_def.restitution = 0.0f;
+
+		body.body->CreateFixture(&fixture_def);
+
+		lua_pop(L, 1);
+		// []
+
+		return 0;
+	}
+
 }

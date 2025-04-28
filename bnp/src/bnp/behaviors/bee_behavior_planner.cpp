@@ -1,6 +1,8 @@
+#include <bnp/components/physics.h>
 #include <bnp/components/transform.h>
 #include <bnp/behaviors/bee_behavior_planner.h>
 
+#include <glm/glm.hpp>
 #include <iostream>
 using namespace std;
 
@@ -9,10 +11,134 @@ namespace bnp {
 	void BeeBehaviorPlanner::update(entt::registry& registry, float dt) {
 		std::vector<entt::entity> bees = get_bees(registry);
 
+		update_goals(registry, bees, dt);
+		execute_goals(registry, bees, dt);
+	}
+
+	void BeeBehaviorPlanner::update_goals(entt::registry& registry, std::vector<entt::entity> bees, float dt) {
 		for (auto bee : bees) {
 			std::vector<entt::entity> threats = get_threats(registry, bee);
+			auto& brain = registry.get_or_emplace<BehaviorBrain>(bee, BehaviorBrain{});
+
+			registry.patch<BehaviorBrain>(bee, [&](BehaviorBrain& b) {
+				// flee behavior
+				for (auto threat : threats) {
+					bool current = false;
+
+					for (auto& goal : b.goals) {
+						// keep fleeing from continuing threats
+						if (goal.type == goal.Flee && goal.target == threat) {
+							goal.motivation = 0.5f;
+							current = true;
+							break;
+						}
+					}
+
+					// if already a threat, we don't need to add another goal
+					if (current) continue;
+
+					b.goals.push_back(BehaviorGoal{
+						BehaviorGoal::Type::Flee,
+						1.0f,
+						0.5f,
+						threat
+						});
+				}
+				});
 		}
 	}
+
+	void BeeBehaviorPlanner::execute_goals(entt::registry& registry, std::vector<entt::entity> bees, float dt) {
+		for (auto bee : bees) {
+			auto& brain = registry.get<BehaviorBrain>(bee);
+
+			if (!brain.goals.size()) {
+				// todo: add return to origin
+				auto& body = registry.get<PhysicsBody2D>(bee);
+				body.body->SetLinearVelocity(b2Vec2(0, 0));
+				continue;
+			}
+
+			auto& goal = brain.goals.front();
+
+			switch (goal.type) {
+			case goal.Flee:
+				execute_flee(registry, goal, bee);
+				break;
+			default:
+				;
+			}
+		}
+	}
+
+	void BeeBehaviorPlanner::execute_flee(entt::registry& registry, const BehaviorGoal& goal, entt::entity bee) {
+		if (!registry.all_of<Motility>(bee)) {
+			return;
+		}
+
+		auto& transform = registry.get<Transform>(bee);
+		auto& motility = registry.get<Motility>(bee);
+
+		if (!registry.all_of<FlowField2D>(goal.target)) {
+			cout << "target has no flow field" << endl;
+			return;
+		}
+
+		auto& field = registry.get<FlowField2D>(goal.target);
+
+
+		glm::vec2 local = glm::vec2(transform.position) - field.origin;
+
+		int fx = std::floor(local.x / field.cell_size);
+		int fy = std::floor(local.y / field.cell_size);
+
+		if (fx < 0 || fx >= field.grid_size.x || fy < 0 || fy >= field.grid_size.y) {
+			return;
+		}
+
+		int idx = fy * field.grid_size.x + fx;
+		glm::vec2 dir = field.reverse_field.at(idx);
+		float cost = field.cost_field.at(idx);
+
+		if (cost == std::numeric_limits<float>::infinity() || glm::length(dir) < 0.001f) {
+			const glm::ivec2 offsets[] = {
+				{ 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 },
+				{ 1, 1 }, { -1, 1 }, { 1, -1 }, { -1, -1 }
+			};
+
+			glm::vec2 best_dir(0);
+			float best_cost = -std::numeric_limits<float>::infinity();
+
+			for (auto& offset : offsets) {
+				int ox = fx + offset.x;
+				int oy = fx + offset.y;
+
+				if (fx < 0 || fx >= field.grid_size.x || fy < 0 || fy >= field.grid_size.y) {
+					continue;
+				}
+
+				int idx = oy * field.grid_size.x + ox;
+				glm::vec2 neighbor_dir = field.reverse_field.at(idx);
+				float cost = field.cost_field.at(idx);
+
+				if (cost == std::numeric_limits<float>::infinity() || glm::length(neighbor_dir) < 0.001f) continue;
+
+				if (cost > best_cost) {
+					best_dir = glm::normalize(glm::vec2(offset.x, offset.y));
+					best_cost = cost;
+				}
+			}
+
+			dir = best_dir;
+		}
+
+		dir = glm::normalize(dir);
+
+		registry.patch<PhysicsBody2D>(bee, [&](PhysicsBody2D& b) {
+			b.body->SetLinearVelocity(b2Vec2(dir.x, dir.y));
+			});
+	}
+
 
 	std::vector<entt::entity> BeeBehaviorPlanner::get_bees(entt::registry& registry) {
 		std::vector<entt::entity> bees;

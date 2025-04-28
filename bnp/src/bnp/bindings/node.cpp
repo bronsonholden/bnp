@@ -3,9 +3,12 @@
 #include <bnp/components/graphics.h>
 #include <bnp/components/script.h>
 #include <bnp/components/hierarchy.h>
+#include <bnp/components/behavior.h>
 #include <bnp/factories/sprite_factory.h>
 #include <bnp/managers/resource_manager.h>
+#include <bnp/managers/physics_manager.h>
 
+#include <box2d/box2d.h>
 #include <filesystem>
 
 extern "C" {
@@ -258,15 +261,74 @@ namespace bnp {
 	}
 
 	int l_node_add_component_physics_body_2d(lua_State* L) {
+		// [node, "PhysicsBody2D", params]
 		Node node = l_pop_script_node(L, 1);
+		// ["PhysicsBody2D", params]
 
-		// todo: add the body
+		lua_pushlightuserdata(L, (void*)"physics_manager");
+		lua_gettable(L, LUA_REGISTRYINDEX);
+		// ["PhysicsBody2D", params, udata]
+		PhysicsManager* physics_manager = static_cast<PhysicsManager*>(lua_touserdata(L, -1));
+		lua_pop(L, 1);
+		// ["PhysicsBody2D", params]
+
+		b2World& world = physics_manager->get_world();
+		b2BodyDef body_def;
+		b2Vec2 position(0, 0);
+
+		if (node.has_component<Transform>()) {
+			auto& transform = node.get_component<Transform>();
+			position.x = transform.position.x;
+			position.y = transform.position.y;
+		}
+
+		lua_getfield(L, 2, "dynamic");
+		// ["PhysicsBody2D", params, dynamic]
+		if (lua_isboolean(L, -1) && lua_toboolean(L, -1)) {
+			body_def.type = b2_dynamicBody;
+		}
+		else {
+			body_def.type = b2_staticBody;
+		}
+		// ["PhysicsBody2D", params]
+
+		body_def.awake = true;
+		body_def.enabled = true;
+		body_def.position = position;
+
+
+		lua_getfield(L, 2, "gravityScale");
+		// ["PhysicsBody2D", params, gravityScale]
+		if (lua_isnumber(L, -1)) body_def.gravityScale = lua_tonumber(L, -1);
+		lua_pop(L, 1);
+		// ["PhysicsBody2D", params]
+
+		lua_pop(L, 2);
+		// []
+
+		b2Body* body = world.CreateBody(&body_def);
+
+		node.add_component<PhysicsBody2D>(PhysicsBody2D{ body });
 
 		l_push_script_node(L, node);
 		luaL_getmetatable(L, "bnp.PhysicsBody2D");
 		lua_setmetatable(L, -2);
 
 		return 1;
+	}
+
+	int l_node_add_component_identity(lua_State* L) {
+		// [node, identity]
+		Node node = l_pop_script_node(L, 1);
+		// [identity]
+
+		std::string species = lua_tostring(L, -1);
+		node.add_component<Identity>(species);
+
+		lua_pop(L, 1);
+		// []
+
+		return 0;
 	}
 
 	int l_node_add_component(lua_State* L) {
@@ -299,6 +361,9 @@ namespace bnp {
 		}
 		else if (strcmp(name, "PhysicsBody2D") == 0) {
 			return l_node_add_component_physics_body_2d(L);
+		}
+		else if (strcmp(name, "Identity") == 0) {
+			return l_node_add_component_identity(L);
 		}
 		else {
 			return luaL_error(L, "Unknown/disallowed component: %s", name);

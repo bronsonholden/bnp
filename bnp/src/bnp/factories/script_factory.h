@@ -2,6 +2,7 @@
 
 #include <bnp/core/node.hpp>
 #include <bnp/managers/resource_manager.h>
+#include <bnp/managers/physics_manager.h>
 #include <bnp/components/script.h>
 #include <bnp/components/transform.h>
 
@@ -11,7 +12,7 @@ namespace bnp {
 
 	class ScriptFactory {
 	public:
-		ScriptFactory(ResourceManager& resource_manager);
+		ScriptFactory(ResourceManager& resource_manager, PhysicsManager& physics_manager);
 		~ScriptFactory();
 
 		lua_State* load_from_file(Node& node, const std::filesystem::path& path, lua_State* L = nullptr);
@@ -24,6 +25,7 @@ namespace bnp {
 		static void bind_log(lua_State* L);
 
 		ResourceManager& resource_manager;
+		PhysicsManager& physics_manager;
 	};
 
 }

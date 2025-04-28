@@ -12,3 +12,7 @@ node:AddComponent("Material", {
 	fragment = "resources/shaders/sprite_fragment_shader.glsl"
 })
 node:AddComponent("Renderable")
+node:AddComponent("Identity", "Bee")
+node:AddComponent("Motility", { speed = 0.5 })
+body = node:AddComponent("PhysicsBody2D", { gravityScale = 0, dynamic = true })
+body:CreateBoxFixture({ w = 0.1, h = 0.1 })

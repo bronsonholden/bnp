@@ -123,7 +123,27 @@ namespace bnp {
 		update_targets(registry, dt);
 		regenerate_if_stale(registry, dt);
 
-		update_bee_behaviors(registry, dt);
+		//update_bee_behaviors(registry, dt);
+
+		// update behaviors
+		// todo: move to method
+		auto view = registry.view<BehaviorBrain>();
+
+		for (auto entity : view) {
+			auto& brain = view.get<BehaviorBrain>(entity);
+
+			for (auto& goal : brain.goals) {
+				goal.motivation -= goal.decay * dt;
+			}
+
+			auto new_end = std::remove_if(brain.goals.begin(), brain.goals.end(), [](BehaviorGoal& goal) {
+				return goal.motivation <= 0;
+				});
+
+			if (new_end != brain.goals.end()) {
+				brain.goals.erase(new_end, brain.goals.end());
+			}
+		}
 	}
 
 	void BehaviorManager::update_targets(entt::registry& registry, float dt) {

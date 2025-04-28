@@ -118,7 +118,9 @@ namespace bnp {
 				auto& position = body_transform.p;
 				auto& rotation = body_transform.q;
 
-				b2PolygonShape* shape = static_cast<b2PolygonShape*>(body.body->GetFixtureList()->GetShape());
+				b2Fixture* fixture = body.body->GetFixtureList();
+				if (!fixture) continue;
+				b2PolygonShape* shape = static_cast<b2PolygonShape*>(fixture->GetShape());
 
 				// m_vertices[2] is top-right corner
 				float height = shape->m_vertices[2].y * 2;
@@ -172,6 +174,11 @@ namespace bnp {
 
 				if (registry.all_of<SpriteAnimator>(entity)) {
 					auto& animator = registry.get<SpriteAnimator>(entity);
+
+					if (sprite.animations.find(animator.current_animation) == sprite.animations.end()) {
+						continue;
+					}
+
 					auto& animation = sprite.animations.at(animator.current_animation);
 
 					// since all layers and frames are split out and listed in the sprite's frame

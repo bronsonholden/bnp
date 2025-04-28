@@ -53,7 +53,8 @@ namespace bnp {
 	Engine::Engine()
 		: archive_manager(std::filesystem::path(PROJECT_ROOT) / "bnp/data"),
 		test_scene(registry),
-		script_factory(resource_manager),
+		physics_manager(),
+		script_factory(resource_manager, physics_manager),
 		behavior_manager(physics_manager)
 	{
 		renderer.initialize();
@@ -129,7 +130,7 @@ namespace bnp {
 		Node repulsor_field = test_scene.create_node();
 		repulsor_field.add_component<Parent>(Parent{ squirrel.get_entity_id() });
 		repulsor_field.add_component<Transform>(Transform{ glm::vec3(0) });
-		repulsor_field.add_component<FlowField2D>(FlowField2D{
+		squirrel.add_component<FlowField2D>(FlowField2D{
 			0.25f,
 			{ 50, 50 },
 			{ 0, 0 }
@@ -199,7 +200,7 @@ namespace bnp {
 		}
 
 		registry.emplace<BeeBehavior>(static_cast<entt::entity>(7), BeeBehavior{});
-		registry.emplace<Identity>(static_cast<entt::entity>(7), Identity{ "Bee" });
+		//registry.emplace<Identity>(static_cast<entt::entity>(7), Identity{ "Bee" });
 
 		//Node butterfly = load_sprite(
 		//	"bnp/sprites/butterfly_red/butterfly_red.png",

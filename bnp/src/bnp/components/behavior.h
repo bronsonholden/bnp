@@ -3,6 +3,7 @@
 #include <vector>
 #include <unordered_map>
 #include <glm/glm.hpp>
+#include <entt/entt.hpp>
 
 namespace bnp {
 
@@ -61,9 +62,11 @@ namespace bnp {
 
 		// todo: behavior decay
 		// how much motivation decays per second
-		//float decay;
+		float decay;
 		// while > 0, this goal can be executed
-		//float motivation;
+		float motivation;
+
+		entt::entity target;
 	};
 
 	struct BehaviorBrain {

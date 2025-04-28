@@ -44,7 +44,7 @@
   "size": { "w": 48, "h": 12 },
   "scale": "1",
   "frameTags": [
-   { "name": "Flying", "from": 0, "to": 3, "direction": "forward", "color": "#000000ff" }
+   { "name": "Idle", "from": 0, "to": 3, "direction": "forward", "color": "#000000ff" }
   ],
   "layers": [
    { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }

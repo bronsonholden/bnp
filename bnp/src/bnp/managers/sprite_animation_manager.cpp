@@ -65,6 +65,11 @@ namespace  bnp {
 			}
 
 			auto& sprite = view.get<Sprite>(entity);
+
+			if (sprite.animations.find(animator.current_animation) == sprite.animations.end()) {
+				continue;
+			}
+
 			const auto& animation = sprite.animations.at(animator.current_animation);
 			const auto& frame = sprite.layers.at(0).frames.at(animation.framelist.at(animator.current_framelist_index));
 
