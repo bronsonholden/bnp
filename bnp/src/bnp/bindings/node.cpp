@@ -260,6 +260,8 @@ namespace bnp {
 	int l_node_add_component_physics_body_2d(lua_State* L) {
 		Node node = l_pop_script_node(L, 1);
 
+		// todo: add the body
+
 		l_push_script_node(L, node);
 		luaL_getmetatable(L, "bnp.PhysicsBody2D");
 		lua_setmetatable(L, -2);
