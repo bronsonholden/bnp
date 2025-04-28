@@ -42,4 +42,31 @@ namespace bnp {
 		glm::vec2 wander_target;
 	};
 
+	struct Identity {
+		std::string species;
+	};
+
+	// how other entities perceive this entity
+	struct Perception {
+		// species, threat level
+		std::unordered_map<std::string, int> threat;
+	};
+
+	struct BehaviorGoal {
+		enum Type {
+			Flee,
+			Follow
+		} type;
+
+		// todo: behavior decay
+		// how much motivation decays per second
+		//float decay;
+		// while > 0, this goal can be executed
+		//float motivation;
+	};
+
+	struct BehaviorBrain {
+		std::vector<BehaviorGoal> goals;
+	};
+
 }
