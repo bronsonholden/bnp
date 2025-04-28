@@ -16,6 +16,8 @@
 #include <bnp/ui/node_inspector.h>
 #include <bnp/controllers/controller.h>
 
+#include <bnp/behaviors/bee_behavior_planner.h>
+
 #include <vector>
 #include <string>
 #include <fstream>
@@ -117,6 +119,12 @@ namespace bnp {
 			glm::quat(),
 			glm::vec3(1)
 			});
+		squirrel.add_component<Identity>(Identity{ "Squirrel" });
+		squirrel.add_component<Perception>(Perception{
+			{
+				{"Bee", 1}
+			}
+			});
 
 		Node repulsor_field = test_scene.create_node();
 		repulsor_field.add_component<Parent>(Parent{ squirrel.get_entity_id() });
@@ -191,6 +199,7 @@ namespace bnp {
 		}
 
 		registry.emplace<BeeBehavior>(static_cast<entt::entity>(7), BeeBehavior{});
+		registry.emplace<Identity>(static_cast<entt::entity>(7), Identity{ "Bee" });
 
 		//Node butterfly = load_sprite(
 		//	"bnp/sprites/butterfly_red/butterfly_red.png",
@@ -308,6 +317,10 @@ namespace bnp {
 
 			// update behaviors with a clean transform hierarchy
 			behavior_manager.update(registry, dt);
+			{
+				BeeBehaviorPlanner bbp;
+				bbp.update(registry, dt);
+			}
 
 			window.clear();
 
