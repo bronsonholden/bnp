@@ -29,7 +29,17 @@ namespace bnp {
 
 	struct BeeBehavior {
 		// how close an enemy can be before fleeing
-		float min_distance;
+		float min_safe_distance;
+		// default position of the bee
+		glm::vec2 origin;
+		// how far the bee can wander from the origin
+		float wander_distance;
+		// how long the bee will stay at its current wader target
+		float idle_time_remaining;
+		float idle_time_min;
+		float idle_time_max;
+		// where the bee intends to be, calculated randomly around the origin
+		glm::vec2 wander_target;
 	};
 
 }

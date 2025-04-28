@@ -52,7 +52,7 @@ namespace bnp {
 
 			for (int y = 0; y < field.grid_size.y; ++y) {
 				for (int x = 0; x < field.grid_size.x; ++x) {
-					glm::vec2 dir = field.direction_field.at(y * field.grid_size.x + x);
+					glm::vec2 dir = field.reverse_field.at(y * field.grid_size.x + x);
 					if (glm::length(dir) < 0.001f) continue;
 					float angle_rad = atan2(dir.x, dir.y);
 
@@ -67,7 +67,7 @@ namespace bnp {
 
 
 					glm::vec4 color(0.0f, 1.0f, 0.0f, 1.0f);
-					//renderer.render_wireframe(camera, sprite_mesh, wireframe_material, cell_world_transform, color);
+					renderer.render_wireframe(camera, sprite_mesh, wireframe_material, cell_world_transform, color);
 					renderer.render_line(camera, line_mesh, wireframe_material, world_transform);
 				}
 			}

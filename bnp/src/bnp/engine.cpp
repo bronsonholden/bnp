@@ -113,7 +113,7 @@ namespace bnp {
 			"resources/sprites/squirrel/squirrel.json"
 		);
 		squirrel.add_component<Transform>(Transform{
-			glm::vec3(0, 0, 0),
+			glm::vec3(2.5, 0, 0),
 			glm::quat(),
 			glm::vec3(1)
 			});

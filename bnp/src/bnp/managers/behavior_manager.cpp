@@ -7,6 +7,33 @@
 
 namespace bnp {
 
+	glm::vec2 nearest_offset(const glm::vec2& input) {
+		if (glm::length(input) < 0.001f) {
+			return glm::vec2(0.0f); // No direction
+		}
+
+		glm::vec2 normalized = glm::normalize(input);
+
+		const glm::vec2 directions[] = {
+		    { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 }, // cardinal
+		    { 1, 1 }, { -1, 1 }, { -1, -1 }, { 1, -1 } // diagonals
+		};
+
+		glm::vec2 best_dir(0.0f);
+		float best_dot = -std::numeric_limits<float>::infinity();
+
+		for (auto& dir : directions) {
+			glm::vec2 dir_normalized = glm::normalize(dir); // for diagonals
+			float dot = glm::dot(normalized, dir_normalized);
+			if (dot > best_dot) {
+				best_dot = dot;
+				best_dir = dir_normalized;
+			}
+		}
+
+		return best_dir;
+	}
+
 	BehaviorManager::BehaviorManager(PhysicsManager& _physics_manager)
 		: physics_manager(_physics_manager)
 	{
@@ -30,7 +57,7 @@ namespace bnp {
 			for (auto pt : potential_threats) {
 				auto& f = potential_threats.get<FlowField2D>(pt);
 
-				if (glm::length(f.target - glm::vec2(transform.position)) < 1.0f) {
+				if (glm::length(f.target - glm::vec2(transform.position)) < 1.5f) {
 					threats.push_back(pt);
 				}
 			}
@@ -47,11 +74,45 @@ namespace bnp {
 					continue;
 				}
 
-				glm::vec2 dir = field.direction_field.at(fy * field.grid_size.x + fx);
+				int idx = fy * field.grid_size.x + fx;
+				glm::vec2 dir = field.reverse_field.at(idx);
+				float cost = field.cost_field.at(idx);
+
+				if (cost == std::numeric_limits<float>::infinity() || glm::length(dir) < 0.001f) {
+					const glm::ivec2 offsets[] = {
+						{ 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 },
+						{ 1, 1 }, { -1, 1 }, { 1, -1 }, { -1, -1 }
+					};
+
+					glm::vec2 best_dir(0);
+					float best_cost = -std::numeric_limits<float>::infinity();
+
+					for (auto& offset : offsets) {
+						int ox = fx + offset.x;
+						int oy = fx + offset.y;
+
+						if (fx < 0 || fx >= field.grid_size.x || fy < 0 || fy >= field.grid_size.y) {
+							continue;
+						}
+
+						int idx = oy * field.grid_size.x + ox;
+						glm::vec2 neighbor_dir = field.reverse_field.at(idx);
+						float cost = field.cost_field.at(idx);
+
+						if (cost == std::numeric_limits<float>::infinity() || glm::length(neighbor_dir) < 0.001f) continue;
+
+						if (cost > best_cost) {
+							best_dir = glm::normalize(glm::vec2(offset.x, offset.y));
+							best_cost = cost;
+						}
+					}
+
+					dir = best_dir;
+				}
 
 				registry.patch<Transform>(entity, [&](Transform& t) {
-					t.position.x -= dir.x * dt;
-					t.position.y -= dir.y * dt;
+					t.position.x += dir.x * dt;
+					t.position.y += dir.y * dt;
 					t.dirty = true;
 					});
 			}
@@ -132,7 +193,7 @@ namespace bnp {
 		glm::ivec2 grid_size,
 		bool attract
 	) {
-		constexpr float MAX_DELTA = 5.0f;    // Max allowed delta difference
+		constexpr float MAX_DELTA = 8.0f;    // Max allowed delta difference
 		constexpr float FALLOFF = 1.1f;       // Exponential falloff sharpness
 		constexpr int MIN_GOOD_NEIGHBORS = 8; // Require at least this many for smoothing
 
@@ -151,6 +212,10 @@ namespace bnp {
 
 		float base_cost = cost_field[y * grid_size.x + x];
 
+		if (base_cost == std::numeric_limits<float>::infinity()) {
+			return glm::vec2(0.0f); // Blocked cell, no direction
+		}
+
 		for (auto offset : offsets) {
 			int nx = x + offset.x;
 			int ny = y + offset.y;
@@ -162,8 +227,10 @@ namespace bnp {
 			float delta = neighbor_cost - base_cost;
 
 			// Check if neighbor is valid based on mode
-			bool valid = attract ? (delta < MAX_DELTA)    // attract: prefer lower neighbor
-				: (-delta < MAX_DELTA);  // repel: prefer higher neighbor
+			bool valid = attract
+				? (delta < MAX_DELTA)                   // attract mode: prefer lower cost
+				: (delta > 0.0f && delta < MAX_DELTA);   // flee mode: prefer higher cost only
+
 			if (!valid) continue;
 
 			good_neighbors++;
@@ -185,7 +252,7 @@ namespace bnp {
 
 			if (better) {
 				best_neighbor_cost = neighbor_cost;
-				best_direction = dir;
+				best_direction = attract ? dir : glm::normalize(glm::vec2(offset.x, offset.y));
 			}
 		}
 
@@ -201,6 +268,7 @@ namespace bnp {
 	void BehaviorManager::generate_direction_field(entt::registry& registry, FlowField2D& field) {
 		const int width = field.grid_size.x;
 		const int height = field.grid_size.y;
+
 		field.direction_field.resize(width * height, glm::vec2(0.0f));
 		field.reverse_field.resize(width * height, glm::vec2(0.0f));
 
@@ -218,9 +286,9 @@ namespace bnp {
 				int i = index(x, y);
 				if (field.cost_field[i] == std::numeric_limits<float>::infinity()) {
 					field.direction_field[i] = glm::vec2(0.0f);
+					field.reverse_field[i] = glm::vec2(0.0f);
 					continue;
 				}
-
 
 				field.direction_field[i] = smooth_direction(x, y, field.cost_field, field.grid_size, true);
 				field.reverse_field[i] = smooth_direction(x, y, field.cost_field, field.grid_size, false);
