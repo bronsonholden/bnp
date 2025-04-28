@@ -18,6 +18,8 @@ namespace bnp {
 		void render_sprites(const entt::registry& registry, const Renderer& renderer, const Camera& camera);
 		void render_water2d(const entt::registry& registry, const Renderer& renderer, const Camera& camera);
 
+		bool render_flow_field_2d_reverse;
+
 	private:
 		// built-in resources
 		Mesh sprite_mesh;

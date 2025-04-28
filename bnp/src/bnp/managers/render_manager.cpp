@@ -15,7 +15,8 @@ namespace bnp {
 	RenderManager::RenderManager()
 		: sprite_mesh(MeshFactory().box()),
 		line_mesh(MeshFactory().line()),
-		wireframe_material(MaterialFactory().wireframe_material())
+		wireframe_material(MaterialFactory().wireframe_material()),
+		render_flow_field_2d_reverse(false)
 	{
 	}
 
@@ -52,7 +53,13 @@ namespace bnp {
 
 			for (int y = 0; y < field.grid_size.y; ++y) {
 				for (int x = 0; x < field.grid_size.x; ++x) {
-					glm::vec2 dir = field.reverse_field.at(y * field.grid_size.x + x);
+					glm::vec2 dir(0);
+					if (render_flow_field_2d_reverse) {
+						dir = field.reverse_field.at(y * field.grid_size.x + x);
+					}
+					else {
+						dir = field.direction_field.at(y * field.grid_size.x + x);
+					}
 					if (glm::length(dir) < 0.001f) continue;
 					float angle_rad = atan2(dir.x, dir.y);
 

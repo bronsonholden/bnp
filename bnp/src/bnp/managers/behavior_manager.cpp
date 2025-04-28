@@ -156,7 +156,6 @@ namespace bnp {
 		}
 	}
 
-
 	void BehaviorManager::regenerate_if_stale(entt::registry& registry, float dt) {
 		auto view = registry.view<FlowField2D, Transform>();
 
@@ -195,7 +194,7 @@ namespace bnp {
 	) {
 		constexpr float MAX_DELTA = 8.0f;    // Max allowed delta difference
 		constexpr float FALLOFF = 1.1f;       // Exponential falloff sharpness
-		constexpr int MIN_GOOD_NEIGHBORS = 8; // Require at least this many for smoothing
+		int MIN_GOOD_NEIGHBORS = attract ? 8 : 3; // Require at least this many for smoothing
 
 		const glm::ivec2 offsets[] = {
 		    { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 },
@@ -205,16 +204,22 @@ namespace bnp {
 		glm::vec2 smoothed_result(0.0f);
 		glm::vec2 best_direction(0.0f);
 		float best_neighbor_cost = attract
-			? std::numeric_limits<float>::infinity()    // if attract: look for smaller cost
-			: -std::numeric_limits<float>::infinity();  // if repel: look for bigger cost
+			? std::numeric_limits<float>::infinity()
+			: -std::numeric_limits<float>::infinity();
 
 		int good_neighbors = 0;
 
 		float base_cost = cost_field[y * grid_size.x + x];
-
 		if (base_cost == std::numeric_limits<float>::infinity()) {
 			return glm::vec2(0.0f); // Blocked cell, no direction
 		}
+
+		// Threat assumed at center
+		glm::vec2 threat_pos(grid_size.x * 0.5f, grid_size.y * 0.5f);
+		glm::vec2 from_threat = glm::normalize(glm::vec2(x, y) - threat_pos);
+
+		// Track wall directions
+		bool block_up = false, block_down = false, block_left = false, block_right = false;
 
 		for (auto offset : offsets) {
 			int nx = x + offset.x;
@@ -222,44 +227,68 @@ namespace bnp {
 			if (nx < 0 || ny < 0 || nx >= grid_size.x || ny >= grid_size.y) continue;
 
 			float neighbor_cost = cost_field[ny * grid_size.x + nx];
-			if (neighbor_cost == std::numeric_limits<float>::infinity()) continue;
+
+			// Detect walls in cardinal directions
+			if (neighbor_cost == std::numeric_limits<float>::infinity()) {
+				if (offset == glm::ivec2(0, 1)) block_up = true;
+				if (offset == glm::ivec2(0, -1)) block_down = true;
+				if (offset == glm::ivec2(-1, 0)) block_left = true;
+				if (offset == glm::ivec2(1, 0)) block_right = true;
+				continue; // No smoothing contribution from blocked neighbor
+			}
 
 			float delta = neighbor_cost - base_cost;
 
-			// Check if neighbor is valid based on mode
 			bool valid = attract
-				? (delta < MAX_DELTA)                   // attract mode: prefer lower cost
-				: (delta > 0.0f && delta < MAX_DELTA);   // flee mode: prefer higher cost only
+				? (delta < MAX_DELTA)
+				: (delta > 0.0f);
 
 			if (!valid) continue;
 
 			good_neighbors++;
 
-			float weight = attract
+			float cost_weight = attract
 				? std::exp(-delta * FALLOFF)
 				: std::exp(delta * FALLOFF);
 
-			glm::vec2 dir = glm::normalize(glm::vec2(offset));
+			glm::vec2 neighbor_dir = glm::normalize(glm::vec2(offset));
 
-			// Only smooth if adding this direction makes smoothed result grow meaningfully
-			if (glm::length(smoothed_result) < glm::length(smoothed_result + dir * weight * 1.1f)) {
-				smoothed_result += dir * weight;
-			}
+			float escape_alignment = glm::dot(neighbor_dir, from_threat);
+			escape_alignment = glm::clamp(escape_alignment, 0.0f, 1.0f);
+			//escape_alignment = std::pow(escape_alignment, 2.0f);
+
+			float final_weight = attract
+				? cost_weight
+				: cost_weight * escape_alignment;
+
+			smoothed_result += neighbor_dir * final_weight;
 
 			// Pick best single neighbor
-			bool better = attract ? (neighbor_cost < best_neighbor_cost)
+			bool better = attract
+				? (neighbor_cost < best_neighbor_cost)
 				: (neighbor_cost > best_neighbor_cost);
 
 			if (better) {
 				best_neighbor_cost = neighbor_cost;
-				best_direction = attract ? dir : glm::normalize(glm::vec2(offset.x, offset.y));
+				best_direction = neighbor_dir;
 			}
 		}
 
+		if (best_direction.y > 0 && block_up) best_direction.y = 0.0f;
+		if (best_direction.y < -0 && block_down) best_direction.y = 0.0f;
+		if (best_direction.x < -0 && block_left) best_direction.x = 0.0f;
+		if (best_direction.x > 0 && block_right) best_direction.x = 0.0f;
+
 		if (good_neighbors < MIN_GOOD_NEIGHBORS) {
-			// Not enough good neighbors — fallback to best neighbor
 			return best_direction;
 		}
+
+		// --- Clamp smoothed direction if it points into a wall ---
+		if (smoothed_result.y > 0 && block_up) smoothed_result.y = 0.0f;
+		if (smoothed_result.y < -0 && block_down) smoothed_result.y = 0.0f;
+		if (smoothed_result.x < -0 && block_left) smoothed_result.x = 0.0f;
+		if (smoothed_result.x > 0 && block_right) smoothed_result.x = 0.0f;
+		// ----------------------------------------------------------
 
 		return glm::length(smoothed_result) > 0.001f ? glm::normalize(smoothed_result) : best_direction;
 	}

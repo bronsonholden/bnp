@@ -337,6 +337,12 @@ namespace bnp {
 				node_inspector.render();
 			}
 
+			ImGui::Begin("Debug Rendering");
+			if (ImGui::Button("Toggle Flow Field Render Reverse")) {
+				render_manager.render_flow_field_2d_reverse = !render_manager.render_flow_field_2d_reverse;
+			}
+			ImGui::End();
+
 			ImGui::Render();
 
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
