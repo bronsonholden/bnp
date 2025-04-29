@@ -56,6 +56,7 @@ namespace bnp {
 
 	struct BehaviorGoal {
 		enum Type {
+			Idle,
 			Flee,
 			Follow
 		} type;
