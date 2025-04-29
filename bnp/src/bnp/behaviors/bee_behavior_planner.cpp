@@ -48,10 +48,18 @@ namespace bnp {
 					});
 			}
 
+			// if idling, wander
+			if (brain.goals.size() == 1 && brain.goals.front().type == BehaviorGoal::Idle) {
+
+			}
+
 			if (!brain.goals.size()) {
 				// todo: add return to origin
-				auto& body = registry.get<PhysicsBody2D>(bee);
-				body.body->SetLinearVelocity(b2Vec2(0, 0));
+				brain.goals.push_back(BehaviorGoal{
+					BehaviorGoal::Type::Idle,
+					0.0f,
+					1.0f
+					});
 			}
 		}
 	}
@@ -67,6 +75,9 @@ namespace bnp {
 			switch (goal.type) {
 			case goal.Flee:
 				execute_flee(registry, goal, bee);
+				break;
+			case goal.Idle:
+				execute_idle(registry, goal, bee);
 				break;
 			default:
 				;
@@ -182,6 +193,10 @@ namespace bnp {
 			});
 	}
 
+	void BeeBehaviorPlanner::execute_idle(entt::registry& registry, const BehaviorGoal& goal, entt::entity bee) {
+		auto& body = registry.get<PhysicsBody2D>(bee);
+		body.body->SetLinearVelocity(b2Vec2(0, 0));
+	}
 
 	std::vector<entt::entity> BeeBehaviorPlanner::get_bees(entt::registry& registry) {
 		std::vector<entt::entity> bees;

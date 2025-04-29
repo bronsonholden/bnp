@@ -13,6 +13,10 @@ namespace bnp {
 			return "Flee";
 		case BehaviorGoal::Follow:
 			return "Follow";
+		case BehaviorGoal::Idle:
+			return "Idle";
+		default:
+			return "<Unnamed Behavior>";
 		}
 	}
 

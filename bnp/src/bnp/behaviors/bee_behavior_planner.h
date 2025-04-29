@@ -20,6 +20,7 @@ namespace bnp {
 		void execute_goals(entt::registry& registry, std::vector<entt::entity> bees, float dt);
 
 		void execute_flee(entt::registry& registry, const BehaviorGoal& goal, entt::entity bee);
+		void execute_idle(entt::registry& registry, const BehaviorGoal& goal, entt::entity bee);
 	};
 
 }
