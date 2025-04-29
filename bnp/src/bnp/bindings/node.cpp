@@ -188,7 +188,11 @@ namespace bnp {
 		Motility motility{ 1.0f };
 
 		lua_getfield(L, 2, "speed");
-		if (lua_isnumber(L, -1)) motility.speed = lua_tonumber(L, 2);
+		if (lua_isnumber(L, -1)) motility.speed = lua_tonumber(L, -1);
+		lua_pop(L, 1);
+
+		lua_getfield(L, 2, "flying");
+		motility.flying = lua_isboolean(L, -1) && lua_toboolean(L, -1);
 		lua_pop(L, 1);
 
 		node.add_component<Motility>(motility);
@@ -295,7 +299,6 @@ namespace bnp {
 		body_def.awake = true;
 		body_def.enabled = true;
 		body_def.position = position;
-
 
 		lua_getfield(L, 2, "gravityScale");
 		// ["PhysicsBody2D", params, gravityScale]

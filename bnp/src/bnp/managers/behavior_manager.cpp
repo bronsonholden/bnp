@@ -238,9 +238,6 @@ namespace bnp {
 		glm::vec2 threat_pos(grid_size.x * 0.5f, grid_size.y * 0.5f);
 		glm::vec2 from_threat = glm::normalize(glm::vec2(x, y) - threat_pos);
 
-		// Track wall directions
-		bool block_up = false, block_down = false, block_left = false, block_right = false;
-
 		for (auto offset : offsets) {
 			int nx = x + offset.x;
 			int ny = y + offset.y;
@@ -250,10 +247,6 @@ namespace bnp {
 
 			// Detect walls in cardinal directions
 			if (neighbor_cost == std::numeric_limits<float>::infinity()) {
-				if (offset == glm::ivec2(0, 1)) block_up = true;
-				if (offset == glm::ivec2(0, -1)) block_down = true;
-				if (offset == glm::ivec2(-1, 0)) block_left = true;
-				if (offset == glm::ivec2(1, 0)) block_right = true;
 				continue; // No smoothing contribution from blocked neighbor
 			}
 
@@ -275,7 +268,6 @@ namespace bnp {
 
 			float escape_alignment = glm::dot(neighbor_dir, from_threat);
 			escape_alignment = glm::clamp(escape_alignment, 0.0f, 1.0f);
-			//escape_alignment = std::pow(escape_alignment, 2.0f);
 
 			float final_weight = attract
 				? cost_weight
@@ -294,21 +286,9 @@ namespace bnp {
 			}
 		}
 
-		if (best_direction.y > 0 && block_up) best_direction.y = 0.0f;
-		if (best_direction.y < -0 && block_down) best_direction.y = 0.0f;
-		if (best_direction.x < -0 && block_left) best_direction.x = 0.0f;
-		if (best_direction.x > 0 && block_right) best_direction.x = 0.0f;
-
 		if (good_neighbors < MIN_GOOD_NEIGHBORS) {
 			return best_direction;
 		}
-
-		// --- Clamp smoothed direction if it points into a wall ---
-		if (smoothed_result.y > 0 && block_up) smoothed_result.y = 0.0f;
-		if (smoothed_result.y < -0 && block_down) smoothed_result.y = 0.0f;
-		if (smoothed_result.x < -0 && block_left) smoothed_result.x = 0.0f;
-		if (smoothed_result.x > 0 && block_right) smoothed_result.x = 0.0f;
-		// ----------------------------------------------------------
 
 		return glm::length(smoothed_result) > 0.001f ? glm::normalize(smoothed_result) : best_direction;
 	}

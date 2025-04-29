@@ -28,7 +28,7 @@ namespace bnp {
 					for (auto& goal : b.goals) {
 						// keep fleeing from continuing threats
 						if (goal.type == goal.Flee && goal.target == threat) {
-							goal.motivation = 0.5f;
+							goal.motivation = 0.15f;
 							current = true;
 							break;
 						}
@@ -86,11 +86,10 @@ namespace bnp {
 
 		auto& field = registry.get<FlowField2D>(goal.target);
 
+		glm::vec2 field_position = glm::vec2(transform.position) - field.origin;
 
-		glm::vec2 local = glm::vec2(transform.position) - field.origin;
-
-		int fx = std::floor(local.x / field.cell_size);
-		int fy = std::floor(local.y / field.cell_size);
+		int fx = std::floor(field_position.x / field.cell_size);
+		int fy = std::floor(field_position.y / field.cell_size);
 
 		if (fx < 0 || fx >= field.grid_size.x || fy < 0 || fy >= field.grid_size.y) {
 			return;
@@ -99,6 +98,7 @@ namespace bnp {
 		int idx = fy * field.grid_size.x + fx;
 		glm::vec2 dir = field.reverse_field.at(idx);
 		float cost = field.cost_field.at(idx);
+		bool blocked_left = false, blocked_right = false, blocked_up = false, blocked_down = false;
 
 		if (cost == std::numeric_limits<float>::infinity() || glm::length(dir) < 0.001f) {
 			const glm::ivec2 offsets[] = {
@@ -111,9 +111,9 @@ namespace bnp {
 
 			for (auto& offset : offsets) {
 				int ox = fx + offset.x;
-				int oy = fx + offset.y;
+				int oy = fy + offset.y;
 
-				if (fx < 0 || fx >= field.grid_size.x || fy < 0 || fy >= field.grid_size.y) {
+				if (ox < 0 || ox >= field.grid_size.x || oy < 0 || oy >= field.grid_size.y) {
 					continue;
 				}
 
@@ -121,7 +121,9 @@ namespace bnp {
 				glm::vec2 neighbor_dir = field.reverse_field.at(idx);
 				float cost = field.cost_field.at(idx);
 
-				if (cost == std::numeric_limits<float>::infinity() || glm::length(neighbor_dir) < 0.001f) continue;
+				if (cost == std::numeric_limits<float>::infinity() || glm::length(neighbor_dir) < 0.001f) {
+					continue;
+				}
 
 				if (cost > best_cost) {
 					best_dir = glm::normalize(glm::vec2(offset.x, offset.y));
@@ -130,12 +132,50 @@ namespace bnp {
 			}
 
 			dir = best_dir;
+
 		}
+
+		// calculate blocked cardinal cells to snap movement direction to avoid blocked cells
+		const glm::ivec2 offsets[] = {
+			{ 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 }
+		};
+		for (auto& offset : offsets) {
+			int ox = fx + offset.x;
+			int oy = fy + offset.y;
+
+			if (ox < 0 || ox >= field.grid_size.x || oy < 0 || oy >= field.grid_size.y) {
+				continue;
+			}
+
+			int idx = oy * field.grid_size.x + ox;
+			float cost = field.cost_field.at(idx);
+
+			if (cost == std::numeric_limits<float>::infinity()) {
+				if (offset.x < 0) blocked_left = true;
+				if (offset.x > 0) blocked_right = true;
+				if (offset.y < 0) blocked_down = true;
+				if (offset.y > 0) blocked_up = true;
+				continue;
+			}
+		}
+
+		auto& threat_transform = registry.get<Transform>(goal.target);
+		glm::vec2 threat_position = threat_transform.world_transform[3];
+		glm::vec2 bee_position = glm::vec2(transform.world_transform[3]);
+		glm::vec2 threat_dir = threat_position - bee_position;
+		dir = dir + (-threat_dir * 0.7f);
+
+		glm::vec2 cell_position = field_position - glm::vec2(fx * field.cell_size, fy * field.cell_size);
+
+		if (blocked_left && dir.x < 0 && (cell_position.x / field.cell_size) < 0.1f) dir.x = 0;
+		if (blocked_right && dir.x > 0 && (cell_position.x / field.cell_size) > 0.9f) dir.x = 0;
+		if (blocked_down && dir.y < 0 && (cell_position.y / field.cell_size) < 0.1f) dir.y = 0;
+		if (blocked_up && dir.y > 0 && (cell_position.y / field.cell_size) > 0.9f) dir.y = 0;
 
 		dir = glm::normalize(dir);
 
-		registry.patch<PhysicsBody2D>(bee, [&](PhysicsBody2D& b) {
-			b.body->SetLinearVelocity(b2Vec2(dir.x, dir.y));
+		registry.patch<Motility>(bee, [&](Motility& m) {
+			m.impulse = glm::vec3(dir, 0);
 			});
 	}
 

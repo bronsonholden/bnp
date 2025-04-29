@@ -82,6 +82,9 @@ namespace bnp {
 	lua_State* ScriptFactory::load_from_file(Node& node, const std::filesystem::path& path, lua_State* L) {
 		if (L == nullptr) L = luaL_newstate();
 
+		luaL_requiref(L, LUA_MATHLIBNAME, luaopen_math, 1);
+		lua_pop(L, 1);
+
 		entt::registry& registry = node.get_registry();
 		Scripts& scripts = registry.get_or_emplace<Scripts>(node.get_entity_id(), Scripts{});
 

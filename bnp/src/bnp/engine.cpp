@@ -131,12 +131,12 @@ namespace bnp {
 		repulsor_field.add_component<Parent>(Parent{ squirrel.get_entity_id() });
 		repulsor_field.add_component<Transform>(Transform{ glm::vec3(0) });
 		squirrel.add_component<FlowField2D>(FlowField2D{
-			0.25f,
-			{ 50, 50 },
+			0.2f,
+			{ 40, 40 },
 			{ 0, 0 }
 			});
 
-		squirrel.add_component<Motility>(Motility{ 2.5f });
+		squirrel.add_component<Motility>(Motility{ 1.8f });
 		squirrel.add_component<Controllable>(Controllable{ true });
 
 		{

@@ -86,11 +86,16 @@ namespace bnp {
 		lua_pop(L, 1);
 		// [params]
 
+		lua_getfield(L, 1, "sensor");
+		fixture_def.isSensor = lua_isboolean(L, -1) && lua_toboolean(L, -1);
+		lua_pop(L, 1);
+		// [params]
+
 		body_shape.SetAsBox(hw, hh);
 		fixture_def.shape = &body_shape;
-		fixture_def.density = 1.0f;
-		fixture_def.friction = 0.3f;
-		fixture_def.restitution = 0.0f;
+		fixture_def.density = 6.0f;
+		fixture_def.friction = 0.8f;
+		fixture_def.restitution = 0.5f;
 
 		body.body->CreateFixture(&fixture_def);
 

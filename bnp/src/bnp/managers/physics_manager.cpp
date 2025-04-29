@@ -9,10 +9,10 @@ namespace bnp {
 	}
 
 	void PhysicsManager::update(entt::registry& registry, float dt) {
-		const int velocityIterations = 1;
-		const int positionIterations = 1;
+		const int velocity_iterations = 8;
+		const int position_iterations = 3;
 
-		world.Step(dt, velocityIterations, positionIterations);
+		world.Step(dt, velocity_iterations, position_iterations);
 
 		auto view = registry.view<PhysicsBody2D, Transform>();
 
@@ -124,7 +124,7 @@ namespace bnp {
 				// less emphasis on horizontal movement
 				float speed = glm::length(glm::vec2(velocity.x / 2, velocity.y));
 				b2Fixture* fixture = body.body->GetFixtureList();
-				if (!fixture) continue;
+				if (!fixture || fixture->IsSensor()) continue;
 
 				b2AABB aabb = fixture->GetAABB(0);
 

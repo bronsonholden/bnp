@@ -9,4 +9,6 @@ water = prefab.load("resources/scripts/water_prefab.lua", {
 	height = 0.15
 })
 
-bee = prefab.load("resources/scripts/bee_prefab.lua")
+for i=1,10 do
+	prefab.load("resources/scripts/bee_prefab.lua")
+end
