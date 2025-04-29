@@ -47,6 +47,12 @@ namespace bnp {
 					threat
 					});
 			}
+
+			if (!brain.goals.size()) {
+				// todo: add return to origin
+				auto& body = registry.get<PhysicsBody2D>(bee);
+				body.body->SetLinearVelocity(b2Vec2(0, 0));
+			}
 		}
 	}
 
@@ -54,12 +60,7 @@ namespace bnp {
 		for (auto bee : bees) {
 			auto& brain = registry.get<BehaviorBrain>(bee);
 
-			if (!brain.goals.size()) {
-				// todo: add return to origin
-				auto& body = registry.get<PhysicsBody2D>(bee);
-				body.body->SetLinearVelocity(b2Vec2(0, 0));
-				continue;
-			}
+			if (!brain.goals.size()) continue;
 
 			auto& goal = brain.goals.front();
 
