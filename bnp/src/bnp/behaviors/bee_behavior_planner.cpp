@@ -1,6 +1,7 @@
 #include <bnp/components/physics.h>
 #include <bnp/components/transform.h>
 #include <bnp/behaviors/bee_behavior_planner.h>
+#include <bnp/helpers/random_float_generator.hpp>
 
 #include <glm/glm.hpp>
 #include <iostream>
@@ -20,31 +21,32 @@ namespace bnp {
 			std::vector<entt::entity> threats = get_threats(registry, bee);
 			auto& brain = registry.get_or_emplace<BehaviorBrain>(bee, BehaviorBrain{});
 
-			registry.patch<BehaviorBrain>(bee, [&](BehaviorBrain& b) {
-				// flee behavior
-				for (auto threat : threats) {
-					bool current = false;
+			// flee behavior
+			for (auto threat : threats) {
+				bool current = false;
 
-					for (auto& goal : b.goals) {
-						// keep fleeing from continuing threats
-						if (goal.type == goal.Flee && goal.target == threat) {
-							goal.motivation = 0.15f;
-							current = true;
-							break;
-						}
+				for (auto& goal : brain.goals) {
+					// keep fleeing from continuing threats
+					if (goal.type == goal.Flee && goal.target == threat) {
+						// randomize how long flee motivation lasts after no longer a threat
+						// todo: maybe only generate once, when adding the flee goal
+						RandomFloatGenerator rfg(0.25f, 0.65f);
+						goal.motivation = rfg.generate();
+						current = true;
+						break;
 					}
-
-					// if already a threat, we don't need to add another goal
-					if (current) continue;
-
-					b.goals.push_back(BehaviorGoal{
-						BehaviorGoal::Type::Flee,
-						1.0f,
-						0.5f,
-						threat
-						});
 				}
-				});
+
+				// if already a threat, we don't need to add another goal
+				if (current) continue;
+
+				brain.goals.insert(brain.goals.begin(), BehaviorGoal{
+					BehaviorGoal::Type::Flee,
+					1.0f,
+					0.5f,
+					threat
+					});
+			}
 		}
 	}
 
