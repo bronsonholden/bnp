@@ -60,7 +60,7 @@ namespace bnp {
 					else {
 						dir = field.direction_field.at(y * field.grid_size.x + x);
 					}
-					//if (glm::length(dir) < 0.001f) continue;
+					if (glm::length(dir) < 0.001f) continue;
 					float angle_rad = atan2(dir.x, dir.y);
 
 					glm::vec2 cell_offset = glm::vec2(field.cell_size / 2, field.cell_size / 2);
@@ -75,7 +75,7 @@ namespace bnp {
 
 					glm::vec4 color(0.0f, 1.0f, 0.0f, 1.0f);
 					renderer.render_wireframe(camera, sprite_mesh, wireframe_material, cell_world_transform, color);
-					if (glm::length(dir) > 0) renderer.render_line(camera, line_mesh, wireframe_material, world_transform);
+					renderer.render_line(camera, line_mesh, wireframe_material, world_transform);
 				}
 			}
 		}

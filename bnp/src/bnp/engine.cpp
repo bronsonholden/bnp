@@ -152,6 +152,7 @@ namespace bnp {
 
 			b2FixtureDef fixture_def;
 			fixture_def.shape = &box;
+			fixture_def.friction = 0.0f;
 
 			// Attach the shape to the ground body
 			physics_manager.add_body(ground, body_def, fixture_def);
@@ -172,6 +173,49 @@ namespace bnp {
 
 			b2FixtureDef fixture_def;
 			fixture_def.shape = &box;
+			fixture_def.friction = 0.0f;
+
+			// Attach the shape to the ground body
+			physics_manager.add_body(ceiling, body_def, fixture_def);
+
+			ceiling.add_component<Renderable>(true);
+		}
+
+		{
+			Node ceiling = test_scene.create_node();
+
+			b2BodyDef body_def;
+			body_def.position.Set(4.0f, 0.1f);  // Set Y to your desired "floor"
+			body_def.type = b2_staticBody;
+
+			// Create a box shape for the ground
+			b2PolygonShape box;
+			box.SetAsBox(0.5f, 0.2f);  // Width, Height (flat platform)
+
+			b2FixtureDef fixture_def;
+			fixture_def.shape = &box;
+			fixture_def.friction = 0.0f;
+
+			// Attach the shape to the ground body
+			physics_manager.add_body(ceiling, body_def, fixture_def);
+
+			ceiling.add_component<Renderable>(true);
+		}
+
+		{
+			Node ceiling = test_scene.create_node();
+
+			b2BodyDef body_def;
+			body_def.position.Set(-4.0f, 0.6f);  // Set Y to your desired "floor"
+			body_def.type = b2_staticBody;
+
+			// Create a box shape for the ground
+			b2PolygonShape box;
+			box.SetAsBox(0.5f, 0.2f);  // Width, Height (flat platform)
+
+			b2FixtureDef fixture_def;
+			fixture_def.shape = &box;
+			fixture_def.friction = 0.0f;
 
 			// Attach the shape to the ground body
 			physics_manager.add_body(ceiling, body_def, fixture_def);
@@ -192,6 +236,7 @@ namespace bnp {
 
 			b2FixtureDef fixture_def;
 			fixture_def.shape = &box;
+			fixture_def.friction = 0.0f;
 
 			// Attach the shape to the ground body
 			physics_manager.add_body(pillar, body_def, fixture_def);

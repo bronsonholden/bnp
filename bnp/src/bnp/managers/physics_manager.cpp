@@ -72,7 +72,7 @@ namespace bnp {
 			b2FixtureDef fixture_def;
 			fixture_def.shape = &body_shape;
 			fixture_def.density = 5.0f;
-			fixture_def.friction = 0.3f;
+			fixture_def.friction = 0.0f;
 			fixture_def.restitution = 0.0f;
 
 			body_def.type = b2_dynamicBody;
@@ -80,6 +80,7 @@ namespace bnp {
 			body_def.enabled = true;
 			body_def.position = b2Vec2(transform.position.x, transform.position.y);
 			body_def.gravityScale = 1.0f;
+			body_def.fixedRotation = true;
 
 			b2Body* body = world.CreateBody(&body_def);
 
