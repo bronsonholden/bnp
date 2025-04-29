@@ -2,7 +2,9 @@
 #include <bnp/ui/components/transform_inspector.h>
 #include <bnp/ui/components/instances_inspector.h>
 #include <bnp/ui/components/sprite_inspector.h>
+#include <bnp/ui/components/behavior_brain_inspector.h>
 #include <bnp/components/physics.h>
+#include <bnp/components/behavior.h>
 
 namespace bnp {
 
@@ -85,6 +87,15 @@ namespace bnp {
 				b2Vec2 position = body.body->GetTransform().p;
 				float pos[2] = { position.x, position.y };
 				ImGui::InputFloat2("Position", pos, "%.3f", ImGuiInputTextFlags_CharsScientific);
+				ImGui::TreePop();
+			}
+		}
+
+		if (node.has_component<BehaviorBrain>()) {
+			if (ImGui::TreeNode("BehaviorBrain")) {
+				BehaviorBrainInspector brain_inspector(node);
+
+				brain_inspector.render();
 				ImGui::TreePop();
 			}
 		}
