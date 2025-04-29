@@ -18,6 +18,8 @@ namespace bnp {
 		float current_air_control = 1.0f;
 		float air_control_ramp = 0.985f;
 		float fall_time = 0.0f;
+		// how quickly directions can change when flying
+		float flying_response = 0.02f;
 		//bool sprinting;
 		//float sprinting_mul;
 		bool air_control = false;
