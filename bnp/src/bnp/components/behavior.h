@@ -15,7 +15,6 @@ namespace bnp {
 		// world-space position of cell containing target
 		glm::vec2 target;
 
-
 		bool attract = false;
 		bool init = false;
 		bool dirty = true;
