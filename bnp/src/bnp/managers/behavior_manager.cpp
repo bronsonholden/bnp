@@ -7,33 +7,6 @@
 
 namespace bnp {
 
-	glm::vec2 nearest_offset(const glm::vec2& input) {
-		if (glm::length(input) < 0.001f) {
-			return glm::vec2(0.0f); // No direction
-		}
-
-		glm::vec2 normalized = glm::normalize(input);
-
-		const glm::vec2 directions[] = {
-		    { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 }, // cardinal
-		    { 1, 1 }, { -1, 1 }, { -1, -1 }, { 1, -1 } // diagonals
-		};
-
-		glm::vec2 best_dir(0.0f);
-		float best_dot = -std::numeric_limits<float>::infinity();
-
-		for (auto& dir : directions) {
-			glm::vec2 dir_normalized = glm::normalize(dir); // for diagonals
-			float dot = glm::dot(normalized, dir_normalized);
-			if (dot > best_dot) {
-				best_dot = dot;
-				best_dir = dir_normalized;
-			}
-		}
-
-		return best_dir;
-	}
-
 	BehaviorManager::BehaviorManager(PhysicsManager& _physics_manager)
 		: physics_manager(_physics_manager)
 	{
@@ -44,100 +17,10 @@ namespace bnp {
 
 	}
 
-	void BehaviorManager::update_bee_behaviors(entt::registry& registry, float dt) {
-		auto view = registry.view<BeeBehavior, Transform>();
-
-		for (auto entity : view) {
-			auto potential_threats = registry.view<FlowField2D>();
-			auto& behavior = view.get<BeeBehavior>(entity);
-			auto& transform = view.get<Transform>(entity);
-
-			std::vector<entt::entity> threats;
-
-			for (auto pt : potential_threats) {
-				auto& f = potential_threats.get<FlowField2D>(pt);
-
-				if (glm::length(f.target - glm::vec2(transform.position)) < 1.5f) {
-					threats.push_back(pt);
-				}
-			}
-
-			for (auto threat : threats) {
-				auto& field = potential_threats.get<FlowField2D>(threat);
-
-				glm::vec2 local = glm::vec2(transform.position) - field.origin;
-
-				int fx = std::floor(local.x / field.cell_size);
-				int fy = std::floor(local.y / field.cell_size);
-
-				if (fx < 0 || fx >= field.grid_size.x || fy < 0 || fy >= field.grid_size.y) {
-					continue;
-				}
-
-				int idx = fy * field.grid_size.x + fx;
-				glm::vec2 dir = field.reverse_field.at(idx);
-				float cost = field.cost_field.at(idx);
-
-				if (cost == std::numeric_limits<float>::infinity() || glm::length(dir) < 0.001f) {
-					const glm::ivec2 offsets[] = {
-						{ 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 },
-						{ 1, 1 }, { -1, 1 }, { 1, -1 }, { -1, -1 }
-					};
-
-					glm::vec2 best_dir(0);
-					float best_cost = -std::numeric_limits<float>::infinity();
-
-					for (auto& offset : offsets) {
-						int ox = fx + offset.x;
-						int oy = fx + offset.y;
-
-						if (fx < 0 || fx >= field.grid_size.x || fy < 0 || fy >= field.grid_size.y) {
-							continue;
-						}
-
-						int idx = oy * field.grid_size.x + ox;
-						glm::vec2 neighbor_dir = field.reverse_field.at(idx);
-						float cost = field.cost_field.at(idx);
-
-						if (cost == std::numeric_limits<float>::infinity() || glm::length(neighbor_dir) < 0.001f) continue;
-
-						if (cost > best_cost) {
-							best_dir = glm::normalize(glm::vec2(offset.x, offset.y));
-							best_cost = cost;
-						}
-					}
-
-					dir = best_dir;
-				}
-
-				registry.patch<Transform>(entity, [&](Transform& t) {
-					t.position.x += dir.x * dt;
-					t.position.y += dir.y * dt;
-					t.dirty = true;
-					});
-			}
-		}
-	}
 
 	void BehaviorManager::update(entt::registry& registry, float dt) {
 		update_targets(registry, dt);
 		regenerate_if_stale(registry, dt);
-
-		//update_bee_behaviors(registry, dt);
-
-
-		// decay goals; planners handle cleanup
-		// todo: move to method
-		//auto view = registry.view<BehaviorBrain>();
-
-		//for (auto entity : view) {
-		//	auto& brain = view.get<BehaviorBrain>(entity);
-
-		//	for (auto& goal : brain.goals) {
-		//		goal.motivation -= goal.decay * dt;
-
-		//	}
-		//}
 	}
 
 	void BehaviorManager::update_targets(entt::registry& registry, float dt) {
