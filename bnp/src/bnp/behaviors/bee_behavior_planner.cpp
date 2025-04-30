@@ -175,11 +175,9 @@ namespace bnp {
 
 			switch (goal.type) {
 			case goal.Flee:
-				cout << "executing flee" << endl;
 				execute_flee(registry, goal, bee);
 				break;
 			case goal.Idle:
-				cout << "executing idle" << endl;
 				execute_idle(registry, goal, bee);
 				break;
 			case goal.Visit:
