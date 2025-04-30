@@ -51,6 +51,8 @@ namespace bnp {
 		for (auto entity : view) {
 			auto& field = view.get<FlowField2D>(entity);
 
+			if (!field.init) continue;
+
 			for (int y = 0; y < field.grid_size.y; ++y) {
 				for (int x = 0; x < field.grid_size.x; ++x) {
 					glm::vec2 dir(0);

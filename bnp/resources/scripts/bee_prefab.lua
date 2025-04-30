@@ -2,7 +2,7 @@
 Creates a bee sprite
 ]]
 
-node:AddComponent("Transform", { x = math.random(-200, 200) * 0.001, y = math.random(20, 50) * 0.01, z = 0 })
+node:AddComponent("Transform", { x = math.random(-200, 200) * 0.001, y = math.random(40, 50) * 0.01, z = 0 })
     :SetScale({ x = 0.25, y = 0.25, z = 0.25 })
 node:AddComponent("Texture", { path = "resources/sprites/bee/bee.png" })
 node:AddComponent("Sprite", { path = "resources/sprites/bee/bee.json" })

@@ -58,16 +58,25 @@ namespace bnp {
 		enum Type {
 			Idle,
 			Flee,
-			Follow
+			Follow,
+			Visit
 		} type;
 
 		// todo: behavior decay
 		// how much motivation decays per second
 		float decay;
-		// while > 0, this goal can be executed
+		// while > 0, this goal can be executed. when zero, goal is removed
+		// and, if transient is true, target entity is destroyed.
 		float motivation;
+		// max distance to satisfy visit or flee, min distance to follow
+		float radius;
 
 		entt::entity target;
+		// if true, `target` is destroyed when goal completes
+		bool transient = false;
+
+		// time spent in this behavior
+		float elapsed_time = 0.0f;
 	};
 
 	struct BehaviorBrain {

@@ -125,25 +125,19 @@ namespace bnp {
 
 		//update_bee_behaviors(registry, dt);
 
-		// update behaviors
+
+		// decay goals; planners handle cleanup
 		// todo: move to method
-		auto view = registry.view<BehaviorBrain>();
+		//auto view = registry.view<BehaviorBrain>();
 
-		for (auto entity : view) {
-			auto& brain = view.get<BehaviorBrain>(entity);
+		//for (auto entity : view) {
+		//	auto& brain = view.get<BehaviorBrain>(entity);
 
-			for (auto& goal : brain.goals) {
-				goal.motivation -= goal.decay * dt;
-			}
+		//	for (auto& goal : brain.goals) {
+		//		goal.motivation -= goal.decay * dt;
 
-			auto new_end = std::remove_if(brain.goals.begin(), brain.goals.end(), [](BehaviorGoal& goal) {
-				return goal.motivation <= 0;
-				});
-
-			if (new_end != brain.goals.end()) {
-				brain.goals.erase(new_end, brain.goals.end());
-			}
-		}
+		//	}
+		//}
 	}
 
 	void BehaviorManager::update_targets(entt::registry& registry, float dt) {
@@ -197,8 +191,16 @@ namespace bnp {
 			// if target changed grid location
 			regenerate = regenerate || field.target.x < bbox.x || field.target.x > bbox.z || field.target.y < bbox.y || field.target.y > bbox.w;
 
+			// todo: check if water overlap, update if it has changed
+			// do this by calculating which columns include water, then
+			// stepping down (from the highest row which water touches).
+			// if any of these water-occupied cells have a valid cost,
+			// regenerate the field
+
 			if (regenerate) {
 				registry.patch<FlowField2D>(entity, [&](FlowField2D& field) {
+					// todo: these should go in a utility fn so that they can be generated
+					// on-demand elsewhere
 					generate_cost_field(registry, field);
 					generate_direction_field(registry, field);
 					});
