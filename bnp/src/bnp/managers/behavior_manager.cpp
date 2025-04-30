@@ -32,24 +32,7 @@ namespace bnp {
 
 			glm::vec4 position = transform.world_transform * glm::vec4(0, 0, 0, 1);
 
-			const int tx = field.grid_size.x / 2;
-			const int ty = field.grid_size.y / 2;
-
-			float snap_x = std::floor(position.x / field.cell_size) * field.cell_size;
-			float snap_y = std::floor(position.y / field.cell_size) * field.cell_size;
-
-			if (glm::length(field.target - glm::vec2(snap_x, snap_y)) > 0.001f) {
-				// reposition the origin
-				field.origin.x = snap_x - tx * field.cell_size;
-				field.origin.y = snap_y - ty * field.cell_size;
-
-				// reposition the target
-				field.target.x = snap_x;
-				field.target.y = snap_y;
-
-				field.init = false;
-			}
-
+			field.reposition_to_target(glm::vec2(position.x, position.y));
 		}
 	}
 

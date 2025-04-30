@@ -27,6 +27,10 @@ namespace bnp {
 		// direction vectors for repulsion.
 		// todo: might remove and just use steering to handle repulsion
 		std::vector<glm::vec2> reverse_field;
+
+		void reposition_to_target(glm::vec2 worldspace_target);
+		bool get_cell_position(glm::ivec2& result, glm::vec2 worlspace_position);
+		bool is_target_cell(glm::vec2 worldspace_position);
 	};
 
 	struct BeeBehavior {
