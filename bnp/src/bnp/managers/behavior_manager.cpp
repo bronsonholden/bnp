@@ -43,20 +43,6 @@ namespace bnp {
 			auto& field = view.get<FlowField2D>(entity);
 			bool regenerate = !field.init;
 
-			const int tx = field.grid_size.x / 2;
-			const int ty = field.grid_size.y / 2;
-
-			// world-space bounding box of the target cell
-			glm::vec4 bbox(
-				field.target.x,
-				field.target.y,
-				field.target.x + field.cell_size,
-				field.target.y + field.cell_size
-			);
-
-			// if target changed grid location
-			regenerate = regenerate || field.target.x < bbox.x || field.target.x > bbox.z || field.target.y < bbox.y || field.target.y > bbox.w;
-
 			// todo: check if water overlap, update if it has changed
 			// do this by calculating which columns include water, then
 			// stepping down (from the highest row which water touches).
