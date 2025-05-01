@@ -94,4 +94,17 @@ namespace bnp {
 		std::vector<BehaviorGoal> goals;
 	};
 
+	// Special type of node for nesting behaviors
+	struct BehaviorNest {
+		entt::entity entity;
+		// when beyond the is distance, dwellers should return
+		float min_return_distance = 1.0f;
+	};
+
+	// Tag for nodes which are transient in behavior implementations, mostly
+	// for debugging (toggle visibility in inspectors, etc.)
+	struct Transient {
+		bool value;
+	};
+
 }

@@ -9,6 +9,10 @@ water = prefab.load("resources/scripts/water_prefab.lua", {
 	height = 0.15
 })
 
+nest = prefab.load("resources/scripts/behavior_nest_prefab.lua")
+nest:GetComponent("Transform"):SetPosition({ y = 0.5 })
+
 for i=1,20 do
-	prefab.load("resources/scripts/bee_prefab.lua")
+	bee = prefab.load("resources/scripts/bee_prefab.lua")
+	bee:AddComponent("BehaviorNest", nest)
 end

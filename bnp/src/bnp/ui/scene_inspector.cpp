@@ -1,4 +1,5 @@
 #include <bnp/ui/scene_inspector.h>
+#include <bnp/components/behavior.h>
 
 namespace bnp {
 
@@ -23,6 +24,9 @@ namespace bnp {
 
 			registry.each([&](entt::entity entity) {
 				Node node(registry, entity);
+
+				if (registry.all_of<Transient>(entity)) return;
+
 				ImGui::TableNextRow();
 				ImGui::TableNextColumn();
 

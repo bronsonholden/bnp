@@ -100,6 +100,12 @@ namespace bnp {
 			}
 		}
 
+		if (node.has_component<FlowField2D>()) {
+			if (ImGui::TreeNode("FlowField2D")) {
+				ImGui::TreePop();
+			}
+		}
+
 		// Add more components here...
 		// if (node.has_component<YourComponent>()) { ... }
 

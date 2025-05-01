@@ -98,7 +98,9 @@ namespace bnp {
 		lua_pop(L, 1);
 		// []
 
-		node.add_component<Transform>(Transform{ position });
+		node.add_component<Transform>(Transform{
+			position
+			});
 
 		l_push_script_node(L, node);
 		luaL_getmetatable(L, "bnp.Transform");
@@ -334,6 +336,24 @@ namespace bnp {
 		return 0;
 	}
 
+	int l_node_add_component_behavior_nest(lua_State* L) {
+		// [node, "BehaviorNest", nest]
+		Node node = l_pop_script_node(L, 1);
+		// ["BehaviorNest", nest]
+		Node nest = l_pop_script_node(L, 2);
+		// ["BehaviorNest"]
+		lua_pop(L, 1);
+		// []
+
+		node.add_component<BehaviorNest>(nest.get_entity_id());
+
+		l_push_script_node(L, nest);
+		luaL_getmetatable(L, "bnp.Node");
+		lua_setmetatable(L, -2);
+
+		return 1;
+	}
+
 	int l_node_add_component(lua_State* L) {
 		// [node, component_name, ...]
 		const char* name = luaL_checkstring(L, 2);
@@ -367,6 +387,9 @@ namespace bnp {
 		}
 		else if (strcmp(name, "Identity") == 0) {
 			return l_node_add_component_identity(L);
+		}
+		else if (strcmp(name, "BehaviorNest") == 0) {
+			return l_node_add_component_behavior_nest(L);
 		}
 		else {
 			return luaL_error(L, "Unknown/disallowed component: %s", name);

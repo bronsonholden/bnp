@@ -10,10 +10,12 @@ namespace bnp {
 		const int tx = grid_size.x / 2;
 		const int ty = grid_size.y / 2;
 
+		glm::vec2 current_target(origin.x + tx * cell_size, origin.y + ty * cell_size);
+
 		float snap_x = std::floor(worldspace_target.x / cell_size) * cell_size;
 		float snap_y = std::floor(worldspace_target.y / cell_size) * cell_size;
 
-		if (glm::length(target - glm::vec2(snap_x, snap_y)) > 0.001f) {
+		if (glm::length(current_target - glm::vec2(snap_x, snap_y)) > 0.001f) {
 			// reposition the origin
 			origin.x = snap_x - tx * cell_size;
 			origin.y = snap_y - ty * cell_size;

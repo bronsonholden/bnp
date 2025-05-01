@@ -103,6 +103,7 @@ namespace bnp {
 					std::floor((x > 0 ? x + 0.25f : x - 0.25f) / 0.1f) * 0.1f,
 					std::floor((y > 0 ? y + 0.1f : y - 0.1f) / 0.1f) * 0.1f
 				);
+				registry.emplace<Transient>(waypoint, true);
 				registry.emplace<Transform>(waypoint, Transform{
 					glm::vec3(bee_position + offset, 0.0f)
 					});
@@ -124,7 +125,7 @@ namespace bnp {
 				// after fleeing expires, idle with near-zero motivation so we go immediately into wandering
 				float motivation = 0.001f;
 				if (!expired_fleeing) {
-					motivation = RandomFloatGenerator(0.2f, 2.3f).generate();
+					//motivation = RandomFloatGenerator(0.2f, 2.3f).generate();
 				}
 
 				// todo: if too far from nest, push another visitor but biased towards nest.
@@ -134,11 +135,58 @@ namespace bnp {
 				// ... code here ...
 				//
 
-				brain.goals.push_back(BehaviorGoal{
-					BehaviorGoal::Type::Idle,
-					1.0f,
-					motivation
-					});
+				if (registry.all_of<BehaviorNest>(bee)) {
+					auto& nest = registry.get<BehaviorNest>(bee);
+					auto& nest_transform = registry.get<Transform>(nest.entity);
+					nest_transform.update_world_transform(glm::mat4(1.0f));
+					glm::vec2 nest_position = nest_transform.world_transform[3];
+					auto& transform = registry.get<Transform>(bee);
+					glm::vec2 bee_position = transform.world_transform[3];
+
+					if (nest.min_return_distance < glm::length(nest_position - bee_position)) {
+						auto& field = registry.get_or_emplace<FlowField2D>(nest.entity, FlowField2D{
+							0.2f,
+							{ 60, 60 },
+							{ 0, 0 }
+							});
+
+						if (!field.init) {
+							field.reposition_to_target(nest_position);
+							field.generate_cost_field(registry);
+							field.generate_direction_field(registry);
+						}
+
+						// random radius for visit to nest
+						RandomFloatGenerator rfg(0.5, 1.1f);
+
+						brain.goals.insert(brain.goals.begin(), BehaviorGoal{
+							BehaviorGoal::Visit,
+							1.0f,
+							3.0f,
+							rfg.generate(),
+							nest.entity,
+							false
+							});
+					}
+					else {
+						// todo: dedup with below
+						brain.goals.push_back(BehaviorGoal{
+							BehaviorGoal::Type::Idle,
+							1.0f,
+							motivation
+							});
+					}
+
+				}
+				else {
+					// todo: dedup with above
+					brain.goals.push_back(BehaviorGoal{
+						BehaviorGoal::Type::Idle,
+						1.0f,
+						motivation
+						});
+				}
+
 			}
 
 			// todo: swarming behavior idea. add new defend behavior that is prioritized above
@@ -199,13 +247,14 @@ namespace bnp {
 		auto& motility = registry.get<Motility>(bee);
 
 		if (!registry.all_of<FlowField2D>(goal.target)) {
-			cout << "target has no flow field" << endl;
 			return;
 		}
 
 		auto& field = registry.get<FlowField2D>(goal.target);
 
-		if (!field.init) return;
+		if (!field.init) {
+			return;
+		}
 
 		auto& target_transform = registry.get<Transform>(goal.target);
 		auto& bee_transform = registry.get<Transform>(bee);
@@ -310,6 +359,7 @@ namespace bnp {
 
 		registry.patch<Motility>(bee, [&](Motility& m) {
 			m.impulse = glm::vec3(dir, 0);
+			m.flying_response = RandomFloatGenerator(0.009f, 0.016f).generate();
 			});
 	}
 
@@ -430,17 +480,15 @@ namespace bnp {
 		registry.patch<Motility>(bee, [&](Motility& m) {
 			m.speed = 1.1f;
 			m.impulse = glm::vec3(dir, 0);
-			m.flying_response = 0.02f;
+			m.flying_response = 0.2f;
 			});
 	}
 
 	void BeeBehaviorPlanner::execute_idle(entt::registry& registry, BehaviorGoal& goal, entt::entity bee) {
-		auto& body = registry.get<PhysicsBody2D>(bee);
-		body.body->SetLinearVelocity(b2Vec2(0, 0));
-
 		registry.patch<Motility>(bee, [](Motility& m) {
+			m.impulse = glm::vec3(0);
 			m.speed = 0.4f;
-			m.flying_response = 0.008f;
+			m.flying_response = RandomFloatGenerator(0.04f, 0.08f).generate();
 			});
 	}
 
