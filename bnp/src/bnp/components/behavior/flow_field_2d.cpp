@@ -6,6 +6,185 @@
 
 namespace bnp {
 
+	glm::vec2 FlowField2D::sample_direction(glm::vec2 worldspace_position) {
+		if (!init) {
+			return glm::vec2(0.0f);
+		}
+
+		glm::vec2 field_position = glm::vec2(worldspace_position) - origin;
+
+		int fx = std::floor(field_position.x / cell_size);
+		int fy = std::floor(field_position.y / cell_size);
+
+		if (fx < 0 || fx >= grid_size.x || fy < 0 || fy >= grid_size.y) {
+			return glm::vec2(0.0f);
+		}
+
+		int idx = fy * grid_size.x + fx;
+		glm::vec2 dir = direction_field.at(idx);
+		float cost = cost_field.at(idx);
+		bool blocked_left = false, blocked_right = false, blocked_up = false, blocked_down = false;
+
+		int tx = grid_size.x / 2;
+		int ty = grid_size.y / 2;
+
+		if (cost == std::numeric_limits<float>::infinity() || glm::length(dir) < 0.001f) {
+			const glm::ivec2 offsets[] = {
+				{ 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 },
+				{ 1, 1 }, { -1, 1 }, { 1, -1 }, { -1, -1 }
+			};
+
+			glm::vec2 best_dir(0);
+			float best_cost = -std::numeric_limits<float>::infinity();
+
+			for (auto& offset : offsets) {
+				int ox = fx + offset.x;
+				int oy = fy + offset.y;
+
+				if (ox < 0 || ox >= grid_size.x || oy < 0 || oy >= grid_size.y) {
+					continue;
+				}
+
+				int idx = oy * grid_size.x + ox;
+				glm::vec2 neighbor_dir = direction_field.at(idx);
+				float cost = cost_field.at(idx);
+
+				if (cost == std::numeric_limits<float>::infinity() || glm::length(neighbor_dir) < 0.001f) {
+					continue;
+				}
+
+				if (cost > best_cost) {
+					best_dir = glm::normalize(glm::vec2(offset.x, offset.y));
+					best_cost = cost;
+				}
+			}
+
+			dir = best_dir;
+		}
+
+		// calculate blocked cardinal cells to snap movement direction to avoid blocked cells
+		const glm::ivec2 offsets[] = {
+			{ 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 }
+		};
+		for (auto& offset : offsets) {
+			int ox = fx + offset.x;
+			int oy = fy + offset.y;
+
+			if (ox < 0 || ox >= grid_size.x || oy < 0 || oy >= grid_size.y) {
+				continue;
+			}
+
+			int idx = oy * grid_size.x + ox;
+			float cost = cost_field.at(idx);
+
+			if (cost == std::numeric_limits<float>::infinity()) {
+				if (offset.x < 0) blocked_left = true;
+				if (offset.x > 0) blocked_right = true;
+				if (offset.y < 0) blocked_down = true;
+				if (offset.y > 0) blocked_up = true;
+				continue;
+			}
+		}
+
+		glm::vec2 cell_position = field_position - glm::vec2(fx * cell_size, fy * cell_size);
+
+		if (blocked_left && dir.x < 0 && (cell_position.x / cell_size) < 0.1f) dir.x = 0;
+		if (blocked_right && dir.x > 0 && (cell_position.x / cell_size) > 0.9f) dir.x = 0;
+		if (blocked_down && dir.y < 0 && (cell_position.y / cell_size) < 0.1f) dir.y = 0;
+		if (blocked_up && dir.y > 0 && (cell_position.y / cell_size) > 0.9f) dir.y = 0;
+
+		glm::ivec2 invalid = glm::isnan(dir);
+
+		if (!invalid.x && !invalid.y) return dir;
+
+		return glm::vec2(0.0f);
+	}
+
+	glm::vec2 FlowField2D::sample_reverse_direction(glm::vec2 worldspace_position) {
+		if (!init) return glm::vec2(0);
+
+		glm::vec2 field_position = worldspace_position - origin;
+
+		int fx = std::floor(field_position.x / cell_size);
+		int fy = std::floor(field_position.y / cell_size);
+
+		if (fx < 0 || fx >= grid_size.x || fy < 0 || fy >= grid_size.y) {
+			return glm::vec2(0.0f);
+		}
+
+		int idx = fy * grid_size.x + fx;
+		glm::vec2 dir = reverse_field.at(idx);
+		float cost = cost_field.at(idx);
+		bool blocked_left = false, blocked_right = false, blocked_up = false, blocked_down = false;
+
+		if (cost == std::numeric_limits<float>::infinity() || glm::length(dir) < 0.001f) {
+			const glm::ivec2 offsets[] = {
+				{ 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 },
+				{ 1, 1 }, { -1, 1 }, { 1, -1 }, { -1, -1 }
+			};
+
+			glm::vec2 best_dir(0);
+			float best_cost = -std::numeric_limits<float>::infinity();
+
+			for (auto& offset : offsets) {
+				int ox = fx + offset.x;
+				int oy = fy + offset.y;
+
+				if (ox < 0 || ox >= grid_size.x || oy < 0 || oy >= grid_size.y) {
+					continue;
+				}
+
+				int idx = oy * grid_size.x + ox;
+				glm::vec2 neighbor_dir = reverse_field.at(idx);
+				float cost = cost_field.at(idx);
+
+				if (cost == std::numeric_limits<float>::infinity() || glm::length(neighbor_dir) < 0.001f) {
+					continue;
+				}
+
+				if (cost > best_cost) {
+					best_dir = glm::normalize(glm::vec2(offset.x, offset.y));
+					best_cost = cost;
+				}
+			}
+
+			dir = best_dir;
+		}
+
+		// calculate blocked cardinal cells to snap movement direction to avoid blocked cells
+		const glm::ivec2 offsets[] = {
+			{ 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 }
+		};
+		for (auto& offset : offsets) {
+			int ox = fx + offset.x;
+			int oy = fy + offset.y;
+
+			if (ox < 0 || ox >= grid_size.x || oy < 0 || oy >= grid_size.y) {
+				continue;
+			}
+
+			int idx = oy * grid_size.x + ox;
+			float cost = cost_field.at(idx);
+
+			if (cost == std::numeric_limits<float>::infinity()) {
+				if (offset.x < 0) blocked_left = true;
+				if (offset.x > 0) blocked_right = true;
+				if (offset.y < 0) blocked_down = true;
+				if (offset.y > 0) blocked_up = true;
+				continue;
+			}
+		}
+
+		glm::vec2 cell_position = field_position - glm::vec2(fx * cell_size, fy * cell_size);
+
+		if (blocked_left && dir.x < 0 && (cell_position.x / cell_size) < 0.1f) dir.x = 0;
+		if (blocked_right && dir.x > 0 && (cell_position.x / cell_size) > 0.9f) dir.x = 0;
+		if (blocked_down && dir.y < 0 && (cell_position.y / cell_size) < 0.1f) dir.y = 0;
+		if (blocked_up && dir.y > 0 && (cell_position.y / cell_size) > 0.9f) dir.y = 0;
+
+		return glm::normalize(dir);
+	}
+
 	void FlowField2D::reposition_to_target(glm::vec2 worldspace_target) {
 		const int tx = grid_size.x / 2;
 		const int ty = grid_size.y / 2;
@@ -122,8 +301,8 @@ namespace bnp {
 				OverlapQueryCallback(const b2AABB& cell) : cell_aabb(cell) {}
 
 				bool ReportFixture(b2Fixture* fixture) override {
-					if (fixture->GetBody()->GetType() != b2_staticBody) {
-						return true; // Skip dynamic bodies
+					if (fixture->IsSensor()) {
+						return true; // skip sensors
 					}
 
 					const b2AABB& fixture_aabb = fixture->GetAABB(0); // Assume fixture 0 for simple shapes

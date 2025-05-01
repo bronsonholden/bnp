@@ -1,4 +1,4 @@
-node:GetComponent("Sprite"):SetLayerVisible("Straw", true)
+--node:GetComponent("Sprite"):SetLayerVisible("Straw", true)
 
 sprite = node:GetComponent("Sprite")
 slice = sprite:GetSlice("Eyes")
@@ -12,7 +12,7 @@ water = prefab.load("resources/scripts/water_prefab.lua", {
 nest = prefab.load("resources/scripts/behavior_nest_prefab.lua")
 nest:GetComponent("Transform"):SetPosition({ y = 0.5 })
 
-for i=1,20 do
+for i=1,50 do
 	bee = prefab.load("resources/scripts/bee_prefab.lua")
 	bee:AddComponent("BehaviorNest", nest)
 end

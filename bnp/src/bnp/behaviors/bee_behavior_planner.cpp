@@ -44,7 +44,12 @@ namespace bnp {
 					return goal.type == BehaviorGoal::Type::Flee && goal.target == threat;
 					}))
 				{
-					RandomFloatGenerator rfg(0.3f, 1.3f);
+					auto& body = registry.get<PhysicsBody2D>(threat);
+
+					// moving threats only
+					if (body.body->GetLinearVelocity().Length() < 0.001f) continue;
+
+					RandomFloatGenerator rfg(0.3f, 1.0f);
 					// todo: insert such that bee flees from highest-threat first
 					brain.goals.insert(brain.goals.begin(), BehaviorGoal{
 						BehaviorGoal::Type::Flee,
@@ -157,14 +162,15 @@ namespace bnp {
 							field.generate_direction_field(registry);
 						}
 
-						// random radius for visit to nest
-						RandomFloatGenerator rfg(0.5, 1.1f);
+						// random radius and motivation for visit to nest
+						RandomFloatGenerator radius_rfg(0.5f, 1.1f);
+						RandomFloatGenerator motivation_rfg(0.3f, 2.0f);
 
 						brain.goals.insert(brain.goals.begin(), BehaviorGoal{
 							BehaviorGoal::Visit,
 							1.0f,
-							3.0f,
-							rfg.generate(),
+							motivation_rfg.generate(),
+							radius_rfg.generate(),
 							nest.entity,
 							false
 							});
@@ -253,110 +259,18 @@ namespace bnp {
 
 		auto& field = registry.get<FlowField2D>(goal.target);
 
+		// let field init before executing
 		if (!field.init) {
 			return;
 		}
 
-		auto& target_transform = registry.get<Transform>(goal.target);
-		auto& bee_transform = registry.get<Transform>(bee);
-		glm::vec2 bee_pos = bee_transform.world_transform[3];
-		glm::vec2 target_pos = target_transform.world_transform[3];
-
-		if (glm::length(bee_pos - target_pos) < goal.radius) {
-			goal.motivation = -1;
-		}
-
-		glm::vec2 field_position = glm::vec2(transform.position) - field.origin;
-
-		int fx = std::floor(field_position.x / field.cell_size);
-		int fy = std::floor(field_position.y / field.cell_size);
-
-		if (fx < 0 || fx >= field.grid_size.x || fy < 0 || fy >= field.grid_size.y) {
-			return;
-		}
-
-		int idx = fy * field.grid_size.x + fx;
-		glm::vec2 dir = field.direction_field.at(idx);
-		float cost = field.cost_field.at(idx);
-		bool blocked_left = false, blocked_right = false, blocked_up = false, blocked_down = false;
-
-		int tx = field.grid_size.x / 2;
-		int ty = field.grid_size.y / 2;
-
-		float target_cost = field.cost_field.at(ty * field.grid_size.x + tx);
+		glm::vec2 dir = field.sample_direction(transform.world_transform[3]);
 
 		// if can't get there, abort
-		if (target_cost == std::numeric_limits<float>::infinity()) {
+		if (glm::length(dir) < 0.001f) {
 			goal.motivation = -1;
 			return;
 		}
-
-		if (cost == std::numeric_limits<float>::infinity() || glm::length(dir) < 0.001f) {
-			const glm::ivec2 offsets[] = {
-				{ 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 },
-				{ 1, 1 }, { -1, 1 }, { 1, -1 }, { -1, -1 }
-			};
-
-			glm::vec2 best_dir(0);
-			float best_cost = -std::numeric_limits<float>::infinity();
-
-			for (auto& offset : offsets) {
-				int ox = fx + offset.x;
-				int oy = fy + offset.y;
-
-				if (ox < 0 || ox >= field.grid_size.x || oy < 0 || oy >= field.grid_size.y) {
-					continue;
-				}
-
-				int idx = oy * field.grid_size.x + ox;
-				glm::vec2 neighbor_dir = field.reverse_field.at(idx);
-				float cost = field.cost_field.at(idx);
-
-				if (cost == std::numeric_limits<float>::infinity() || glm::length(neighbor_dir) < 0.001f) {
-					continue;
-				}
-
-				if (cost > best_cost) {
-					best_dir = glm::normalize(glm::vec2(offset.x, offset.y));
-					best_cost = cost;
-				}
-			}
-
-			dir = best_dir;
-		}
-
-		// calculate blocked cardinal cells to snap movement direction to avoid blocked cells
-		const glm::ivec2 offsets[] = {
-			{ 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 }
-		};
-		for (auto& offset : offsets) {
-			int ox = fx + offset.x;
-			int oy = fy + offset.y;
-
-			if (ox < 0 || ox >= field.grid_size.x || oy < 0 || oy >= field.grid_size.y) {
-				continue;
-			}
-
-			int idx = oy * field.grid_size.x + ox;
-			float cost = field.cost_field.at(idx);
-
-			if (cost == std::numeric_limits<float>::infinity()) {
-				if (offset.x < 0) blocked_left = true;
-				if (offset.x > 0) blocked_right = true;
-				if (offset.y < 0) blocked_down = true;
-				if (offset.y > 0) blocked_up = true;
-				continue;
-			}
-		}
-
-		glm::vec2 cell_position = field_position - glm::vec2(fx * field.cell_size, fy * field.cell_size);
-
-		if (blocked_left && dir.x < 0 && (cell_position.x / field.cell_size) < 0.1f) dir.x = 0;
-		if (blocked_right && dir.x > 0 && (cell_position.x / field.cell_size) > 0.9f) dir.x = 0;
-		if (blocked_down && dir.y < 0 && (cell_position.y / field.cell_size) < 0.1f) dir.y = 0;
-		if (blocked_up && dir.y > 0 && (cell_position.y / field.cell_size) > 0.9f) dir.y = 0;
-
-		dir = glm::normalize(dir);
 
 		registry.patch<Motility>(bee, [&](Motility& m) {
 			m.impulse = glm::vec3(dir, 0);
@@ -380,99 +294,22 @@ namespace bnp {
 
 		auto& field = registry.get<FlowField2D>(goal.target);
 
-		if (!field.init) return;
-
-		auto& target_transform = registry.get<Transform>(goal.target);
-		auto& bee_transform = registry.get<Transform>(bee);
-		glm::vec2 bee_pos = bee_transform.world_transform[3];
-		glm::vec2 target_pos = target_transform.world_transform[3];
-
-		glm::vec2 field_position = glm::vec2(transform.position) - field.origin;
-
-		int fx = std::floor(field_position.x / field.cell_size);
-		int fy = std::floor(field_position.y / field.cell_size);
-
-		if (fx < 0 || fx >= field.grid_size.x || fy < 0 || fy >= field.grid_size.y) {
+		// let field init before executing
+		if (!field.init) {
 			return;
 		}
 
-		int idx = fy * field.grid_size.x + fx;
-		glm::vec2 dir = field.reverse_field.at(idx);
-		float cost = field.cost_field.at(idx);
-		bool blocked_left = false, blocked_right = false, blocked_up = false, blocked_down = false;
+		glm::vec2 dir = field.sample_reverse_direction(transform.world_transform[3]);
 
-		if (cost == std::numeric_limits<float>::infinity() || glm::length(dir) < 0.001f) {
-			const glm::ivec2 offsets[] = {
-				{ 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 },
-				{ 1, 1 }, { -1, 1 }, { 1, -1 }, { -1, -1 }
-			};
-
-			glm::vec2 best_dir(0);
-			float best_cost = -std::numeric_limits<float>::infinity();
-
-			for (auto& offset : offsets) {
-				int ox = fx + offset.x;
-				int oy = fy + offset.y;
-
-				if (ox < 0 || ox >= field.grid_size.x || oy < 0 || oy >= field.grid_size.y) {
-					continue;
-				}
-
-				int idx = oy * field.grid_size.x + ox;
-				glm::vec2 neighbor_dir = field.reverse_field.at(idx);
-				float cost = field.cost_field.at(idx);
-
-				if (cost == std::numeric_limits<float>::infinity() || glm::length(neighbor_dir) < 0.001f) {
-					continue;
-				}
-
-				if (cost > best_cost) {
-					best_dir = glm::normalize(glm::vec2(offset.x, offset.y));
-					best_cost = cost;
-				}
-			}
-
-			dir = best_dir;
-		}
-
-		// calculate blocked cardinal cells to snap movement direction to avoid blocked cells
-		const glm::ivec2 offsets[] = {
-			{ 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 }
-		};
-		for (auto& offset : offsets) {
-			int ox = fx + offset.x;
-			int oy = fy + offset.y;
-
-			if (ox < 0 || ox >= field.grid_size.x || oy < 0 || oy >= field.grid_size.y) {
-				continue;
-			}
-
-			int idx = oy * field.grid_size.x + ox;
-			float cost = field.cost_field.at(idx);
-
-			if (cost == std::numeric_limits<float>::infinity()) {
-				if (offset.x < 0) blocked_left = true;
-				if (offset.x > 0) blocked_right = true;
-				if (offset.y < 0) blocked_down = true;
-				if (offset.y > 0) blocked_up = true;
-				continue;
-			}
-		}
+		if (glm::length(dir) < 0.001f) return;
 
 		auto& threat_transform = registry.get<Transform>(goal.target);
 		glm::vec2 threat_position = threat_transform.world_transform[3];
 		glm::vec2 bee_position = glm::vec2(transform.world_transform[3]);
 		glm::vec2 threat_dir = threat_position - bee_position;
-		dir = dir + (-threat_dir * 0.7f);
+		dir = glm::normalize(dir + (-threat_dir * 0.7f));
 
-		glm::vec2 cell_position = field_position - glm::vec2(fx * field.cell_size, fy * field.cell_size);
-
-		if (blocked_left && dir.x < 0 && (cell_position.x / field.cell_size) < 0.1f) dir.x = 0;
-		if (blocked_right && dir.x > 0 && (cell_position.x / field.cell_size) > 0.9f) dir.x = 0;
-		if (blocked_down && dir.y < 0 && (cell_position.y / field.cell_size) < 0.1f) dir.y = 0;
-		if (blocked_up && dir.y > 0 && (cell_position.y / field.cell_size) > 0.9f) dir.y = 0;
-
-		dir = glm::normalize(dir);
+		// todo: sample field position of bee and blockage at this positions and apply impulse away from them
 
 		registry.patch<Motility>(bee, [&](Motility& m) {
 			m.speed = 1.1f;
