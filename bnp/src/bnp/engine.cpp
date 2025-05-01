@@ -4,6 +4,7 @@
 #include <bnp/components/transform.h>
 #include <bnp/components/graphics.h>
 #include <bnp/components/controllable.h>
+#include <bnp/components/global.h>
 #include <bnp/helpers/random_float_generator.hpp>
 #include <bnp/factories/sprite_factory.h>
 #include <bnp/factories/script_factory.h>
@@ -57,6 +58,9 @@ namespace bnp {
 		script_factory(resource_manager, physics_manager),
 		behavior_manager(physics_manager)
 	{
+		registry.emplace<Global>(registry.create(), Global{
+			&physics_manager.get_world()
+			});
 		renderer.initialize();
 		archive_manager.load();
 
@@ -351,22 +355,7 @@ namespace bnp {
 				time.consume_fixed_step();
 			}
 
-			//cout << "fps: " << std::to_string(1.0f / dt) << endl;
-
-			// manager updates
-			sprite_animation_manager.update(registry, dt);
-			motility_manager.update(registry, dt);
-
-			// only apply transforms after all game updates have completed
-			// so we have the most correct transforms
-			hierarchy_manager.update(registry);
-
-			// update behaviors with a clean transform hierarchy
-			behavior_manager.update(registry, dt);
-			{
-				BeeBehaviorPlanner bbp;
-				bbp.update(registry, dt);
-			}
+			update(dt);
 
 			window.clear();
 
@@ -411,7 +400,22 @@ namespace bnp {
 	}
 
 	void Engine::update(float dt) {
+		//cout << "fps: " << std::to_string(1.0f / dt) << endl;
 
+		// manager updates
+		sprite_animation_manager.update(registry, dt);
+		motility_manager.update(registry, dt);
+
+		// only apply transforms after all game updates have completed
+		// so we have the most correct transforms
+		hierarchy_manager.update(registry);
+
+		// update behaviors with a clean transform hierarchy
+		behavior_manager.update(registry, dt);
+		{
+			BeeBehaviorPlanner bbp;
+			bbp.update(registry, dt);
+		}
 	}
 
 	void Engine::fixed_update() {

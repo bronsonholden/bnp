@@ -30,6 +30,14 @@ namespace bnp {
 		void reposition_to_target(glm::vec2 worldspace_target);
 		bool get_cell_position(glm::ivec2& result, glm::vec2 worlspace_position);
 		bool is_target_cell(glm::vec2 worldspace_position);
+		void generate_cost_field(entt::registry& registry);
+		void generate_direction_field(entt::registry& registry);
+		glm::vec2 smooth_direction(
+			int x, int y,
+			const std::vector<float>& cost_field,
+			glm::ivec2 grid_size,
+			bool attract
+		);
 	};
 
 	struct BeeBehavior {
