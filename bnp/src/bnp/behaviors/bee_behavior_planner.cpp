@@ -480,7 +480,7 @@ namespace bnp {
 		registry.patch<Motility>(bee, [&](Motility& m) {
 			m.speed = 1.1f;
 			m.impulse = glm::vec3(dir, 0);
-			m.flying_response = 0.2f;
+			m.flying_response = 0.7f;
 			});
 	}
 

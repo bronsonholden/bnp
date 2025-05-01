@@ -16,3 +16,6 @@ for i=1,20 do
 	bee = prefab.load("resources/scripts/bee_prefab.lua")
 	bee:AddComponent("BehaviorNest", nest)
 end
+
+queen = prefab.load("resources/scripts/queen_bee_prefab.lua")
+queen:AddComponent("BehaviorNest", nest)
