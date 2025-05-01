@@ -19,6 +19,8 @@ namespace bnp {
 
 	struct Renderable {
 		bool value;
+		// primarily used for 2D rendering. lower values render first
+		uint32_t render_order = 0;
 	};
 
 	struct Vertex {
