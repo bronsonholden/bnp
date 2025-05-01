@@ -44,11 +44,12 @@ namespace bnp {
 					return goal.type == BehaviorGoal::Type::Flee && goal.target == threat;
 					}))
 				{
+					RandomFloatGenerator rfg(0.3f, 1.3f);
 					// todo: insert such that bee flees from highest-threat first
 					brain.goals.insert(brain.goals.begin(), BehaviorGoal{
 						BehaviorGoal::Type::Flee,
 						1.0f,
-						0.5f,
+						rfg.generate(),
 						1.0f,
 						threat,
 						false
@@ -385,10 +386,6 @@ namespace bnp {
 		auto& bee_transform = registry.get<Transform>(bee);
 		glm::vec2 bee_pos = bee_transform.world_transform[3];
 		glm::vec2 target_pos = target_transform.world_transform[3];
-
-		if (glm::length(bee_pos - target_pos) <= goal.radius) {
-			goal.motivation = 0.5f;
-		}
 
 		glm::vec2 field_position = glm::vec2(transform.position) - field.origin;
 
