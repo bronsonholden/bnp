@@ -7,6 +7,7 @@
 
 namespace bnp {
 
+	// todo: allow target to be a set of cells
 	struct FlowField2D {
 		float cell_size;
 		glm::ivec2 grid_size;
