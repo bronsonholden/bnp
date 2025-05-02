@@ -10,8 +10,6 @@ using namespace std;
 
 namespace bnp {
 
-	// todo: need a generic way to declare a 
-
 	void BeeBehaviorPlanner::update(entt::registry& registry, float dt) {
 		std::vector<entt::entity> bees = get_bees(registry);
 
