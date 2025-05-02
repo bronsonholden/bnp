@@ -52,31 +52,7 @@ namespace bnp {
 	}
 
 	int Window::poll(SDL_Event& event) {
-		int ret = SDL_PollEvent(&event);
-
-		switch (event.type) {
-		case SDL_QUIT:
-			this->open = false;
-			break;
-		case SDL_WINDOWEVENT:
-			handle_window_event(event);
-			break;
-		default:
-			;
-		}
-
-		return ret;
-	}
-
-	void Window::handle_window_event(SDL_Event& event) {
-		switch (event.window.event) {
-		case SDL_WINDOWEVENT_RESIZED:
-		case SDL_WINDOWEVENT_SIZE_CHANGED:
-			glViewport(0, 0, event.window.data1, event.window.data2);
-			break;
-		default:
-			;
-		}
+		return SDL_PollEvent(&event);
 	}
 
 	void Window::clear() {

@@ -339,6 +339,17 @@ namespace bnp {
 			SDL_Event event;
 
 			while (window.poll(event)) {
+				switch (event.type) {
+				case SDL_QUIT:
+					window.open = false;
+					break;
+				case SDL_WINDOWEVENT:
+					handle_window_event(event);
+					break;
+				default:
+					;
+				}
+
 				ImGui_ImplSDL2_ProcessEvent(&event);
 				controller.process_event(event);
 			}
@@ -418,5 +429,19 @@ namespace bnp {
 	void Engine::fixed_update() {
 		water2d_manager.update(registry, time.fixed_delta_time());
 		physics_manager.update(registry, time.fixed_delta_time());
+	}
+
+	void Engine::handle_window_event(SDL_Event& event) {
+		int width = event.window.data1;
+		int height = event.window.data2;
+
+		switch (event.window.event) {
+		case SDL_WINDOWEVENT_RESIZED:
+		case SDL_WINDOWEVENT_SIZE_CHANGED:
+			glViewport(0, 0, width, height);
+			break;
+		default:
+			;
+		}
 	}
 }
