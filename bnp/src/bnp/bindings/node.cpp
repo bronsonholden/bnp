@@ -354,6 +354,51 @@ namespace bnp {
 		return 1;
 	}
 
+	int l_node_add_component_perception(lua_State* L) {
+		// [node, "Perception", params]
+		Node node = l_pop_script_node(L, 1);
+		// ["Perception", params]
+
+		Perception perception;
+
+		lua_pushnil(L);
+		// ["Perception", params, nil]
+
+		while (lua_next(L, 2)) {
+			// ["Perception, params, key, value]
+			const char* key = lua_tostring(L, -2);
+			int value = lua_tointeger(L, -1);
+
+			perception.threat.emplace(key, value);
+
+			lua_pop(L, 1); // pop value, keep key for next iteration
+			// ["Perception", params, key]
+		}
+
+		node.add_component<Perception>(perception);
+
+		// ["Perception", params, key]
+		lua_pop(L, 3);
+		// []
+
+		return 0;
+	}
+
+	int l_node_add_component_flow_field_2d(lua_State* L) {
+		// [node, "FlowField2D", params]
+		Node node = l_pop_script_node(L, 1);
+		// ["FlowField2D", params]
+
+		// todo: accept params
+		node.add_component<FlowField2D>(FlowField2D{
+			0.2f,
+			{ 40, 40 },
+			{ 0, 0 }
+			});
+
+		return 0;
+	}
+
 	int l_node_add_component(lua_State* L) {
 		// [node, component_name, ...]
 		const char* name = luaL_checkstring(L, 2);
@@ -390,6 +435,12 @@ namespace bnp {
 		}
 		else if (strcmp(name, "BehaviorNest") == 0) {
 			return l_node_add_component_behavior_nest(L);
+		}
+		else if (strcmp(name, "Perception") == 0) {
+			return l_node_add_component_perception(L);
+		}
+		else if (strcmp(name, "FlowField2D") == 0) {
+			return l_node_add_component_flow_field_2d(L);
 		}
 		else {
 			return luaL_error(L, "Unknown/disallowed component: %s", name);

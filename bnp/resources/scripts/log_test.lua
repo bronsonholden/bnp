@@ -9,6 +9,8 @@ water = prefab.load("resources/scripts/water_prefab.lua", {
 	height = 0.15
 })
 
+toad = prefab.load("resources/scripts/toad_prefab.lua")
+
 nest = prefab.load("resources/scripts/behavior_nest_prefab.lua")
 nest:GetComponent("Transform"):SetPosition({ y = 0.5 })
 

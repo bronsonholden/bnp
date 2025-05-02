@@ -44,8 +44,9 @@ namespace bnp {
 				{
 					auto& body = registry.get<PhysicsBody2D>(threat);
 
+					// todo: customize perception by requiring movement or not?
 					// moving threats only
-					if (body.body->GetLinearVelocity().Length() < 0.001f) continue;
+					//if (body.body->GetLinearVelocity().Length() < 0.001f) continue;
 
 					RandomFloatGenerator rfg(0.3f, 1.0f);
 					// todo: insert such that bee flees from highest-threat first

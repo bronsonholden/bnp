@@ -131,9 +131,6 @@ namespace bnp {
 			}
 			});
 
-		Node repulsor_field = test_scene.create_node();
-		repulsor_field.add_component<Parent>(Parent{ squirrel.get_entity_id() });
-		repulsor_field.add_component<Transform>(Transform{ glm::vec3(0) });
 		squirrel.add_component<FlowField2D>(FlowField2D{
 			0.2f,
 			{ 40, 40 },
