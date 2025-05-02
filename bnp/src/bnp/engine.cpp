@@ -372,10 +372,12 @@ namespace bnp {
 			// rendering
 			//render_manager.render(registry, renderer, camera);
 			//render_manager.render_instances(registry, renderer, camera);
+			renderer.front_fb.bind();
 			render_manager.render_sprites(registry, renderer, camera);
 			render_manager.render_water2d(registry, renderer, camera);
 			render_manager.render_wireframes(registry, renderer, camera);
 			//render_manager.render_flow_field_2ds(registry, renderer, camera);
+			renderer.front_fb.unbind();
 
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplSDL2_NewFrame(window.get_sdl_window());

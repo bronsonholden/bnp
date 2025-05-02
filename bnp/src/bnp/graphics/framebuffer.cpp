@@ -37,6 +37,8 @@ namespace bnp {
 		}
 
 		init = true;
+		width = w;
+		height = h;
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
@@ -45,7 +47,12 @@ namespace bnp {
 		if (!init) return;
 
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-		glViewport(0, 0, width, height);
+		// todo: maybe keep this?
+		//glViewport(0, 0, width, height);
+	}
+
+	void Framebuffer::unbind() {
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	void Framebuffer::destroy() {

@@ -10,10 +10,13 @@ namespace bnp {
 
 		void create(int w, int h);
 		void bind();
+		void unbind();
 		void destroy();
 
 	private:
 		bool init;
+		int width;
+		int height;
 		GLuint fbo;
 		GLuint color_texture_id;
 		GLuint depth_rbo;
