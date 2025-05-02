@@ -12,10 +12,12 @@ water = prefab.load("resources/scripts/water_prefab.lua", {
 nest = prefab.load("resources/scripts/behavior_nest_prefab.lua")
 nest:GetComponent("Transform"):SetPosition({ y = 0.5 })
 
-for i=1,50 do
-	bee = prefab.load("resources/scripts/bee_prefab.lua")
-	bee:AddComponent("BehaviorNest", nest)
+for i=1,0 do
+	if i == 1 then
+		queen = prefab.load("resources/scripts/queen_bee_prefab.lua")
+		queen:AddComponent("BehaviorNest", nest)
+	end
+	--bee = prefab.load("resources/scripts/bee_prefab.lua")
+	--bee:AddComponent("BehaviorNest", nest)
 end
 
-queen = prefab.load("resources/scripts/queen_bee_prefab.lua")
-queen:AddComponent("BehaviorNest", nest)

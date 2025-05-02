@@ -57,10 +57,10 @@ namespace bnp {
 				for (int x = 0; x < field.grid_size.x; ++x) {
 					glm::vec2 dir(0);
 					if (render_flow_field_2d_reverse) {
-						dir = field.reverse_field.at(y * field.grid_size.x + x);
+						dir = field.wander_field.at(y * field.grid_size.x + x);
 					}
 					else {
-						dir = field.direction_field.at(y * field.grid_size.x + x);
+						dir = field.wander_field.at(y * field.grid_size.x + x);
 					}
 					if (glm::length(dir) < 0.001f) continue;
 					float angle_rad = atan2(dir.x, dir.y);

@@ -27,6 +27,9 @@ namespace bnp {
 		// direction vectors for repulsion.
 		// todo: might remove and just use steering to handle repulsion
 		std::vector<glm::vec2> reverse_field;
+		std::vector<glm::vec2> wander_field;
+
+		float wander_time = 0.0f;
 
 		glm::vec2 sample_direction(glm::vec2 worldspace_position);
 		glm::vec2 sample_reverse_direction(glm::vec2 worldspace_position);
@@ -35,6 +38,7 @@ namespace bnp {
 		bool is_target_cell(glm::vec2 worldspace_position);
 		void generate_cost_field(entt::registry& registry);
 		void generate_direction_field(entt::registry& registry);
+		void generate_wander_field(float frequency = 0.9f, float speed = 1.0f, float swirl_scale = 0.2f);
 		glm::vec2 smooth_direction(
 			int x, int y,
 			const std::vector<float>& cost_field,

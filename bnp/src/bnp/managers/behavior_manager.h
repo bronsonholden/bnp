@@ -20,9 +20,6 @@ namespace bnp {
 		void update_targets(entt::registry& registry, float dt);
 
 		void regenerate_if_stale(entt::registry& registry, float dt);
-		glm::vec2 smooth_direction(int x, int y, const std::vector<float>& cost_field, glm::ivec2 grid_size, bool attract);
-		void generate_direction_field(entt::registry& registry, FlowField2D& field);
-		void generate_cost_field(entt::registry& registry, FlowField2D& field);
 
 	private:
 		PhysicsManager& physics_manager;

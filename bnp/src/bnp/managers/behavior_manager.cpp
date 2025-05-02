@@ -49,14 +49,18 @@ namespace bnp {
 			// if any of these water-occupied cells have a valid cost,
 			// regenerate the field
 
-			if (regenerate) {
-				registry.patch<FlowField2D>(entity, [&](FlowField2D& field) {
+
+			registry.patch<FlowField2D>(entity, [&](FlowField2D& field) {
+				if (regenerate) {
 					// todo: these should go in a utility fn so that they can be generated
 					// on-demand elsewhere
 					field.generate_cost_field(registry);
 					field.generate_direction_field(registry);
-					});
-			}
+				}
+				field.wander_time += dt;
+				field.generate_wander_field();
+				});
+
 		}
 	}
 

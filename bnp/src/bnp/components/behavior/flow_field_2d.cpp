@@ -3,6 +3,8 @@
 #include <bnp/components/physics.h>
 
 #include <queue>
+#include <random>
+#include <cmath>
 
 namespace bnp {
 
@@ -301,6 +303,11 @@ namespace bnp {
 				OverlapQueryCallback(const b2AABB& cell) : cell_aabb(cell) {}
 
 				bool ReportFixture(b2Fixture* fixture) override {
+					// skip dynamic bodies until we can filter colliding with body attached to the field
+					if (fixture->GetBody()->GetType() != b2_staticBody) {
+						return true;
+					}
+
 					if (fixture->IsSensor()) {
 						return true; // skip sensors
 					}
@@ -521,7 +528,50 @@ namespace bnp {
 			}
 		}
 
+		generate_wander_field(0);
+
 		init = true;
 	}
+
+	void FlowField2D::generate_wander_field(float frequency, float speed, float swirl_scale) {
+		const int width = grid_size.x;
+		const int height = grid_size.y;
+
+		wander_field.resize(width * height, glm::vec2(0.0f));
+
+		std::mt19937 rng(33); // Seeded RNG
+		std::uniform_real_distribution<float> offset(0.0f, 100.0f); // Large range offsets to desync waves
+
+		float ox1 = offset(rng);
+		float oy1 = offset(rng);
+		float ox2 = offset(rng);
+		float oy2 = offset(rng);
+
+		auto noise = [&](float x, float y, float t) -> float {
+			return std::sin((x + ox1) * frequency + t * speed)
+				+ std::cos((y + oy1) * frequency - t * speed)
+				+ std::sin((x + ox2 + y + oy2) * frequency * 0.5f + t * speed * 0.7f);
+			};
+
+		for (int y = 0; y < height; ++y) {
+			for (int x = 0; x < width; ++x) {
+				if (cost_field[y * width + x] == std::numeric_limits<float>::infinity()) {
+					wander_field[y * width + x] = glm::vec2(0);
+					continue;
+				}
+
+				float px = static_cast<float>(x) + (wander_time / 0.6f);
+				float py = static_cast<float>(y) + (std::cos(wander_time * 2.0f));
+
+				float dx = noise(px + 3.1f, py, (wander_time + std::cos(0.1f * y)));
+				float dy = noise(px, py + 2.3f, (wander_time + std::sin(0.1f * x)));
+
+				glm::vec2 dir(dx, dy);
+				wander_field[y * width + x] = glm::normalize(dir) * swirl_scale;
+			}
+		}
+	}
+
+
 
 }
