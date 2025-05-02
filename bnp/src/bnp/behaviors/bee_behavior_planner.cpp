@@ -301,7 +301,12 @@ namespace bnp {
 
 		glm::vec2 dir = field.sample_reverse_direction(transform.world_transform[3]);
 
-		if (glm::length(dir) < 0.001f) return;
+		// can't proceed to target, abandon visit
+		if (glm::length(dir) < 0.001f) {
+			cout << "abandoning flee, no dir given" << endl;
+			goal.motivation = -1;
+			return;
+		}
 
 		auto& threat_transform = registry.get<Transform>(goal.target);
 		glm::vec2 threat_position = threat_transform.world_transform[3];
@@ -314,7 +319,7 @@ namespace bnp {
 		registry.patch<Motility>(bee, [&](Motility& m) {
 			m.speed = 1.1f;
 			m.impulse = glm::vec3(dir, 0);
-			m.flying_response = 0.7f;
+			m.flying_response = 0.9f;
 			});
 	}
 

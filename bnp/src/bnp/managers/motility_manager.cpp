@@ -12,8 +12,17 @@ namespace bnp {
 			if (old_motility.flying) {
 				registry.patch<Motility>(entity, [&](Motility& m) {
 					m.current_velocity = glm::mix(m.current_velocity, m.impulse, m.flying_response);
-					body.body->SetLinearVelocity(b2Vec2{ m.current_velocity.x * m.speed, m.current_velocity.y * m.speed });
-					body.body->SetGravityScale(0.0f);
+
+					glm::ivec2 invalid = glm::isnan(m.current_velocity);
+
+					if (glm::length(m.current_velocity) < 0.001f || invalid.x || invalid.y) {
+						body.body->SetLinearVelocity(b2Vec2{ 0, 0 });
+						m.current_velocity = glm::vec3(0);
+					}
+					else {
+						body.body->SetLinearVelocity(b2Vec2{ m.current_velocity.x * m.speed, m.current_velocity.y * m.speed });
+						body.body->SetGravityScale(0.0f);
+					}
 					});
 			}
 			else {
