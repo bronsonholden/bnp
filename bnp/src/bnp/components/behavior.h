@@ -31,6 +31,7 @@ namespace bnp {
 
 		float wander_time = 0.0f;
 
+		glm::vec4 get_aabb();
 		glm::vec2 sample_direction(glm::vec2 worldspace_position);
 		glm::vec2 sample_reverse_direction(glm::vec2 worldspace_position);
 		glm::vec2 sample_wander_direction(glm::vec2 worldspace_position);

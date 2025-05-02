@@ -8,6 +8,11 @@
 
 namespace bnp {
 
+	glm::vec4 FlowField2D::get_aabb() {
+		glm::vec2 top_right = origin + glm::vec2(grid_size.x * cell_size, grid_size.y * cell_size);
+		return glm::vec4(origin.x, origin.y, top_right.x, top_right.y);
+	}
+
 	glm::vec2 FlowField2D::sample_direction(glm::vec2 worldspace_position) {
 		if (!init) {
 			return glm::vec2(0.0f);
