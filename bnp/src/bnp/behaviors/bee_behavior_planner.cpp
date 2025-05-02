@@ -76,6 +76,10 @@ namespace bnp {
 				return goal.type == goal.Visit && goal.motivation > 0.0f;
 				});
 
+			int expired_visiting = std::count_if(brain.goals.begin(), brain.goals.end(), [](const auto& goal) {
+				return goal.type == goal.Visit && goal.motivation <= 0.0f;
+				});
+
 			int wandering = std::count_if(brain.goals.begin(), brain.goals.end(), [](const auto& goal) {
 				return goal.type == goal.Wander && goal.motivation > 0.0f;
 				});
@@ -126,18 +130,11 @@ namespace bnp {
 				}
 			}
 			else if (any_idling == 0) {
-				// after fleeing expires, idle with near-zero motivation so we go immediately into wandering
+				// after fleeing or visiting expires, idle with near-zero motivation so we go immediately into wandering
 				float motivation = 0.001f;
-				if (!expired_fleeing) {
-					//motivation = RandomFloatGenerator(0.2f, 2.3f).generate();
+				if (!expired_fleeing && !expired_visiting) {
+					motivation = RandomFloatGenerator(0.2f, 0.7f).generate();
 				}
-
-				// todo: if too far from nest, push another visitor but biased towards nest.
-				// use a high-resolution flow field and bias the random movement along
-				// that (mostly static) field weighted by distance.
-				//
-				// ... code here ...
-				//
 
 				if (registry.all_of<BehaviorNest>(bee)) {
 					auto& nest = registry.get<BehaviorNest>(bee);

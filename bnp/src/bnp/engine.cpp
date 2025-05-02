@@ -164,26 +164,26 @@ namespace bnp {
 			ground.add_component<Renderable>(true);
 		}
 
-		{
-			Node ceiling = test_scene.create_node();
+		//{
+		//	Node ceiling = test_scene.create_node();
 
-			b2BodyDef body_def;
-			body_def.position.Set(0.0f, 1.0f);  // Set Y to your desired "floor"
-			body_def.type = b2_staticBody;
+		//	b2BodyDef body_def;
+		//	body_def.position.Set(0.0f, 1.0f);  // Set Y to your desired "floor"
+		//	body_def.type = b2_staticBody;
 
-			// Create a box shape for the ground
-			b2PolygonShape box;
-			box.SetAsBox(1.5f, 0.15f);  // Width, Height (flat platform)
+		//	// Create a box shape for the ground
+		//	b2PolygonShape box;
+		//	box.SetAsBox(1.5f, 0.15f);  // Width, Height (flat platform)
 
-			b2FixtureDef fixture_def;
-			fixture_def.shape = &box;
-			fixture_def.friction = 0.0f;
+		//	b2FixtureDef fixture_def;
+		//	fixture_def.shape = &box;
+		//	fixture_def.friction = 0.0f;
 
-			// Attach the shape to the ground body
-			physics_manager.add_body(ceiling, body_def, fixture_def);
+		//	// Attach the shape to the ground body
+		//	physics_manager.add_body(ceiling, body_def, fixture_def);
 
-			ceiling.add_component<Renderable>(true);
-		}
+		//	ceiling.add_component<Renderable>(true);
+		//}
 
 		{
 			Node ceiling = test_scene.create_node();

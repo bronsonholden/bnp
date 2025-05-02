@@ -91,6 +91,10 @@ namespace bnp {
 		lua_pop(L, 1);
 		// [params]
 
+		lua_getfield(L, 1, "ignoreContacts");
+		if (lua_isboolean(L, -1) && lua_toboolean(L, -1)) fixture_def.filter.maskBits = 0;
+		lua_pop(L, 1);
+
 		body_shape.SetAsBox(hw, hh);
 		fixture_def.shape = &body_shape;
 		fixture_def.density = 6.0f;
