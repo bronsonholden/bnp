@@ -23,6 +23,7 @@ namespace bnp {
 		// old goal stuff - probably removing/refactoring
 		//void clean_goals(entt::registry& registry, std::vector<entt::entity> bees, float dt);
 
+		void execute_wander(entt::registry& registry, BehaviorGoal& goal, entt::entity bee);
 		void execute_visit(entt::registry& registry, BehaviorGoal& goal, entt::entity bee);
 		void execute_flee(entt::registry& registry, BehaviorGoal& goal, entt::entity bee);
 		void execute_idle(entt::registry& registry, BehaviorGoal& goal, entt::entity bee);

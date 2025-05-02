@@ -17,6 +17,8 @@ namespace bnp {
 			return "Idle";
 		case BehaviorGoal::Visit:
 			return "Visit";
+		case BehaviorGoal::Wander:
+			return "Wander";
 		default:
 			return "<Unnamed Behavior>";
 		}

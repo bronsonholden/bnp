@@ -76,6 +76,10 @@ namespace bnp {
 				return goal.type == goal.Visit && goal.motivation > 0.0f;
 				});
 
+			int wandering = std::count_if(brain.goals.begin(), brain.goals.end(), [](const auto& goal) {
+				return goal.type == goal.Wander && goal.motivation > 0.0f;
+				});
+
 			int expired_idling = std::count_if(brain.goals.begin(), brain.goals.end(), [](const auto& goal) {
 				return goal.type == goal.Idle && goal.motivation <= 0.0f;
 				});
@@ -87,12 +91,12 @@ namespace bnp {
 			// if fleeing, no motivation to idle or visit
 			if (fleeing > 0) {
 				for (auto& goal : brain.goals) {
-					if (goal.type == goal.Idle || goal.type == goal.Visit) {
+					if (goal.type == goal.Idle || goal.type == goal.Visit || goal.type == goal.Wander) {
 						goal.motivation = -1;
 					}
 				}
 			}
-			else if (visiting > 0) {
+			else if (visiting > 0 || wandering > 0) {
 				for (auto& goal : brain.goals) {
 					if (goal.type == goal.Idle) {
 						goal.motivation = -1;
@@ -100,32 +104,26 @@ namespace bnp {
 				}
 			}
 			else if (any_idling > 0 && any_idling == expired_idling) {
-				RandomFloatGenerator rfg(-0.2, 0.2);
-				entt::entity waypoint = registry.create();
-				glm::vec2 bee_position = registry.get<Transform>(bee).world_transform[3];
-				float x = rfg.generate();
-				float y = rfg.generate();
-				glm::vec2 offset(
-					std::floor((x > 0 ? x + 0.25f : x - 0.25f) / 0.1f) * 0.1f,
-					std::floor((y > 0 ? y + 0.1f : y - 0.1f) / 0.1f) * 0.1f
-				);
-				registry.emplace<Transient>(waypoint, true);
-				registry.emplace<Transform>(waypoint, Transform{
-					glm::vec3(bee_position + offset, 0.0f)
-					});
-				registry.emplace<FlowField2D>(waypoint, FlowField2D{
-					0.15f,
-					{ 12, 12 },
-					{ 0, 0 }
-					});
-				brain.goals.insert(brain.goals.begin(), BehaviorGoal{
-					BehaviorGoal::Visit,
-					1.0f,
-					3.0f,
-					0.15f * 1.414f,
-					waypoint,
-					true
-					});
+				if (registry.all_of<BehaviorNest>(bee) && !wandering) {
+					auto& nest = registry.get<BehaviorNest>(bee);
+					brain.goals.insert(brain.goals.begin(), BehaviorGoal{
+						BehaviorGoal::Wander,
+						1.0f,
+						2.0f,
+						0.15f * 1.414f,
+						nest.entity,
+						false
+						});
+				}
+				else {
+					RandomFloatGenerator rfg(0.8f, 1.3f);
+					// todo: dedup
+					brain.goals.push_back(BehaviorGoal{
+						BehaviorGoal::Type::Idle,
+						1.0f,
+						rfg.generate()
+						});
+				}
 			}
 			else if (any_idling == 0) {
 				// after fleeing expires, idle with near-zero motivation so we go immediately into wandering
@@ -176,7 +174,7 @@ namespace bnp {
 							});
 					}
 					else {
-						// todo: dedup with below
+						// todo: dedup
 						brain.goals.push_back(BehaviorGoal{
 							BehaviorGoal::Type::Idle,
 							1.0f,
@@ -186,7 +184,7 @@ namespace bnp {
 
 				}
 				else {
-					// todo: dedup with above
+					// todo: dedup
 					brain.goals.push_back(BehaviorGoal{
 						BehaviorGoal::Type::Idle,
 						1.0f,
@@ -238,10 +236,46 @@ namespace bnp {
 			case goal.Visit:
 				execute_visit(registry, goal, bee);
 				break;
+			case goal.Wander:
+				execute_wander(registry, goal, bee);
+				break;
 			default:
 				;
 			}
 		}
+	}
+
+	void BeeBehaviorPlanner::execute_wander(entt::registry& registry, BehaviorGoal& goal, entt::entity bee) {
+		if (!registry.all_of<Motility>(bee)) {
+			return;
+		}
+
+		auto& transform = registry.get<Transform>(bee);
+		auto& motility = registry.get<Motility>(bee);
+
+		if (!registry.all_of<FlowField2D>(goal.target)) {
+			return;
+		}
+
+		auto& field = registry.get<FlowField2D>(goal.target);
+
+		// let field init before executing
+		if (!field.init) {
+			return;
+		}
+
+		glm::vec2 dir = field.sample_wander_direction(transform.world_transform[3]);
+
+		// if can't get there, abort
+		if (glm::length(dir) < 0.001f) {
+			goal.motivation = -1;
+			return;
+		}
+
+		registry.patch<Motility>(bee, [&](Motility& m) {
+			m.impulse = glm::vec3(dir, 0);
+			m.flying_response = RandomFloatGenerator(0.009f, 0.016f).generate();
+			});
 	}
 
 	// todo: querying against a flow field needs to go into a generic function
