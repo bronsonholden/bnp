@@ -61,34 +61,17 @@ namespace bnp {
 
 			}
 
-			// todo: maybe make this a single loop and increment counters?
-			int fleeing = std::count_if(brain.goals.begin(), brain.goals.end(), [](const auto& goal) {
-				return goal.type == goal.Flee && goal.motivation > 0.0f;
-				});
+			int fleeing = 0, expired_fleeing = 0, visiting = 0, expired_visiting = 0, wandering = 0, expired_idling = 0, any_idling = 0;
 
-			int expired_fleeing = std::count_if(brain.goals.begin(), brain.goals.end(), [](const auto& goal) {
-				return goal.type == goal.Flee && goal.motivation <= 0.0f;
-				});
-
-			int visiting = std::count_if(brain.goals.begin(), brain.goals.end(), [](const auto& goal) {
-				return goal.type == goal.Visit && goal.motivation > 0.0f;
-				});
-
-			int expired_visiting = std::count_if(brain.goals.begin(), brain.goals.end(), [](const auto& goal) {
-				return goal.type == goal.Visit && goal.motivation <= 0.0f;
-				});
-
-			int wandering = std::count_if(brain.goals.begin(), brain.goals.end(), [](const auto& goal) {
-				return goal.type == goal.Wander && goal.motivation > 0.0f;
-				});
-
-			int expired_idling = std::count_if(brain.goals.begin(), brain.goals.end(), [](const auto& goal) {
-				return goal.type == goal.Idle && goal.motivation <= 0.0f;
-				});
-
-			int any_idling = std::count_if(brain.goals.begin(), brain.goals.end(), [](const auto& goal) {
-				return goal.type == goal.Idle;
-				});
+			for (auto& goal : brain.goals) {
+				if (goal.type == goal.Flee && goal.motivation > 0.0f) fleeing++;
+				if (goal.type == goal.Flee && goal.motivation <= 0.0f) expired_fleeing++;
+				if (goal.type == goal.Visit && goal.motivation > 0.0f) visiting++;
+				if (goal.type == goal.Visit && goal.motivation <= 0.0f) expired_visiting++;
+				if (goal.type == goal.Wander && goal.motivation > 0.0f) wandering++;
+				if (goal.type == goal.Idle && goal.motivation <= 0.0f) expired_idling++;
+				if (goal.type == goal.Idle) any_idling++;
+			}
 
 			// if fleeing, no motivation to idle or visit
 			if (fleeing > 0) {
