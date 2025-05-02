@@ -7,7 +7,9 @@ using namespace std;
 
 namespace bnp {
 
-	Renderer::Renderer() {
+	Renderer::Renderer()
+		: front_fb()
+	{
 	}
 
 	Renderer::~Renderer() {
