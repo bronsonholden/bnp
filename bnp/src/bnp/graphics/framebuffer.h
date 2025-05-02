@@ -13,6 +13,7 @@ namespace bnp {
 		void destroy();
 
 	private:
+		bool init;
 		GLuint fbo;
 		GLuint color_texture_id;
 		GLuint depth_rbo;

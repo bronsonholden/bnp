@@ -2,7 +2,16 @@
 
 namespace bnp {
 
+	Framebuffer::Framebuffer() {
+		color_texture_id = 0;
+		depth_rbo = 0;
+		fbo = 0;
+		init = false;
+	}
+
 	void Framebuffer::create(int w, int h) {
+		if (init) destroy();
+
 		// Color texture
 		glGenTextures(1, &color_texture_id);
 		glBindTexture(GL_TEXTURE_2D, color_texture_id);
@@ -25,15 +34,21 @@ namespace bnp {
 			throw std::runtime_error("Framebuffer not complete!");
 		}
 
+		init = true;
+
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	void Framebuffer::bind() {
+		if (!init) return;
+
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 		glViewport(0, 0, width, height);
 	}
 
 	void Framebuffer::destroy() {
+		if (!init) return;
+
 		glDeleteTextures(1, &color_texture_id);
 		glDeleteRenderbuffers(1, &depth_rbo);
 		glDeleteFramebuffers(1, &fbo);
