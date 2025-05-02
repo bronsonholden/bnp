@@ -27,7 +27,7 @@ namespace bnp {
 	}
 
 	void Renderer::shutdown() {
-		front_fb.destroy();
+
 	}
 
 	void Renderer::resize(int width, int height) {

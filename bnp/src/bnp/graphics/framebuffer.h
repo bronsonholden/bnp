@@ -6,7 +6,8 @@ namespace bnp {
 
 	class Framebuffer {
 	public:
-		Framebuffer() = default;
+		Framebuffer();
+		~Framebuffer();
 
 		void create(int w, int h);
 		void bind();

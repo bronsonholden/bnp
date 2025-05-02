@@ -11,6 +11,10 @@ namespace bnp {
 		init = false;
 	}
 
+	Framebuffer::~Framebuffer() {
+		destroy();
+	}
+
 	void Framebuffer::create(int w, int h) {
 		if (init) destroy();
 
