@@ -4,6 +4,8 @@
 #include <bnp/components/transform.h>
 #include <bnp/components/physics.h>
 
+#include <glm/glm.hpp>
+
 extern "C" {
 #include <lauxlib.h>
 #include <lualib.h>
@@ -140,6 +142,40 @@ namespace bnp {
 			});
 
 		return 0;
+	}
+
+	int l_transform_set_rotation(lua_State* L) {
+		// [node, params]
+		Node node = l_pop_script_node(L, 1);
+		// [params]
+
+		auto& transform = node.get_component<Transform>();
+
+		float radians = 0.0f;
+
+		lua_getfield(L, 1, "radians");
+		// [params, radians]
+		if (lua_isnumber(L, -1)) radians = lua_tonumber(L, -1);
+		lua_pop(L, 1);
+		// [params]
+
+
+		node.get_registry().patch<Transform>(node.get_entity_id(), [=](Transform& t) {
+			t.rotation = glm::angleAxis(radians, glm::vec3(0.0f, 0.0f, 1.0f));
+			t.dirty = true;
+			});
+
+		lua_pop(L, 1);
+		// []
+
+		l_push_script_node(L, node);
+		// [node]
+		luaL_getmetatable(L, "bnp.Transform");
+		// [node, metatable]
+		lua_setmetatable(L, -2);
+		// [node]
+
+		return 1;
 	}
 
 }

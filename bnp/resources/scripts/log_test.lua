@@ -10,6 +10,7 @@ water = prefab.load("resources/scripts/water_prefab.lua", {
 })
 
 toad = prefab.load("resources/scripts/toad_prefab.lua")
+toad:GetComponent("Transform"):SetRotation({ radians = -0.3 })
 
 nest = prefab.load("resources/scripts/behavior_nest_prefab.lua")
 nest:GetComponent("Transform"):SetPosition({ y = 0.5 })

@@ -169,6 +169,9 @@ namespace bnp {
 			lua_pushcfunction(L, l_transform_set_scale);
 			lua_setfield(L, -2, "SetScale");
 
+			lua_pushcfunction(L, l_transform_set_rotation);
+			lua_setfield(L, -2, "SetRotation");
+
 			lua_setfield(L, -2, "__index");
 			lua_pop(L, 1);
 		}
