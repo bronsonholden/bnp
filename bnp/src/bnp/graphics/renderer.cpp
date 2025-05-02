@@ -22,6 +22,14 @@ namespace bnp {
 		glDisable(GL_CULL_FACE);
 	}
 
+	void Renderer::shutdown() {
+
+	}
+
+	void Renderer::resize(int width, int height) {
+		glViewport(0, 0, width, height);
+	}
+
 	void Renderer::render_line(const Camera& camera, const Mesh& mesh, const Material& material, const glm::mat4& world_transform) const {
 		glUseProgram(material.shader_id);
 
@@ -228,10 +236,6 @@ namespace bnp {
 		if (texture.channels == 4) {
 			glDisable(GL_BLEND);
 		}
-	}
-
-
-	void Renderer::shutdown() {
 	}
 
 } // namespace bnp

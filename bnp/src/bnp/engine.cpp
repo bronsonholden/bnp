@@ -438,7 +438,7 @@ namespace bnp {
 		switch (event.window.event) {
 		case SDL_WINDOWEVENT_RESIZED:
 		case SDL_WINDOWEVENT_SIZE_CHANGED:
-			glViewport(0, 0, width, height);
+			renderer.resize(width, height);
 			break;
 		default:
 			;
