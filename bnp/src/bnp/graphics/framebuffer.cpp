@@ -5,6 +5,8 @@
 namespace bnp {
 
 	Framebuffer::Framebuffer() {
+		width = 0;
+		height = 0;
 		color_texture_id = 0;
 		depth_rbo = 0;
 		fbo = 0;
@@ -52,7 +54,12 @@ namespace bnp {
 
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 		// todo: maybe keep this?
-		//glViewport(0, 0, width, height);
+		glViewport(0, 0, width, height);
+	}
+
+	void Framebuffer::clear() {
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	void Framebuffer::unbind() {

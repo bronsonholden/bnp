@@ -23,7 +23,7 @@ namespace bnp {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDisable(GL_CULL_FACE);
 
-		front_fb.create(width, height);
+		resize(width, height);
 	}
 
 	void Renderer::shutdown() {
@@ -31,7 +31,12 @@ namespace bnp {
 	}
 
 	void Renderer::resize(int width, int height) {
-		glViewport(0, 0, width, height);
+		//float aspect = static_cast<float>(width) / static_cast<float>(height);
+
+		// downscale but keep aspect ratio
+		//int downscaled_height = 240;
+		//int downscaled_width = static_cast<int>(std::floor(height * aspect));
+
 		front_fb.create(width, height);
 	}
 
@@ -114,6 +119,55 @@ namespace bnp {
 		if (texture.channels < 4) {
 			glEnable(GL_BLEND);
 		}
+	}
+
+	void Renderer::render_fullscreen_quad(const Mesh& mesh, const Material& material) const {
+		glUseProgram(material.shader_id);
+
+		glDisable(GL_DEPTH_TEST);
+
+		// Set sampler uniform to texture unit 0
+		GLint location = glGetUniformLocation(material.shader_id, "screenTexture");
+		glUniform1i(location, 0);
+
+		// Vertex data: fullscreen quad in clip space
+		float quad_vertices[] = {
+			// positions   // texCoords
+			-1.0f,  1.0f,   0.0f, 1.0f,
+			-1.0f, -1.0f,   0.0f, 0.0f,
+			 1.0f, -1.0f,   1.0f, 0.0f,
+
+			-1.0f,  1.0f,   0.0f, 1.0f,
+			 1.0f, -1.0f,   1.0f, 0.0f,
+			 1.0f,  1.0f,   1.0f, 1.0f
+		};
+
+		GLuint vao, vbo;
+		glGenVertexArrays(1, &vao);
+		glGenBuffers(1, &vbo);
+
+		glBindVertexArray(vao);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray(0); // aPos
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+
+		glEnableVertexAttribArray(1); // aTexCoord
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+		// Bind texture
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, front_fb.color_texture_id);
+
+		// Draw the quad
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		// Cleanup (optional since we're discarding VAO/VBO anyway)
+		glDeleteBuffers(1, &vbo);
+		glDeleteVertexArrays(1, &vao);
+
+		glEnable(GL_DEPTH_TEST);
 	}
 
 	void Renderer::render_wireframe(const Camera& camera, const Mesh& mesh, const Material& material, const glm::mat4& world_transform, const glm::vec4& color, bool fill) const {

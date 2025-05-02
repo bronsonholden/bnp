@@ -16,6 +16,7 @@ namespace bnp {
 		: sprite_mesh(MeshFactory().box()),
 		line_mesh(MeshFactory().line()),
 		wireframe_material(MaterialFactory().wireframe_material()),
+		quad_material(MaterialFactory().quad_material()),
 		render_flow_field_2d_reverse(false)
 	{
 	}
@@ -40,6 +41,28 @@ namespace bnp {
 				}
 			}
 		}
+	}
+
+	void RenderManager::render_fullscreen_quad(const Renderer& renderer) {
+		Camera camera({
+			glm::vec3(0.0f, 0.0f, 500.0f),
+			glm::vec3(0.0f, 0.0f, 0.0f),
+			glm::vec3(0.0f, 1.0f, 0.0f),
+			glm::ortho(
+				-0.5f,
+				0.5f,
+				-0.5f,
+				0.5f,
+				0.1f,
+				10000.0f
+				)
+			});
+
+		//glViewport(0, 0, screen_width, screen_height);
+
+		// color doesn't matter
+		// todo: make a renderer method for plain quads w/o color arg
+		renderer.render_fullscreen_quad(sprite_mesh, quad_material);
 	}
 
 	// todo: render instanced lines

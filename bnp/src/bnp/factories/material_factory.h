@@ -12,7 +12,10 @@ namespace bnp {
 		MaterialFactory() = default;
 
 		Material load_material(const unordered_map<ShaderType, std::string>& shaders);
+
+		// baked-in materials
 		Material wireframe_material();
+		Material quad_material();
 
 	protected:
 		GLuint compile_shader(const char* source, GLuint type);

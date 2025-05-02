@@ -2,6 +2,30 @@
 
 #include <iostream>
 
+const char* quad_vertex_shader_source = R"(
+#version 330 core
+layout (location = 0) in vec2 aPos;
+layout (location = 1) in vec2 aTexCoord;
+
+out vec2 TexCoord;
+
+void main() {
+    gl_Position = vec4(aPos.xy, 0.0, 1.0);
+    TexCoord = aTexCoord;
+}
+)";
+
+const char* quad_fragment_shader_source = R"(
+#version 330 core
+in vec2 TexCoord;
+out vec4 FragColor;
+
+uniform sampler2D screenTexture;
+
+void main() {
+    FragColor = texture(screenTexture, TexCoord);
+}
+)";
 
 const char* wireframe_vertex_shader_source = R"(
 #version 330 core
@@ -114,6 +138,13 @@ namespace bnp {
 		return load_material({
 			{ShaderType::VertexShader, wireframe_vertex_shader_source},
 			{ShaderType::FragmentShader, wireframe_fragment_shader_source},
+			});
+	}
+
+	Material MaterialFactory::quad_material() {
+		return load_material({
+			{ShaderType::VertexShader, quad_vertex_shader_source},
+			{ShaderType::FragmentShader, quad_fragment_shader_source},
 			});
 	}
 

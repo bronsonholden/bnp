@@ -11,10 +11,10 @@ namespace bnp {
 
 		void create(int w, int h);
 		void bind();
+		void clear();
 		void unbind();
 		void destroy();
 
-	private:
 		bool init;
 		int width;
 		int height;
