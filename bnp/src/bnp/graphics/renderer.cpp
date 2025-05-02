@@ -14,20 +14,23 @@ namespace bnp {
 		shutdown();
 	}
 
-	void Renderer::initialize() {
+	void Renderer::initialize(int width, int height) {
 		glewInit();
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDisable(GL_CULL_FACE);
+
+		front_fb.create(width, height);
 	}
 
 	void Renderer::shutdown() {
-
+		front_fb.destroy();
 	}
 
 	void Renderer::resize(int width, int height) {
 		glViewport(0, 0, width, height);
+		front_fb.create(width, height);
 	}
 
 	void Renderer::render_line(const Camera& camera, const Mesh& mesh, const Material& material, const glm::mat4& world_transform) const {

@@ -61,7 +61,9 @@ namespace bnp {
 		registry.emplace<Global>(registry.create(), Global{
 			&physics_manager.get_world()
 			});
-		renderer.initialize();
+
+		renderer.initialize(window.get_width(), window.get_height());
+
 		archive_manager.load();
 
 		Node node = test_scene.create_node();
