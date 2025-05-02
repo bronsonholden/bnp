@@ -26,8 +26,8 @@ namespace bnp {
 		void render_sprite(const Camera& camera, const Sprite& sprite, const SpriteFrame& sprite_frame, const Mesh& mesh, const Material& material, const Texture& texture, const glm::mat4& transform) const;
 		void render_instances(const Camera& camera, const Mesh& mesh, const Material& material, const Texture& texture, const Instances& instances) const;
 
-	private:
 		Framebuffer front_fb;
+	private:
 	};
 
 } // namespace bnp
