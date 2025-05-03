@@ -32,11 +32,11 @@ namespace bnp {
 	}
 
 	void Renderer::resize(int width, int height) {
-		//	float aspect = static_cast<float>(width) / static_cast<float>(height);
-
-		//	//downscale but keep aspect ratio
-		//	int downscaled_height = 240;
-		//	int downscaled_width = static_cast<int>(std::floor(height * aspect));
+		float aspect = static_cast<float>(width) / static_cast<float>(height);
+		// downscale but keep aspect ratio
+		int downscaled_height = height / 5;
+		int downscaled_width = static_cast<int>(std::floor(height * aspect));
+		upscale_fb.create(downscaled_width, downscaled_height, 4);
 
 		front_fb.create(width, height);
 		obstacle_fb.create(width, height);
@@ -168,12 +168,12 @@ namespace bnp {
 		glUniformMatrix4fv(view_loc, 1, GL_FALSE, &view[0][0]);
 		glUniformMatrix4fv(proj_loc, 1, GL_FALSE, &projection[0][0]);
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glBindVertexArray(sprite.vao);
 		// Draw the quads
 		glDrawArrays(GL_TRIANGLES, 0, sprite.vertex_count);
 		glEnable(GL_DEPTH_TEST);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
 	void Renderer::render_wireframe(const Camera& camera, const Mesh& mesh, const Material& material, const glm::mat4& world_transform, const glm::vec4& color, bool fill) const {

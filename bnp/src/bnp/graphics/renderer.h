@@ -29,6 +29,7 @@ namespace bnp {
 		void render_fullscreen_quad(const Mesh& mesh, const Material& material, const Framebuffer& framebuffer) const;
 
 		Framebuffer front_fb;
+		Framebuffer upscale_fb;
 		Framebuffer obstacle_fb;
 	private:
 	};
