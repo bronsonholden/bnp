@@ -21,7 +21,7 @@ namespace bnp {
 		void render_physics_body_2ds(const entt::registry& registry, const Renderer& renderer, const Camera& camera);
 		void render_bezier_sprites(const entt::registry& registry, const Renderer& renderer, const Camera& camera);
 
-		bool render_flow_field_2d_reverse;
+		bool debug_render_wireframes;
 
 	private:
 		// built-in resources

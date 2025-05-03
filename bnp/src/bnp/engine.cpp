@@ -15,6 +15,7 @@
 #include <bnp/ui/file_browser.h>
 #include <bnp/ui/scene_inspector.h>
 #include <bnp/ui/node_inspector.h>
+#include <bnp/ui/render_manager_inspector.h>
 #include <bnp/controllers/controller.h>
 
 #include <bnp/behaviors/bee_behavior_planner.h>
@@ -435,11 +436,8 @@ namespace bnp {
 				node_inspector.render();
 			}
 
-			ImGui::Begin("Debug Rendering");
-			if (ImGui::Button("Toggle Flow Field Render Reverse")) {
-				render_manager.render_flow_field_2d_reverse = !render_manager.render_flow_field_2d_reverse;
-			}
-			ImGui::End();
+			RenderManagerInspector render_manager_inspector(render_manager);
+			render_manager_inspector.render();
 
 			ImGui::Render();
 
