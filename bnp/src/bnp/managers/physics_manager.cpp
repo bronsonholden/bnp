@@ -22,15 +22,14 @@ namespace bnp {
 
 			const b2Vec2& pos = body.body->GetPosition();
 
-			glm::vec2 distance{ pos.x - transform.position.x, pos.y - transform.position.y };
-
-			if (glm::length(distance) > 0.001f) {
-				registry.patch<Transform>(entity, [&pos](Transform& t) {
-					t.position.x = pos.x;
-					t.position.y = pos.y;
-					t.dirty = true;
-					});
-			}
+			registry.patch<Transform>(entity, [&](Transform& t) {
+				glm::mat4 world_transform =
+					glm::translate(glm::mat4(1.0f), glm::vec3(pos.x, pos.y, 0)) *
+					glm::mat4_cast(glm::quat()) *
+					glm::scale(glm::mat4(1.0f), t.scale);
+				t.world_transform = world_transform;
+				t.dirty = false;
+				});
 		}
 
 		update_water2d_collisions(registry, dt);

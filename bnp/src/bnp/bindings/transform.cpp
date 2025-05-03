@@ -85,7 +85,14 @@ namespace bnp {
 
 		lua_pop(L, 3);
 
-		return 0;
+		l_push_script_node(L, node);
+		// [node]
+		luaL_getmetatable(L, "bnp.Transform");
+		// [node, metatable]
+		lua_setmetatable(L, -2);
+		// [node]
+
+		return 1;
 	}
 
 	int l_transform_get_scale(lua_State* L) {

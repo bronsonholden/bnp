@@ -95,11 +95,23 @@ namespace bnp {
 		if (lua_isboolean(L, -1) && lua_toboolean(L, -1)) fixture_def.filter.maskBits = 0;
 		lua_pop(L, 1);
 
+		lua_getfield(L, 1, "restitution");
+		if (lua_isnumber(L, -1)) fixture_def.restitution = lua_tonumber(L, -1);
+		else fixture_def.restitution = 0.3f;
+		lua_pop(L, 1);
+
+		lua_getfield(L, 1, "friction");
+		if (lua_isnumber(L, -1)) fixture_def.friction = lua_tonumber(L, -1);
+		else fixture_def.friction = 0.8f;
+		lua_pop(L, 1);
+
+		lua_getfield(L, 1, "density");
+		if (lua_isnumber(L, -1)) fixture_def.density = lua_tonumber(L, -1);
+		else fixture_def.density = 5.0f;
+		lua_pop(L, 1);
+
 		body_shape.SetAsBox(hw, hh);
 		fixture_def.shape = &body_shape;
-		fixture_def.density = 6.0f;
-		fixture_def.friction = 0.8f;
-		fixture_def.restitution = 0.5f;
 
 		body.body->CreateFixture(&fixture_def);
 

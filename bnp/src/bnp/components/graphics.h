@@ -132,19 +132,6 @@ namespace bnp {
 		GLuint shader_id = 0;
 
 		Material() : shader_id(0) { }
-
-		//Material(const Material& other)
-		//	: vertex_shader_resource_id(other.vertex_shader_resource_id),
-		//	fragment_shader_resource_id(other.fragment_shader_resource_id),
-		//	shader_id(other.shader_id)
-		//{
-		//}
-
-		//Material(Material&& other) noexcept
-		//	: vertex_shader_resource_id(std::move(other.vertex_shader_resource_id)),
-		//	fragment_shader_resource_id(std::move(other.fragment_shader_resource_id))
-		//{
-		//}
 	};
 
 	struct Camera {

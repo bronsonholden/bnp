@@ -2,8 +2,7 @@
 Creates a queen bee sprite
 ]]
 
-node:AddComponent("Transform", { x = -3 + math.random(-200, 200) * 0.001, y = math.random(40, 50) * 0.01, z = 0 })
-    :SetScale({ x = 0.25, y = 0.25, z = 0.25 })
+node:AddComponent("Transform"):SetScale({ x = 0.25, y = 0.25, z = 0.25 })
 node:AddComponent("Texture", { path = "resources/sprites/queen_bee/queen_bee.png" })
 node:AddComponent("Sprite", { path = "resources/sprites/queen_bee/queen_bee.json" })
 node:AddComponent("Material", {

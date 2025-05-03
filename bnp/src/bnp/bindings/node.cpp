@@ -35,6 +35,16 @@ namespace bnp {
 		};
 	}
 
+	int l_node_get_entity_id(lua_State* L) {
+		// [node]
+		Node node = l_pop_script_node(L);
+		// []
+
+		lua_pushinteger(L, static_cast<int>(node.get_entity_id()));
+
+		return 1;
+	}
+
 	int l_node_create_child(lua_State* L) {
 		Node node = l_pop_script_node(L);
 		Node child(node.get_registry());
@@ -284,8 +294,9 @@ namespace bnp {
 
 		if (node.has_component<Transform>()) {
 			auto& transform = node.get_component<Transform>();
-			position.x = transform.position.x;
-			position.y = transform.position.y;
+			transform.update_world_transform(glm::mat4(1.0f));
+			position.x = transform.world_transform[3].x;
+			position.y = transform.world_transform[3].y;
 		}
 
 		lua_getfield(L, 2, "dynamic");

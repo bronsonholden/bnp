@@ -128,6 +128,9 @@ namespace bnp {
 		if (luaL_newmetatable(L, "bnp.Node")) {
 			lua_newtable(L);
 
+			lua_pushcfunction(L, l_node_get_entity_id);
+			lua_setfield(L, -2, "GetEntityId");
+
 			lua_pushcfunction(L, l_node_create_child);
 			lua_setfield(L, -2, "CreateChild");
 
