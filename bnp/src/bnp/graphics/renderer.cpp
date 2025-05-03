@@ -132,42 +132,18 @@ namespace bnp {
 		GLint location = glGetUniformLocation(material.shader_id, "screenTexture");
 		glUniform1i(location, 0);
 
-		// Vertex data: fullscreen quad in clip space
-		float quad_vertices[] = {
-			// positions   // texCoords
-			-1.0f,  1.0f,   0.0f, 1.0f,
-			-1.0f, -1.0f,   0.0f, 0.0f,
-			 1.0f, -1.0f,   1.0f, 0.0f,
+		glBindVertexArray(mesh.va_id);
 
-			-1.0f,  1.0f,   0.0f, 1.0f,
-			 1.0f, -1.0f,   1.0f, 0.0f,
-			 1.0f,  1.0f,   1.0f, 1.0f
-		};
-
-		GLuint vao, vbo;
-		glGenVertexArrays(1, &vao);
-		glGenBuffers(1, &vbo);
-
-		glBindVertexArray(vao);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
-
-		glEnableVertexAttribArray(0); // aPos
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-
-		glEnableVertexAttribArray(1); // aTexCoord
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+		if (mesh.eb_id) {
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.eb_id);
+		}
 
 		// Bind texture
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, framebuffer.color_texture_id);
 
 		// Draw the quad
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		// Cleanup (optional since we're discarding VAO/VBO anyway)
-		glDeleteBuffers(1, &vbo);
-		glDeleteVertexArrays(1, &vao);
+		glDrawElements(GL_TRIANGLES, mesh.vertex_count, GL_UNSIGNED_INT, 0);
 
 		glEnable(GL_DEPTH_TEST);
 	}

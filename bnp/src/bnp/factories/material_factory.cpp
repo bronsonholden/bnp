@@ -31,12 +31,14 @@ void main() {
 const char* quad_vertex_shader_source = R"(
 #version 330 core
 layout (location = 0) in vec2 aPos;
-layout (location = 1) in vec2 aTexCoord;
+layout (location = 1) in vec3 _aNormal;
+layout (location = 2) in vec2 aTexCoord;
 
 out vec2 TexCoord;
 
 void main() {
-    gl_Position = vec4(aPos.xy, 0.0, 1.0);
+    // quads are -0.5, -0.5 to 0.5, 0.5 so scale it up
+    gl_Position = vec4(aPos.xy * 2, 0.0, 1.0);
     TexCoord = aTexCoord;
 }
 )";
