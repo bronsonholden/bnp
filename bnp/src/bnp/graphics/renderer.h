@@ -28,6 +28,7 @@ namespace bnp {
 		void render_fullscreen_quad(const Mesh& mesh, const Material& material) const;
 
 		Framebuffer front_fb;
+		Framebuffer osbtacle_fb;
 	private:
 	};
 
