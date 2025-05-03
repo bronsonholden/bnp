@@ -18,7 +18,7 @@ namespace bnp {
 		wireframe_material(MaterialFactory().wireframe_material()),
 		quad_material(MaterialFactory().quad_material()),
 		obstacle_material(MaterialFactory().obstacle_material()),
-		debug_render_wireframes(false)
+		debug_render_wireframes(true)
 	{
 	}
 
