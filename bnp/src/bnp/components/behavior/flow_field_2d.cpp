@@ -393,7 +393,7 @@ namespace bnp {
 				OverlapQueryCallback(const b2AABB& cell) : cell_aabb(cell) {}
 
 				bool ReportFixture(b2Fixture* fixture) override {
-					// skip dynamic bodies until we can filter colliding with body attached to the field
+					// todo: skip dynamic bodies until we can filter colliding with body attached to the field
 					if (fixture->GetBody()->GetType() != b2_staticBody) {
 						return true;
 					}

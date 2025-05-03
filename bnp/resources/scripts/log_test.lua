@@ -16,6 +16,8 @@ toad:GetComponent("Transform"):SetPosition({ x = 1.0, y = 0.25 })
 nest = prefab.load("resources/scripts/behavior_nest_prefab.lua")
 nest:GetComponent("Transform"):SetPosition({ y = 0.5 })
 
+flower = prefab.load("resources/scripts/flower_01_prefab.lua")
+
 for i=1,30 do
 	if i == 1 then
 		queen = prefab.load("resources/scripts/queen_bee_prefab.lua")

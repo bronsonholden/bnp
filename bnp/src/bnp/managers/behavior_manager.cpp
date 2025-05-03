@@ -52,8 +52,6 @@ namespace bnp {
 
 			registry.patch<FlowField2D>(entity, [&](FlowField2D& field) {
 				if (regenerate) {
-					// todo: these should go in a utility fn so that they can be generated
-					// on-demand elsewhere
 					field.generate_cost_field(registry);
 					field.generate_direction_field(registry);
 				}
