@@ -321,18 +321,22 @@ namespace bnp {
 		script_factory.load_from_file(squirrel, root / "resources/scripts/log_test.lua");
 
 		while (window.open) {
-			float width = static_cast<float>(window.get_width()) / 120;
-			float height = static_cast<float>(window.get_height()) / 120;
+			float width = static_cast<float>(window.get_width());
+			float height = static_cast<float>(window.get_height());
+			float aspect = width / height;
+
+			float view_height = 10.0f;
+			float view_width = aspect * view_height;
 
 			Camera camera({
 				glm::vec3(0.0f, 0.0f, 500.0f),
 				glm::vec3(0.0f, 0.0f, 0.0f),
 				glm::vec3(0.0f, 1.0f, 0.0f),
 				glm::ortho(
-					-width / 2,
-					width / 2,
-					-height / 2,
-					height / 2,
+					-view_width / 2,
+					view_width / 2,
+					-view_height / 2,
+					view_height / 2,
 					0.1f,
 					10000.0f
 					)
