@@ -8,7 +8,8 @@ using namespace std;
 namespace bnp {
 
 	Renderer::Renderer()
-		: front_fb()
+		: front_fb(),
+		obstacle_fb()
 	{
 	}
 
@@ -38,6 +39,7 @@ namespace bnp {
 		//int downscaled_width = static_cast<int>(std::floor(height * aspect));
 
 		front_fb.create(width, height);
+		obstacle_fb.create(width, height);
 	}
 
 	void Renderer::render_line(const Camera& camera, const Mesh& mesh, const Material& material, const glm::mat4& world_transform) const {
@@ -121,7 +123,7 @@ namespace bnp {
 		}
 	}
 
-	void Renderer::render_fullscreen_quad(const Mesh& mesh, const Material& material) const {
+	void Renderer::render_fullscreen_quad(const Mesh& mesh, const Material& material, const Framebuffer& framebuffer) const {
 		glUseProgram(material.shader_id);
 
 		glDisable(GL_DEPTH_TEST);
@@ -158,7 +160,7 @@ namespace bnp {
 
 		// Bind texture
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, front_fb.color_texture_id);
+		glBindTexture(GL_TEXTURE_2D, framebuffer.color_texture_id);
 
 		// Draw the quad
 		glDrawArrays(GL_TRIANGLES, 0, 6);

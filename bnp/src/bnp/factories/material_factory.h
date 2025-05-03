@@ -16,6 +16,7 @@ namespace bnp {
 		// baked-in materials
 		Material wireframe_material();
 		Material quad_material();
+		Material obstacle_material();
 
 	protected:
 		GLuint compile_shader(const char* source, GLuint type);

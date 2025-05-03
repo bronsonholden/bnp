@@ -17,13 +17,33 @@ namespace bnp {
 		destroy();
 	}
 
-	void Framebuffer::create(int w, int h) {
+	void Framebuffer::create(int w, int h, int channels) {
 		if (init) destroy();
+
+		GLenum internal_format = GL_RGB;
+		GLenum format = GL_RGB;
+
+		switch (channels) {
+		case 1:
+			internal_format = GL_R8;
+			format = GL_RED;
+			break;
+		case 3:
+			internal_format = GL_RGB8;
+			format = GL_RGB;
+			break;
+		case 4:
+			internal_format = GL_RGBA8;
+			format = GL_RGBA;
+			break;
+		default:
+			throw std::runtime_error("Unsupported framebuffer channel count");
+		}
 
 		// Color texture
 		glGenTextures(1, &color_texture_id);
 		glBindTexture(GL_TEXTURE_2D, color_texture_id);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+		glTexImage2D(GL_TEXTURE_2D, 0, internal_format, w, h, 0, format, GL_UNSIGNED_BYTE, nullptr);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 

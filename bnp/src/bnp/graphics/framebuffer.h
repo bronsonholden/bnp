@@ -9,7 +9,7 @@ namespace bnp {
 		Framebuffer();
 		~Framebuffer();
 
-		void create(int w, int h);
+		void create(int w, int h, int channels = 3);
 		void bind();
 		void clear();
 		void unbind();

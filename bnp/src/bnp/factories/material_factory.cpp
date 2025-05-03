@@ -2,6 +2,32 @@
 
 #include <iostream>
 
+const char* obstacle_vertex_shader_source = R"(
+#version 330 core
+layout (location = 0) in vec3 aPos;
+
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+out vec3 FragPos;
+
+void main() {
+    FragPos = vec3(model * vec4(aPos, 1.0));
+    gl_Position = projection * view * vec4(FragPos, 1.0);
+}
+)";
+
+const char* obstacle_fragment_shader_source = R"(
+#version 330 core
+
+out vec4 FragColor;
+
+void main() {
+    FragColor = vec4(1.0);
+}
+)";
+
 const char* quad_vertex_shader_source = R"(
 #version 330 core
 layout (location = 0) in vec2 aPos;
@@ -145,6 +171,13 @@ namespace bnp {
 		return load_material({
 			{ShaderType::VertexShader, quad_vertex_shader_source},
 			{ShaderType::FragmentShader, quad_fragment_shader_source},
+			});
+	}
+
+	Material MaterialFactory::obstacle_material() {
+		return load_material({
+			{ShaderType::VertexShader, obstacle_vertex_shader_source},
+			{ShaderType::FragmentShader, obstacle_fragment_shader_source},
 			});
 	}
 

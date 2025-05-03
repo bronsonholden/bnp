@@ -17,6 +17,7 @@ namespace bnp {
 		line_mesh(MeshFactory().line()),
 		wireframe_material(MaterialFactory().wireframe_material()),
 		quad_material(MaterialFactory().quad_material()),
+		obstacle_material(MaterialFactory().obstacle_material()),
 		render_flow_field_2d_reverse(false)
 	{
 	}
@@ -43,7 +44,7 @@ namespace bnp {
 		}
 	}
 
-	void RenderManager::render_fullscreen_quad(const Renderer& renderer) {
+	void RenderManager::render_fullscreen_quad(const Renderer& renderer, const Framebuffer& framebuffer) {
 		Camera camera({
 			glm::vec3(0.0f, 0.0f, 500.0f),
 			glm::vec3(0.0f, 0.0f, 0.0f),
@@ -62,7 +63,7 @@ namespace bnp {
 
 		// color doesn't matter
 		// todo: make a renderer method for plain quads w/o color arg
-		renderer.render_fullscreen_quad(sprite_mesh, quad_material);
+		renderer.render_fullscreen_quad(sprite_mesh, quad_material, framebuffer);
 	}
 
 	// todo: render instanced lines
@@ -262,6 +263,31 @@ namespace bnp {
 
 				renderer.render_wireframe(camera, sprite_mesh, material, world_transform, color, true);
 			}
+		}
+	}
+
+	void RenderManager::render_physics_body_2ds(const entt::registry& registry, const Renderer& renderer, const Camera& camera) {
+		auto view = registry.view<Renderable, PhysicsBody2D>();
+		glm::vec4 color(1.0f);
+
+		for (auto entity : view) {
+			auto& body = view.get<PhysicsBody2D>(entity);
+			auto& body_transform = body.body->GetTransform();
+			auto& position = body_transform.p;
+			auto& rotation = body_transform.q;
+
+			b2Fixture* fixture = body.body->GetFixtureList();
+			if (!fixture) continue;
+			b2PolygonShape* shape = static_cast<b2PolygonShape*>(fixture->GetShape());
+
+			// m_vertices[2] is top-right corner
+			float height = shape->m_vertices[2].y * 2;
+			float width = shape->m_vertices[2].x * 2;
+
+			glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0));
+			transform = glm::scale(transform, glm::vec3(width, height, 1.0f));
+
+			renderer.render_wireframe(camera, sprite_mesh, obstacle_material, transform, color, true);
 		}
 	}
 

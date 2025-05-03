@@ -370,6 +370,12 @@ namespace bnp {
 			window.clear();
 
 			// rendering
+
+			renderer.obstacle_fb.bind();
+			renderer.obstacle_fb.clear();
+			render_manager.render_physics_body_2ds(registry, renderer, camera);
+			renderer.obstacle_fb.unbind();
+
 			//render_manager.render(registry, renderer, camera);
 			//render_manager.render_instances(registry, renderer, camera);
 			renderer.front_fb.bind();
@@ -381,7 +387,7 @@ namespace bnp {
 			renderer.front_fb.unbind();
 
 			glViewport(0, 0, window.get_width(), window.get_height());
-			render_manager.render_fullscreen_quad(renderer);
+			render_manager.render_fullscreen_quad(renderer, renderer.front_fb);
 
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplSDL2_NewFrame(window.get_sdl_window());
