@@ -32,11 +32,11 @@ namespace bnp {
 	}
 
 	void Renderer::resize(int width, int height) {
-		//float aspect = static_cast<float>(width) / static_cast<float>(height);
+		//	float aspect = static_cast<float>(width) / static_cast<float>(height);
 
-		// downscale but keep aspect ratio
-		//int downscaled_height = 240;
-		//int downscaled_width = static_cast<int>(std::floor(height * aspect));
+		//	//downscale but keep aspect ratio
+		//	int downscaled_height = 240;
+		//	int downscaled_width = static_cast<int>(std::floor(height * aspect));
 
 		front_fb.create(width, height);
 		obstacle_fb.create(width, height);
@@ -146,6 +146,34 @@ namespace bnp {
 		glDrawElements(GL_TRIANGLES, mesh.vertex_count, GL_UNSIGNED_INT, 0);
 
 		glEnable(GL_DEPTH_TEST);
+	}
+
+	void Renderer::render_bezier_sprite(const Camera& camera, const BezierSprite& sprite, const Material& material, const glm::mat4& world_transform) const {
+		glUseProgram(material.shader_id);
+
+		GLint viewport[4];
+		glGetIntegerv(GL_VIEWPORT, viewport);
+
+		float aspect = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
+
+		glm::mat4 view = glm::lookAt(camera.position, camera.target, camera.up);
+		glm::mat4 projection = camera.perspective;
+
+		// Set the transform matrices
+		GLuint model_loc = glGetUniformLocation(material.shader_id, "model");
+		GLuint view_loc = glGetUniformLocation(material.shader_id, "view");
+		GLuint proj_loc = glGetUniformLocation(material.shader_id, "projection");
+
+		glUniformMatrix4fv(model_loc, 1, GL_FALSE, &world_transform[0][0]);
+		glUniformMatrix4fv(view_loc, 1, GL_FALSE, &view[0][0]);
+		glUniformMatrix4fv(proj_loc, 1, GL_FALSE, &projection[0][0]);
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glBindVertexArray(sprite.vao);
+		// Draw the quads
+		glDrawArrays(GL_TRIANGLES, 0, sprite.vertex_count);
+		glEnable(GL_DEPTH_TEST);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
 	void Renderer::render_wireframe(const Camera& camera, const Mesh& mesh, const Material& material, const glm::mat4& world_transform, const glm::vec4& color, bool fill) const {

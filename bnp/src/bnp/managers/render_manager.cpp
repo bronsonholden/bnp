@@ -291,4 +291,16 @@ namespace bnp {
 		}
 	}
 
+	void RenderManager::render_bezier_sprites(const entt::registry& registry, const Renderer& renderer, const Camera& camera) {
+		auto view = registry.view<Renderable, BezierSprite, Transform>();
+		glm::vec4 color(1.0f);
+
+		for (auto entity : view) {
+			auto& sprite = view.get<BezierSprite>(entity);
+			auto& transform = view.get<Transform>(entity);
+
+			renderer.render_bezier_sprite(camera, sprite, wireframe_material, transform.world_transform);
+		}
+	}
+
 } // namespace bnp

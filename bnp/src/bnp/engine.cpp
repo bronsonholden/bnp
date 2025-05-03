@@ -320,6 +320,24 @@ namespace bnp {
 		root = root / "bnp";
 		script_factory.load_from_file(squirrel, root / "resources/scripts/log_test.lua");
 
+		{
+			Node bezier = test_scene.create_node();
+
+			bezier.add_component< Renderable>(true);
+			bezier.add_component<Transform>(Transform{
+				glm::vec3(0.0f, 0.5f, 0.0f)
+				});
+			bezier.add_component<BezierSprite>(BezierSprite{
+				{0.5f, 1.8f},
+				{1.0f, 1.6f},
+				{1.5f, 1.8f}
+				});
+
+			registry.patch<BezierSprite>(bezier.get_entity_id(), [](BezierSprite& b) {
+				b.update_buffer_data();
+				});
+		}
+
 		while (window.open) {
 			float width = static_cast<float>(window.get_width());
 			float height = static_cast<float>(window.get_height());
@@ -388,6 +406,7 @@ namespace bnp {
 			render_manager.render_water2d(registry, renderer, camera);
 			render_manager.render_wireframes(registry, renderer, camera);
 			//render_manager.render_flow_field_2ds(registry, renderer, camera);
+			render_manager.render_bezier_sprites(registry, renderer, camera);
 			renderer.front_fb.unbind();
 
 			glViewport(0, 0, window.get_width(), window.get_height());
