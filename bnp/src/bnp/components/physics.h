@@ -14,7 +14,7 @@ namespace bnp {
 
 	struct Motility {
 		float speed = 1.0f;
-		float jump_height = 2.0f;
+		float jump_height = 2.5f;
 		float current_air_control = 1.0f;
 		float air_control_ramp = 0.985f;
 		float fall_time = 0.0f;
