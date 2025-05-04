@@ -251,7 +251,6 @@ namespace bnp {
 			return vertices;
 		}
 
-
 		void update_buffer_data() {
 			if (vao) glDeleteVertexArrays(1, &vao);
 			if (vbo) glDeleteBuffers(1, &vbo);
