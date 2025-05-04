@@ -1,6 +1,8 @@
 --node:GetComponent("Sprite"):SetLayerVisible("Straw", true)
 
 sprite = node:GetComponent("Sprite")
+sprite:SetLayerVisible("EyesClosed", true)
+sprite:SetLayerVisible("EyesOpen", true)
 
 water = prefab.load("resources/scripts/water_prefab.lua", {
 	columns = 100,
