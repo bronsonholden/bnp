@@ -6,6 +6,8 @@
 #include <random>
 #include <cmath>
 
+#define INDEX(x, y) ((y) * width + (x))
+
 namespace bnp {
 
 	glm::vec4 FlowField2D::get_aabb() {
@@ -419,18 +421,17 @@ namespace bnp {
 
 		// ==== Initial flood-fill setup ====
 		std::queue<glm::ivec2> open;
-		auto index = [&](int x, int y) { return y * width + x; };
 
 		const int tx = width / 2;
 		const int ty = height / 2;
 
 		auto is_invalid = [&](int x, int y) {
-			int i = index(x, y);
+			int i = INDEX(x, y);
 			return blocked[i] || underwater[i];
 			};
 
 		if (!is_invalid(tx, ty)) {
-			cost_field[index(tx, ty)] = 0.0f;
+			cost_field[INDEX(tx, ty)] = 0.0f;
 			open.push({ tx, ty });
 		}
 		else {
@@ -445,7 +446,7 @@ namespace bnp {
 					int ny = ty + i * offset.y;
 					if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
 					if (!is_invalid(nx, ny)) {
-						cost_field[index(nx, ny)] = 0.0f;
+						cost_field[INDEX(nx, ny)] = 0.0f;
 						open.push({ nx, ny });
 						found = true;
 						break;
@@ -465,7 +466,7 @@ namespace bnp {
 			glm::ivec2 current = open.front();
 			open.pop();
 
-			float curr_cost = cost_field[index(current.x, current.y)];
+			float curr_cost = cost_field[INDEX(current.x, current.y)];
 
 			for (auto offset : offsets) {
 				int nx = current.x + offset.x;
@@ -475,7 +476,7 @@ namespace bnp {
 
 				float step_cost = (offset.x != 0 && offset.y != 0) ? 1.4142f : 1.0f;
 				float new_cost = curr_cost + step_cost;
-				int ni = index(nx, ny);
+				int ni = INDEX(nx, ny);
 
 				if (new_cost < cost_field[ni]) {
 					cost_field[ni] = new_cost;
@@ -580,10 +581,6 @@ namespace bnp {
 		direction_field.resize(width * height, glm::vec2(0.0f));
 		reverse_field.resize(width * height, glm::vec2(0.0f));
 
-		auto index = [&](int x, int y) {
-			return y * width + x;
-			};
-
 		const glm::ivec2 offsets[] = {
 			{ 1, 0}, { -1, 0 }, { 0,  1 }, { 0, -1 }, // 4 cardinal
 			{ 1, 1}, { -1, 1 }, { 1, -1 }, {-1, -1 }  // 4 diagonal
@@ -591,7 +588,7 @@ namespace bnp {
 
 		for (int y = 0; y < height; ++y) {
 			for (int x = 0; x < width; ++x) {
-				int i = index(x, y);
+				int i = INDEX(x, y);
 				if (cost_field[i] == std::numeric_limits<float>::infinity()) {
 					direction_field[i] = glm::vec2(0.0f);
 					reverse_field[i] = glm::vec2(0.0f);
