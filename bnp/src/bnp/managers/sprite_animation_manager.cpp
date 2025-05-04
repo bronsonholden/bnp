@@ -35,6 +35,9 @@ namespace  bnp {
 				if (motility.jumping || motility.falling) {
 					new_animation = "Jump";
 				}
+				else if (motility.flying) {
+					new_animation = "Fly";
+				}
 				else if (motility.walking) {
 					new_animation = "Walk";
 				}
@@ -43,9 +46,6 @@ namespace  bnp {
 				}
 				else if (motility.crouching) {
 					new_animation = "Crouch";
-				}
-				else if (motility.flying) {
-					new_animation = "Fly";
 				}
 
 				if (new_animation != animator.current_animation) {
