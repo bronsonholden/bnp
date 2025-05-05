@@ -225,6 +225,13 @@ namespace bnp {
 					1.0f
 				);
 				glm::mat4 world_transform = transform.world_transform * glm::scale(glm::mat4(1.0f), scalar);
+				glm::vec2 camera_position = camera.position;
+				glm::vec2 relative_position = glm::vec2(world_transform[3]) - camera_position;
+				glm::vec2 pixel_space = glm::floor(relative_position * 48.0f + 0.5f);
+				glm::vec2 snap_position = pixel_space / 48.0f + camera_position;
+
+				world_transform[3].x = snap_position.x;
+				world_transform[3].y = snap_position.y;
 
 				renderer.render_sprite(camera, sprite, sprite_frame, sprite_mesh, material, texture, world_transform);
 

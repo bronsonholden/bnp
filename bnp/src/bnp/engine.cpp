@@ -9,6 +9,7 @@
 #include <bnp/factories/sprite_factory.h>
 #include <bnp/factories/script_factory.h>
 #include <bnp/helpers/color_helper.hpp>
+#include <bnp/helpers/camera_helper.h>
 #include <bnp/serializers/scene.hpp>
 #include <bnp/serializers/graphics.hpp>
 #include <bnp/managers/archive_manager.h>
@@ -340,26 +341,15 @@ namespace bnp {
 		}
 
 		while (window.open) {
-			float width = static_cast<float>(window.get_width());
-			float height = static_cast<float>(window.get_height());
-			float aspect = width / height;
-
-			float view_height = 10.0f;
-			float view_width = aspect * view_height;
 
 			Camera camera({
 				glm::vec3(0.0f, 0.0f, 500.0f),
 				glm::vec3(0.0f, 0.0f, 0.0f),
 				glm::vec3(0.0f, 1.0f, 0.0f),
-				glm::ortho(
-					-view_width / 2,
-					view_width / 2,
-					-view_height / 2,
-					view_height / 2,
-					0.1f,
-					10000.0f
-					)
+				glm::mat4(1.0)
 				});
+
+			configure_pixel_perfect_camera(camera, window.get_width(), window.get_height());
 
 			SDL_Event event;
 
