@@ -13,20 +13,8 @@ namespace bnp {
 	void BeeBehaviorPlanner::update(entt::registry& registry, float dt) {
 		std::vector<entt::entity> bees = get_bees(registry);
 
-		tick_goals(registry, bees, dt);
 		plan_goals(registry, bees, dt);
 		execute_goals(registry, bees, dt);
-	}
-
-	void BeeBehaviorPlanner::tick_goals(entt::registry& registry, std::vector<entt::entity> bees, float dt) {
-		for (auto bee : bees) {
-			auto& brain = registry.get_or_emplace<BehaviorBrain>(bee, BehaviorBrain{});
-
-			for (auto& goal : brain.goals) {
-				goal.motivation -= dt * goal.decay;
-				goal.elapsed_time += dt;
-			}
-		}
 	}
 
 	void BeeBehaviorPlanner::plan_goals(entt::registry& registry, std::vector<entt::entity> bees, float dt) {
@@ -356,7 +344,7 @@ namespace bnp {
 			}
 		}
 
-		return bees;
+		return std::move(bees);
 	}
 
 	std::vector<entt::entity> BeeBehaviorPlanner::get_threats(entt::registry& registry, entt::entity bee) {
@@ -381,7 +369,7 @@ namespace bnp {
 			threats.push_back(entity);
 		}
 
-		return threats;
+		return std::move(threats);
 	}
 
 }

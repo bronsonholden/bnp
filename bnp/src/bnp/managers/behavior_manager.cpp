@@ -19,8 +19,22 @@ namespace bnp {
 
 
 	void BehaviorManager::update(entt::registry& registry, float dt) {
+		tick_goals(registry, dt);
 		update_targets(registry, dt);
 		regenerate_if_stale(registry, dt);
+	}
+
+	void BehaviorManager::tick_goals(entt::registry& registry, float dt) {
+		auto view = registry.view<BehaviorBrain>();
+
+		for (auto entity : view) {
+			auto& brain = view.get<BehaviorBrain>(entity);
+
+			for (auto& goal : brain.goals) {
+				goal.motivation -= dt * goal.decay;
+				goal.elapsed_time += dt;
+			}
+		}
 	}
 
 	void BehaviorManager::update_targets(entt::registry& registry, float dt) {

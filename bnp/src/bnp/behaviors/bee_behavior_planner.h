@@ -17,7 +17,6 @@ namespace bnp {
 		std::vector<entt::entity> get_threats(entt::registry& registry, entt::entity bee);
 
 		void plan_goals(entt::registry& registry, std::vector<entt::entity> bees, float dt);
-		void tick_goals(entt::registry& registry, std::vector<entt::entity> bees, float dt);
 		void execute_goals(entt::registry& registry, std::vector<entt::entity> bees, float dt);
 
 		// old goal stuff - probably removing/refactoring

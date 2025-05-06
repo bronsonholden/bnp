@@ -16,9 +16,8 @@ namespace bnp {
 
 		void update(entt::registry& registry, float dt);
 
-		// set target to parent position
+		void tick_goals(entt::registry& registry, float dt);
 		void update_targets(entt::registry& registry, float dt);
-
 		void regenerate_if_stale(entt::registry& registry, float dt);
 
 	private:
