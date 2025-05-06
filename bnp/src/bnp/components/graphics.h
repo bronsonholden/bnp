@@ -182,7 +182,6 @@ namespace bnp {
 		}
 
 		void apply_viewport() const {
-			cout << viewport_x << ", " << viewport_y << ", " << render_width * scale << ", " << render_height * scale << endl;
 			glViewport(viewport_x, viewport_y, render_width * scale, render_height * scale);
 		}
 

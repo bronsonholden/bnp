@@ -32,4 +32,3 @@ for i=1,30 do
 		bee:GetComponent("Transform"):SetPosition({ x = -3 + math.random(-200, 200) * 0.001, y = math.random(40, 50) * 0.01, z = 0 }):SetScale({ x = 0.25, y = 0.25, z = 0.25 })
 	end
 end
-
