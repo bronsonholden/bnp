@@ -7,6 +7,16 @@ namespace bnp {
 
 	struct World2D {
 		bool init = false;
+
+		// world is split up into partitions of this size
+		glm::ivec2 partition_size;
+
+		// worldspace coordinates of viewer
+		glm::vec2 viewer;
+
+		// x, y coords of active partition (in partition grid, not worldspace)
+		glm::ivec2 get_active_partition() {
+		}
 	};
 
 	struct Tilemap {
