@@ -3,6 +3,7 @@
 * [ ] Collision manager to allow collision callbacks in Lua scripts
 * [ ] Add script update hook
 * [ ] Create design document
+* [ ] Consistent naming of `2D` classes & files (should be e.g. `water_2d_manager.h` for `Water2DManager`)
 
 ## Four Pillars
 
