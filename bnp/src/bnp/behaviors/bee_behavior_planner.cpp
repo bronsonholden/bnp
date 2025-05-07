@@ -289,7 +289,6 @@ namespace bnp {
 		auto& motility = registry.get<Motility>(bee);
 
 		if (!registry.all_of<FlowField2D>(goal.target)) {
-			cout << "target has no flow field" << endl;
 			return;
 		}
 
@@ -304,7 +303,6 @@ namespace bnp {
 
 		// can't proceed to target, abandon visit
 		if (glm::length(dir) < 0.001f) {
-			cout << "abandoning flee, no dir given" << endl;
 			goal.motivation = -1;
 			return;
 		}

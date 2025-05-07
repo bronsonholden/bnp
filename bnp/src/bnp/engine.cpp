@@ -5,6 +5,7 @@
 #include <bnp/components/graphics.h>
 #include <bnp/components/controllable.h>
 #include <bnp/components/global.h>
+#include <bnp/components/world.h>
 #include <bnp/helpers/random_float_generator.hpp>
 #include <bnp/factories/sprite_factory.h>
 #include <bnp/factories/script_factory.h>
@@ -58,7 +59,8 @@ namespace bnp {
 		test_scene(registry),
 		physics_manager(),
 		script_factory(resource_manager, physics_manager),
-		behavior_manager(physics_manager)
+		behavior_manager(physics_manager),
+		world2d_manager()
 	{
 		registry.emplace<Global>(registry.create(), Global{
 			&physics_manager.get_world()
@@ -124,7 +126,7 @@ namespace bnp {
 			"resources/sprites/squirrel/squirrel.json"
 		);
 		squirrel.add_component<Transform>(Transform{
-			glm::vec3(2.5, 0, 0),
+			glm::vec3(3, 3, 0),
 			glm::quat(),
 			glm::vec3(1)
 			});
@@ -144,176 +146,7 @@ namespace bnp {
 		squirrel.add_component<Motility>(Motility{ 1.8f });
 		squirrel.add_component<Controllable>(Controllable{ true });
 
-		{
-			Node ground = test_scene.create_node();
-
-			b2BodyDef body_def;
-			body_def.position.Set(0.0f, -0.5f);  // Set Y to your desired "floor"
-			body_def.type = b2_staticBody;
-
-			// Create a box shape for the ground
-			b2PolygonShape box;
-			box.SetAsBox(10.0f, 0.5f);  // Width, Height (flat platform)
-
-			b2FixtureDef fixture_def;
-			fixture_def.shape = &box;
-			fixture_def.friction = 0.0f;
-
-			// Attach the shape to the ground body
-			physics_manager.add_body(ground, body_def, fixture_def);
-
-			ground.add_component<Renderable>(true);
-		}
-
-		//{
-		//	Node ceiling = test_scene.create_node();
-
-		//	b2BodyDef body_def;
-		//	body_def.position.Set(0.0f, 1.0f);  // Set Y to your desired "floor"
-		//	body_def.type = b2_staticBody;
-
-		//	// Create a box shape for the ground
-		//	b2PolygonShape box;
-		//	box.SetAsBox(1.5f, 0.15f);  // Width, Height (flat platform)
-
-		//	b2FixtureDef fixture_def;
-		//	fixture_def.shape = &box;
-		//	fixture_def.friction = 0.0f;
-
-		//	// Attach the shape to the ground body
-		//	physics_manager.add_body(ceiling, body_def, fixture_def);
-
-		//	ceiling.add_component<Renderable>(true);
-		//}
-
-		{
-			Node ceiling = test_scene.create_node();
-
-			b2BodyDef body_def;
-			body_def.position.Set(4.0f, 0.1f);  // Set Y to your desired "floor"
-			body_def.type = b2_staticBody;
-
-			// Create a box shape for the ground
-			b2PolygonShape box;
-			box.SetAsBox(0.5f, 0.2f);  // Width, Height (flat platform)
-
-			b2FixtureDef fixture_def;
-			fixture_def.shape = &box;
-			fixture_def.friction = 0.0f;
-
-			// Attach the shape to the ground body
-			physics_manager.add_body(ceiling, body_def, fixture_def);
-
-			ceiling.add_component<Renderable>(true);
-		}
-
-		{
-			Node ceiling = test_scene.create_node();
-
-			b2BodyDef body_def;
-			body_def.position.Set(-4.0f, 0.6f);  // Set Y to your desired "floor"
-			body_def.type = b2_staticBody;
-
-			// Create a box shape for the ground
-			b2PolygonShape box;
-			box.SetAsBox(0.5f, 0.2f);  // Width, Height (flat platform)
-
-			b2FixtureDef fixture_def;
-			fixture_def.shape = &box;
-			fixture_def.friction = 0.0f;
-
-			// Attach the shape to the ground body
-			physics_manager.add_body(ceiling, body_def, fixture_def);
-
-			ceiling.add_component<Renderable>(true);
-		}
-
-		{
-			Node pillar = test_scene.create_node();
-
-			b2BodyDef body_def;
-			body_def.position.Set(-2.0f, 4.0f);  // Set Y to your desired "floor"
-			body_def.type = b2_staticBody;
-
-			// Create a box shape for the ground
-			b2PolygonShape box;
-			box.SetAsBox(0.15f, 3.0f);  // Width, Height (flat platform)
-
-			b2FixtureDef fixture_def;
-			fixture_def.shape = &box;
-			fixture_def.friction = 0.0f;
-
-			// Attach the shape to the ground body
-			physics_manager.add_body(pillar, body_def, fixture_def);
-
-			pillar.add_component<Renderable>(true);
-		}
-
-		registry.emplace<BeeBehavior>(static_cast<entt::entity>(7), BeeBehavior{});
-		//registry.emplace<Identity>(static_cast<entt::entity>(7), Identity{ "Bee" });
-
-		//Node butterfly = load_sprite(
-		//	"bnp/sprites/butterfly_red/butterfly_red.png",
-		//	"bnp/sprites/butterfly_red/butterfly_red.json"
-		//);
-		//butterfly.add_component<Transform>(Transform{
-		//	glm::vec3(1.75, 0.2, 0),
-		//	glm::quat(),
-		//	glm::vec3(0.3)
-		//	});
-
-		//Node butterfly2 = load_sprite(
-		//	"bnp/sprites/butterfly_yellow/butterfly_yellow.png",
-		//	"bnp/sprites/butterfly_yellow/butterfly_yellow.json"
-		//);
-		//butterfly2.add_component<Transform>(Transform{
-		//	glm::vec3(0.75, 0.2, 0),
-		//	glm::quat(),
-		//	glm::vec3(0.3)
-		//	});
-
-		//Node grass = load_sprite(
-		//	"bnp/sprites/grass_blue_01/grass_blue_01.png",
-		//	"bnp/sprites/grass_blue_01/grass_blue_01.json"
-		//);
-		//grass.add_component<Transform>(Transform{
-		//	glm::vec3(2, 0, 0),
-		//	glm::quat(),
-		//	glm::vec3(1)
-		//	});
-
-
-		//Node grass2 = load_sprite(
-		//	"bnp/sprites/grass_blue_01/grass_blue_01.png",
-		//	"bnp/sprites/grass_blue_01/grass_blue_01.json"
-		//);
-		//grass2.add_component<Transform>(Transform{
-		//	glm::vec3(2.4, 0, 0),
-		//	glm::quat(),
-		//	glm::vec3(1)
-		//	});
-
-		//Node bush = load_sprite(
-		//	"bnp/sprites/bush_blue_01/bush_blue_01.png",
-		//	"bnp/sprites/bush_blue_01/bush_blue_01.json"
-		//);
-		//bush.add_component<Transform>(Transform{
-		//	glm::vec3(1, 0, 0),
-		//	glm::quat(),
-		//	glm::vec3(1)
-		//	});
-
-		/*Node arch = load_sprite(
-			"bnp/sprites/arch_01/arch_01.png",
-			"bnp/sprites/arch_01/arch_01.json"
-		);
-		arch.add_component<Transform>(Transform{
-			glm::vec3(1, 0, 0),
-			glm::quat(),
-			glm::vec3(4)
-			});*/
-
-			// pre-run setup
+		// pre-run setup
 		physics_manager.generate_sprite_bodies(registry);
 
 		Controller controller(registry, squirrel.get_entity_id());
@@ -323,21 +156,27 @@ namespace bnp {
 		script_factory.load_from_file(squirrel, root / "resources/scripts/log_test.lua");
 
 		{
-			Node bezier = test_scene.create_node();
+			Tilemap tilemap;
+			tilemap.tiles = {
+				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+				0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+				0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+				1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+				1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+			};
+			tilemap.width = tilemap.tiles.size() / 5;
+			tilemap.height = 5;
 
-			bezier.add_component< Renderable>(true);
-			bezier.add_component<Transform>(Transform{
-				glm::vec3(0.0f, 0.5f, 0.0f)
-				});
-			bezier.add_component<BezierSprite>(BezierSprite{
-				{0.5f, 0.5f},
-				{1.0f, 0.95f},
-				{1.5f, 0.7f}
-				});
+			std::vector<glm::ivec4> rects = tilemap.decompose();
+			for (const auto& r : rects) {
+				std::cout << "Rect: x=" << r.x << " y=" << r.y
+					<< " w=" << r.z << " h=" << r.w << "\n";
+			}
 
-			registry.patch<BezierSprite>(bezier.get_entity_id(), [](BezierSprite& b) {
-				b.update_buffer_data();
-				});
+			entt::entity world = registry.create();
+
+			registry.emplace<World2D>(world, World2D{});
+			registry.emplace<Tilemap>(world, tilemap);
 		}
 
 		while (window.open) {
@@ -443,6 +282,7 @@ namespace bnp {
 		// manager updates
 		sprite_animation_manager.update(registry, dt);
 		motility_manager.update(registry, dt);
+		world2d_manager.update(registry, dt);
 
 		// only apply transforms after all game updates have completed
 		// so we have the most correct transforms
