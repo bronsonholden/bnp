@@ -26,6 +26,13 @@ namespace bnp {
 
 			auto rects = tilemap.decompose();
 
+
+			// todo: lazy load rects by taking a slice of of the tilemap data for a
+			// given partition.
+			// todo: when creating the entity, it needs a World2DChunk component or
+			// similar so we can query for it and disable it when the partition is
+			// not active (likely will go with viewer's current partition and any
+			// neighboring partitions for now)
 			for (auto rect : rects) {
 				entt::entity entity = registry.create();
 
