@@ -6,17 +6,24 @@
 namespace bnp {
 
 	struct World2D {
-		bool init = false;
+		float tile_size;
 
 		// world is split up into partitions of this size
 		glm::ivec2 partition_size;
 
-		// worldspace coordinates of viewer
-		glm::vec2 viewer;
+		// worldspace coordinates of focus, for loading/activating the objects in
+		// the active and neighboring partitions
+		glm::vec2 focus;
 
 		// x, y coords of active partition (in partition grid, not worldspace)
 		glm::ivec2 get_active_partition() {
+			return glm::ivec2(
+				std::floor(focus.x / (partition_size.x * tile_size)),
+				std::floor(focus.y / (partition_size.y * tile_size))
+			);
 		}
+
+		bool init = false;
 	};
 
 	struct Tilemap {

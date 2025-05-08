@@ -38,7 +38,7 @@ namespace bnp {
 
 				int flipped_y = tilemap.height - rect.y - rect.w;
 
-				float tile_size = 0.25f;
+				float tile_size = world.tile_size;
 
 				float center_x = (rect.x + rect.z / 2.0f) * tile_size;
 				float center_y = (flipped_y + rect.w / 2.0f) * tile_size;

@@ -46,11 +46,6 @@ namespace bnp {
 	void Renderer::render_line(const Camera& camera, const Mesh& mesh, const Material& material, const glm::mat4& world_transform) const {
 		glUseProgram(material.shader_id);
 
-		GLint viewport[4];
-		glGetIntegerv(GL_VIEWPORT, viewport);
-
-		float aspect = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
-
 		glm::mat4 view = camera.view;
 		glm::mat4 projection = camera.perspective;
 
@@ -83,11 +78,6 @@ namespace bnp {
 			glDisable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
-
-		GLint viewport[4];
-		glGetIntegerv(GL_VIEWPORT, viewport);
-
-		float aspect = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
 
 		glm::mat4 view = camera.view;
 		glm::mat4 projection = camera.perspective;
@@ -152,11 +142,6 @@ namespace bnp {
 	void Renderer::render_bezier_sprite(const Camera& camera, const BezierSprite& sprite, const Material& material, const glm::mat4& world_transform) const {
 		glUseProgram(material.shader_id);
 
-		GLint viewport[4];
-		glGetIntegerv(GL_VIEWPORT, viewport);
-
-		float aspect = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
-
 		glm::mat4 view = camera.view;
 		glm::mat4 projection = camera.perspective;
 
@@ -179,11 +164,6 @@ namespace bnp {
 
 	void Renderer::render_wireframe(const Camera& camera, const Mesh& mesh, const Material& material, const glm::mat4& world_transform, const glm::vec4& color, bool fill) const {
 		glUseProgram(material.shader_id);
-
-		GLint viewport[4];
-		glGetIntegerv(GL_VIEWPORT, viewport);
-
-		float aspect = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
 
 		glm::mat4 view = camera.view;
 		glm::mat4 projection = camera.perspective;
@@ -217,11 +197,6 @@ namespace bnp {
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
-
-		GLint viewport[4];
-		glGetIntegerv(GL_VIEWPORT, viewport);
-
-		float aspect = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
 
 		glm::mat4 view = camera.view;
 		glm::mat4 projection = camera.perspective;
@@ -259,11 +234,6 @@ namespace bnp {
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
-
-		GLint viewport[4];
-		glGetIntegerv(GL_VIEWPORT, viewport);
-
-		float aspect = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
 
 		// Camera view and projection matrices
 		glm::mat4 view = camera.view;
