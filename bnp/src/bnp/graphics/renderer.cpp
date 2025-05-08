@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 #include <string>
+
 #include <iostream>
 using namespace std;
 
@@ -50,7 +51,7 @@ namespace bnp {
 
 		float aspect = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
 
-		glm::mat4 view = glm::lookAt(camera.position, camera.target, camera.up);
+		glm::mat4 view = camera.view;
 		glm::mat4 projection = camera.perspective;
 
 		// Set the transform matrices
@@ -88,7 +89,7 @@ namespace bnp {
 
 		float aspect = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
 
-		glm::mat4 view = glm::lookAt(camera.position, camera.target, camera.up);
+		glm::mat4 view = camera.view;
 		glm::mat4 projection = camera.perspective;
 
 		// Set the transform matrices
@@ -156,7 +157,7 @@ namespace bnp {
 
 		float aspect = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
 
-		glm::mat4 view = glm::lookAt(camera.position, camera.target, camera.up);
+		glm::mat4 view = camera.view;
 		glm::mat4 projection = camera.perspective;
 
 		// Set the transform matrices
@@ -184,7 +185,7 @@ namespace bnp {
 
 		float aspect = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
 
-		glm::mat4 view = glm::lookAt(camera.position, camera.target, camera.up);
+		glm::mat4 view = camera.view;
 		glm::mat4 projection = camera.perspective;
 
 		// Set the transform matrices
@@ -222,7 +223,7 @@ namespace bnp {
 
 		float aspect = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
 
-		glm::mat4 view = glm::lookAt(camera.position, camera.target, camera.up);
+		glm::mat4 view = camera.view;
 		glm::mat4 projection = camera.perspective;
 
 		// Set the transform matrices
@@ -265,7 +266,7 @@ namespace bnp {
 		float aspect = static_cast<float>(viewport[2]) / static_cast<float>(viewport[3]);
 
 		// Camera view and projection matrices
-		glm::mat4 view = glm::lookAt(camera.position, camera.target, camera.up);
+		glm::mat4 view = camera.view;
 		glm::mat4 projection = camera.perspective;
 
 		// Set the uniform locations for matrices

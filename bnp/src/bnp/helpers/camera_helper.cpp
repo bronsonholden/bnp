@@ -39,13 +39,15 @@ namespace bnp {
 
 		// 6. Apply orthographic projection centered around the camera's position
 		camera.perspective = glm::ortho(
-			-world_width / 2.0f, world_width / 2.0f,
-			-world_height / 2.0f, world_height / 2.0f,
-			0.1f, 1000.0f
+			-world_width / 2.0f + camera.position.x, world_width / 2.0f + camera.position.x,
+			-world_height / 2.0f + camera.position.y, world_height / 2.0f + camera.position.y,
+			-1000.0f, 1000.0f
 		);
 
+		camera.view = glm::mat4(1.0f);
+
 		// Optional: recompute camera's view matrix if needed
-		// glm::mat4 view = glm::lookAt(camera.position, camera.target, camera.up);
+		// glm::mat4 view = camera.view;
 		// pass (projection * view) to your shader as usual
 	}
 }
