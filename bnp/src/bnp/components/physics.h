@@ -26,6 +26,7 @@ namespace bnp {
 		bool falling = false;
 		bool idle = true;
 		bool start_jump = false;
+		bool stop_jump = false;
 		bool jumping = false;
 		bool walking = false;
 		bool crouching = false;

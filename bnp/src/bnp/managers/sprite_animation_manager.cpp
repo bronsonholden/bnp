@@ -32,8 +32,11 @@ namespace  bnp {
 			registry.patch<SpriteAnimator>(entity, [&motility](SpriteAnimator& animator) {
 				std::string new_animation = animator.current_animation;
 
-				if (motility.jumping || motility.falling) {
+				if (motility.jumping) {
 					new_animation = "Jump";
+				}
+				else if (motility.falling) {
+					new_animation = "Fall";
 				}
 				else if (motility.flying) {
 					new_animation = "Fly";

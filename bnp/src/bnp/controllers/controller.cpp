@@ -41,6 +41,13 @@ namespace bnp {
 			if (event.type == SDL_KEYDOWN) {
 				if (!m.jumping && !m.falling && event.key.keysym.sym == SDLK_SPACE && event.key.repeat == 0) {
 					m.start_jump = true;
+					m.stop_jump = false;
+				}
+			}
+
+			if (event.type == SDL_KEYUP) {
+				if (m.jumping) {
+					m.stop_jump = true;
 				}
 			}
 

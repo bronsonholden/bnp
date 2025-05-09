@@ -105,7 +105,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
     "sourceSize": { "w": 48, "h": 48 },
-    "duration": 120
+    "duration": 50
    },
    {
     "filename": "squirrel (Squirrel) 12.aseprite",
@@ -114,10 +114,19 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
     "sourceSize": { "w": 48, "h": 48 },
-    "duration": 190
+    "duration": 210
    },
    {
     "filename": "squirrel (Squirrel) 13.aseprite",
+    "frame": { "x": 240, "y": 48, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 160
+   },
+   {
+    "filename": "squirrel (Squirrel) 14.aseprite",
     "frame": { "x": 240, "y": 48, "w": 48, "h": 48 },
     "rotated": false,
     "trimmed": false,
@@ -231,7 +240,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
     "sourceSize": { "w": 48, "h": 48 },
-    "duration": 120
+    "duration": 50
    },
    {
     "filename": "squirrel (MouthFull) 12.aseprite",
@@ -240,10 +249,19 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
     "sourceSize": { "w": 48, "h": 48 },
-    "duration": 190
+    "duration": 210
    },
    {
     "filename": "squirrel (MouthFull) 13.aseprite",
+    "frame": { "x": 336, "y": 96, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 160
+   },
+   {
+    "filename": "squirrel (MouthFull) 14.aseprite",
     "frame": { "x": 336, "y": 96, "w": 48, "h": 48 },
     "rotated": false,
     "trimmed": false,
@@ -357,7 +375,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
     "sourceSize": { "w": 48, "h": 48 },
-    "duration": 120
+    "duration": 50
    },
    {
     "filename": "squirrel (Straw) 12.aseprite",
@@ -366,10 +384,19 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
     "sourceSize": { "w": 48, "h": 48 },
-    "duration": 190
+    "duration": 210
    },
    {
     "filename": "squirrel (Straw) 13.aseprite",
+    "frame": { "x": 48, "y": 192, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 160
+   },
+   {
+    "filename": "squirrel (Straw) 14.aseprite",
     "frame": { "x": 48, "y": 192, "w": 48, "h": 48 },
     "rotated": false,
     "trimmed": false,
@@ -483,7 +510,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
     "sourceSize": { "w": 48, "h": 48 },
-    "duration": 120
+    "duration": 50
    },
    {
     "filename": "squirrel (EyesClosed) 12.aseprite",
@@ -492,10 +519,19 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
     "sourceSize": { "w": 48, "h": 48 },
-    "duration": 190
+    "duration": 210
    },
    {
     "filename": "squirrel (EyesClosed) 13.aseprite",
+    "frame": { "x": 144, "y": 192, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 160
+   },
+   {
+    "filename": "squirrel (EyesClosed) 14.aseprite",
     "frame": { "x": 144, "y": 192, "w": 48, "h": 48 },
     "rotated": false,
     "trimmed": false,
@@ -609,7 +645,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
     "sourceSize": { "w": 48, "h": 48 },
-    "duration": 120
+    "duration": 50
    },
    {
     "filename": "squirrel (EyesOpen) 12.aseprite",
@@ -618,10 +654,19 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
     "sourceSize": { "w": 48, "h": 48 },
-    "duration": 190
+    "duration": 210
    },
    {
     "filename": "squirrel (EyesOpen) 13.aseprite",
+    "frame": { "x": 192, "y": 288, "w": 48, "h": 48 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 48, "h": 48 },
+    "sourceSize": { "w": 48, "h": 48 },
+    "duration": 160
+   },
+   {
+    "filename": "squirrel (EyesOpen) 14.aseprite",
     "frame": { "x": 192, "y": 288, "w": 48, "h": 48 },
     "rotated": false,
     "trimmed": false,
@@ -641,7 +686,8 @@
    { "name": "Idle", "from": 0, "to": 5, "direction": "forward", "color": "#000000ff" },
    { "name": "Walk", "from": 6, "to": 9, "direction": "forward", "color": "#000000ff" },
    { "name": "Crouch", "from": 10, "to": 10, "direction": "forward", "color": "#000000ff" },
-   { "name": "Jump", "from": 11, "to": 13, "direction": "forward", "repeat": "1", "color": "#000000ff" }
+   { "name": "Jump", "from": 11, "to": 13, "direction": "forward", "repeat": "1", "color": "#000000ff" },
+   { "name": "Fall", "from": 14, "to": 14, "direction": "forward", "color": "#000000ff" }
   ],
   "layers": [
    { "name": "Squirrel", "opacity": 255, "blendMode": "normal" },
