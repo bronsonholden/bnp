@@ -69,7 +69,6 @@ namespace bnp {
 			bool has_input = std::abs(motility.impulse.x) > 0.001f;
 
 			motility.walking = has_input;
-			motility.idle = !has_input;
 
 			// === HORIZONTAL MOVEMENT ===
 			if (has_input) {

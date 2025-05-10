@@ -19,8 +19,8 @@ namespace  bnp {
 			auto& motility = registry.get<Motility>(entity);
 
 			registry.patch<Sprite>(entity, [&](Sprite& sprite) {
-				if (std::abs(motility.impulse.x) > 0.001f) {
-					if (motility.impulse.x < 0) {
+				if (std::abs(motility.current_velocity.x) > 0.001f) {
+					if (motility.current_velocity.x < 0) {
 						sprite.mirror.x = -1;
 					}
 					else {
