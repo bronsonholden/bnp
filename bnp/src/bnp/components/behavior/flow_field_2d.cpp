@@ -97,10 +97,10 @@ namespace bnp {
 
 		glm::vec2 cell_position = field_position - glm::vec2(fx * cell_size, fy * cell_size);
 
-		if (blocked_left && dir.x < 0 && (cell_position.x / cell_size) < 0.1f) dir.x = 0;
-		if (blocked_right && dir.x > 0 && (cell_position.x / cell_size) > 0.9f) dir.x = 0;
-		if (blocked_down && dir.y < 0 && (cell_position.y / cell_size) < 0.1f) dir.y = 0;
-		if (blocked_up && dir.y > 0 && (cell_position.y / cell_size) > 0.9f) dir.y = 0;
+		if (blocked_left && dir.x < 0 && (cell_position.x / cell_size) < 0.5f) dir.x = 0.1f;
+		if (blocked_right && dir.x > 0 && (cell_position.x / cell_size) > 0.5f) dir.x = -0.1f;
+		if (blocked_down && dir.y < 0 && (cell_position.y / cell_size) < 0.5f) dir.y = 0.1f;
+		if (blocked_up && dir.y > 0 && (cell_position.y / cell_size) > 0.5f) dir.y = -0.1f;
 
 		glm::ivec2 invalid = glm::isnan(dir);
 
@@ -186,10 +186,10 @@ namespace bnp {
 
 		glm::vec2 cell_position = field_position - glm::vec2(fx * cell_size, fy * cell_size);
 
-		if (blocked_left && dir.x < 0 && (cell_position.x / cell_size) < 0.1f) dir.x = 0;
-		if (blocked_right && dir.x > 0 && (cell_position.x / cell_size) > 0.9f) dir.x = 0;
-		if (blocked_down && dir.y < 0 && (cell_position.y / cell_size) < 0.1f) dir.y = 0;
-		if (blocked_up && dir.y > 0 && (cell_position.y / cell_size) > 0.9f) dir.y = 0;
+		if (blocked_left && dir.x < 0 && (cell_position.x / cell_size) < 0.5f) dir.x = 0.1f;
+		if (blocked_right && dir.x > 0 && (cell_position.x / cell_size) > 0.5f) dir.x = -0.1f;
+		if (blocked_down && dir.y < 0 && (cell_position.y / cell_size) < 0.5f) dir.y = 0.1f;
+		if (blocked_up && dir.y > 0 && (cell_position.y / cell_size) > 0.5f) dir.y = -0.1f;
 
 		return glm::normalize(dir);
 	}
@@ -271,10 +271,10 @@ namespace bnp {
 
 		glm::vec2 cell_position = field_position - glm::vec2(fx * cell_size, fy * cell_size);
 
-		if (blocked_left && dir.x < 0 && (cell_position.x / cell_size) < 0.1f) dir.x = 0;
-		if (blocked_right && dir.x > 0 && (cell_position.x / cell_size) > 0.9f) dir.x = 0;
-		if (blocked_down && dir.y < 0 && (cell_position.y / cell_size) < 0.1f) dir.y = 0;
-		if (blocked_up && dir.y > 0 && (cell_position.y / cell_size) > 0.9f) dir.y = 0;
+		if (blocked_left && dir.x < 0 && (cell_position.x / cell_size) < 0.5f) dir.x = 0.1f;
+		if (blocked_right && dir.x > 0 && (cell_position.x / cell_size) > 0.5f) dir.x = -0.1f;
+		if (blocked_down && dir.y < 0 && (cell_position.y / cell_size) < 0.5f) dir.y = 0.1f;
+		if (blocked_up && dir.y > 0 && (cell_position.y / cell_size) > 0.5f) dir.y = -0.1f;
 
 		return glm::normalize(dir);
 	}

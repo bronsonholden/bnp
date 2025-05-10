@@ -116,7 +116,7 @@ namespace bnp {
 
 					if (nest.min_return_distance < glm::length(nest_position - bee_position)) {
 						auto& field = registry.get_or_emplace<FlowField2D>(nest.entity, FlowField2D{
-							0.2f,
+							0.25f,
 							{ 60, 60 },
 							{ 0, 0 }
 							});
@@ -241,7 +241,7 @@ namespace bnp {
 
 		registry.patch<Motility>(bee, [&](Motility& m) {
 			m.impulse = glm::vec3(dir, 0);
-			m.flying_response = RandomFloatGenerator(0.009f, 0.016f).generate();
+			m.flying_response = 1.0f;
 			});
 	}
 
@@ -307,18 +307,10 @@ namespace bnp {
 			return;
 		}
 
-		auto& threat_transform = registry.get<Transform>(goal.target);
-		glm::vec2 threat_position = threat_transform.world_transform[3];
-		glm::vec2 bee_position = glm::vec2(transform.world_transform[3]);
-		glm::vec2 threat_dir = threat_position - bee_position;
-		dir = glm::normalize(dir + (-threat_dir * 0.7f));
-
-		// todo: sample field position of bee and blockage at this positions and apply impulse away from them
-
 		registry.patch<Motility>(bee, [&](Motility& m) {
 			m.speed = 1.1f;
 			m.impulse = glm::vec3(dir, 0);
-			m.flying_response = 0.9f;
+			m.flying_response = 1.0f;
 			});
 	}
 
@@ -342,7 +334,7 @@ namespace bnp {
 			}
 		}
 
-		return std::move(bees);
+		return bees;
 	}
 
 	std::vector<entt::entity> BeeBehaviorPlanner::get_threats(entt::registry& registry, entt::entity bee) {
@@ -367,7 +359,7 @@ namespace bnp {
 			threats.push_back(entity);
 		}
 
-		return std::move(threats);
+		return threats;
 	}
 
 }

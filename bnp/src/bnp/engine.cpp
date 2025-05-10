@@ -138,7 +138,7 @@ namespace bnp {
 			});
 
 		squirrel.add_component<FlowField2D>(FlowField2D{
-			0.2f,
+			0.25f,
 			{ 40, 40 },
 			{ 0, 0 }
 			});
@@ -186,7 +186,7 @@ namespace bnp {
 			entt::entity world = registry.create();
 
 			auto& world2d = registry.emplace<World2D>(world, World2D{
-				0.35f,
+				0.25f,
 				{ 10, 10 },
 				{ 5.0f, 2.5f }
 				});
@@ -263,7 +263,7 @@ namespace bnp {
 			render_manager.render_water2d(registry, renderer, camera);
 			render_manager.render_wireframes(registry, renderer, camera);
 			render_manager.render_fullscreen_quad(renderer, renderer.upscale_fb);
-			//render_manager.render_flow_field_2ds(registry, renderer, camera);
+			render_manager.render_flow_field_2ds(registry, renderer, camera);
 			renderer.front_fb.unbind();
 
 			glViewport(0, 0, window.get_width(), window.get_height());
