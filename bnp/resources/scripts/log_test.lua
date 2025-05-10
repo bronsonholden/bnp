@@ -3,12 +3,15 @@ sprite:SetLayerVisible("EyesClosed", true)
 sprite:SetLayerVisible("EyesOpen", true)
 sprite:SetLayerVisible("Straw", false)
 
---[[
+
 water = prefab.load("resources/scripts/water_prefab.lua", {
-	columns = 100,
+	columns = 81,
 	columnWidth = 0.1,
-	height = 0.15
+	height = 0.18
 })
+water:GetComponent("Transform"):SetPosition({ x = 13.125, y = 0.7 })
+
+--[[
 
 toad = prefab.load("resources/scripts/toad_prefab.lua")
 toad:GetComponent("Transform"):SetPosition({ x = 1.0, y = 0.25 })
