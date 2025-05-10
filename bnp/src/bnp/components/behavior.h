@@ -47,6 +47,11 @@ namespace bnp {
 			glm::ivec2 grid_size,
 			bool attract
 		);
+		glm::vec2 adjust_for_blocked_neighbors(
+			int fx, int fy,
+			glm::vec2 field_position,
+			glm::vec2 dir
+		);
 	};
 
 	struct BeeBehavior {

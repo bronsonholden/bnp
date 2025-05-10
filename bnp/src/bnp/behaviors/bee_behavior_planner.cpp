@@ -254,6 +254,14 @@ namespace bnp {
 		auto& transform = registry.get<Transform>(bee);
 		auto& motility = registry.get<Motility>(bee);
 
+		glm::vec2 position = transform.world_transform[3];
+		glm::vec2 target_position = registry.get<Transform>(goal.target).world_transform[3];
+
+		if (glm::length(target_position - position) < goal.radius) {
+			goal.motivation = -1;
+			return;
+		}
+
 		if (!registry.all_of<FlowField2D>(goal.target)) {
 			return;
 		}
@@ -275,7 +283,7 @@ namespace bnp {
 
 		registry.patch<Motility>(bee, [&](Motility& m) {
 			m.impulse = glm::vec3(dir, 0);
-			m.flying_response = RandomFloatGenerator(0.009f, 0.016f).generate();
+			m.flying_response = 1.0f;
 			});
 	}
 
@@ -318,7 +326,7 @@ namespace bnp {
 		registry.patch<Motility>(bee, [](Motility& m) {
 			m.impulse = glm::vec3(0);
 			m.speed = 0.4f;
-			m.flying_response = RandomFloatGenerator(0.04f, 0.08f).generate();
+			m.flying_response = 1.0f;
 			});
 	}
 

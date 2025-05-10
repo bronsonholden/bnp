@@ -71,42 +71,83 @@ namespace bnp {
 			dir = best_dir;
 		}
 
-		// calculate blocked cardinal cells to snap movement direction to avoid blocked cells
-		const glm::ivec2 offsets[] = {
-			{ 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 }
-		};
-		for (auto& offset : offsets) {
-			int ox = fx + offset.x;
-			int oy = fy + offset.y;
-
-			if (ox < 0 || ox >= grid_size.x || oy < 0 || oy >= grid_size.y) {
-				continue;
-			}
-
-			int idx = oy * grid_size.x + ox;
-			float cost = cost_field.at(idx);
-
-			if (cost == std::numeric_limits<float>::infinity()) {
-				if (offset.x < 0) blocked_left = true;
-				if (offset.x > 0) blocked_right = true;
-				if (offset.y < 0) blocked_down = true;
-				if (offset.y > 0) blocked_up = true;
-				continue;
-			}
-		}
-
-		glm::vec2 cell_position = field_position - glm::vec2(fx * cell_size, fy * cell_size);
-
-		if (blocked_left && dir.x < 0 && (cell_position.x / cell_size) < 0.5f) dir.x = 0.1f;
-		if (blocked_right && dir.x > 0 && (cell_position.x / cell_size) > 0.5f) dir.x = -0.1f;
-		if (blocked_down && dir.y < 0 && (cell_position.y / cell_size) < 0.5f) dir.y = 0.1f;
-		if (blocked_up && dir.y > 0 && (cell_position.y / cell_size) > 0.5f) dir.y = -0.1f;
+		dir = adjust_for_blocked_neighbors(fx, fy, field_position, dir);
 
 		glm::ivec2 invalid = glm::isnan(dir);
 
 		if (!invalid.x && !invalid.y) return dir;
 
 		return glm::vec2(0.0f);
+	}
+
+	glm::vec2 FlowField2D::adjust_for_blocked_neighbors(
+		int fx, int fy,
+		glm::vec2 field_position,
+		glm::vec2 dir
+	) {
+		const int width = grid_size.x;
+		const int height = grid_size.y;
+
+		bool blocked_left = false, blocked_right = false;
+		bool blocked_up = false, blocked_down = false;
+		bool blocked_ul = false, blocked_ur = false;
+		bool blocked_dl = false, blocked_dr = false;
+
+		const glm::ivec2 offsets[] = {
+			{ 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 },
+			{ -1, -1 }, { 1, -1 }, { -1, 1 }, { 1, 1 }
+		};
+
+		for (auto& offset : offsets) {
+			int ox = fx + offset.x;
+			int oy = fy + offset.y;
+
+			if (ox < 0 || ox >= width || oy < 0 || oy >= height) continue;
+
+			int idx = oy * width + ox;
+			float cost = cost_field[idx];
+
+			if (cost == std::numeric_limits<float>::infinity()) {
+				if (offset == glm::ivec2{ -1, 0 }) blocked_left = true;
+				if (offset == glm::ivec2{ 1, 0 }) blocked_right = true;
+				if (offset == glm::ivec2{ 0, -1 }) blocked_down = true;
+				if (offset == glm::ivec2{ 0, 1 }) blocked_up = true;
+				if (offset == glm::ivec2{ -1, -1 }) blocked_dl = true;
+				if (offset == glm::ivec2{ 1, -1 }) blocked_dr = true;
+				if (offset == glm::ivec2{ -1, 1 }) blocked_ul = true;
+				if (offset == glm::ivec2{ 1, 1 }) blocked_ur = true;
+			}
+		}
+
+		glm::vec2 cell_position = field_position - glm::vec2(fx * cell_size, fy * cell_size);
+		float px = cell_position.x / cell_size;
+		float py = cell_position.y / cell_size;
+
+		// Cardinals
+		if (blocked_left && dir.x < 0 && px < 0.2f) dir.x = 0.1f;
+		if (blocked_right && dir.x > 0 && px > 0.8f) dir.x = -0.1f;
+		if (blocked_down && dir.y < 0 && py < 0.2f) dir.y = 0.1f;
+		if (blocked_up && dir.y > 0 && py > 0.8f) dir.y = -0.1f;
+
+		// Diagonals
+		if (blocked_ul && dir.x < 0 && dir.y > 0 && px < 0.3f && py > 0.7f) {
+			dir.x = 0.1f;
+			dir.y = -0.1f;
+		}
+		if (blocked_ur && dir.x > 0 && dir.y > 0 && px > 0.7f && py > 0.7f) {
+			dir.x = -0.1f;
+			dir.y = -0.1f;
+		}
+		if (blocked_dl && dir.x < 0 && dir.y < 0 && px < 0.3f && py < 0.3f) {
+			dir.x = 0.1f;
+			dir.y = 0.1f;
+		}
+		if (blocked_dr && dir.x > 0 && dir.y < 0 && px > 0.7f && py < 0.3f) {
+			dir.x = -0.1f;
+			dir.y = 0.1f;
+		}
+
+		return glm::normalize(dir);
 	}
 
 	glm::vec2 FlowField2D::sample_reverse_direction(glm::vec2 worldspace_position) {
@@ -160,38 +201,7 @@ namespace bnp {
 			dir = best_dir;
 		}
 
-		// calculate blocked cardinal cells to snap movement direction to avoid blocked cells
-		const glm::ivec2 offsets[] = {
-			{ 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 }
-		};
-		for (auto& offset : offsets) {
-			int ox = fx + offset.x;
-			int oy = fy + offset.y;
-
-			if (ox < 0 || ox >= grid_size.x || oy < 0 || oy >= grid_size.y) {
-				continue;
-			}
-
-			int idx = oy * grid_size.x + ox;
-			float cost = cost_field.at(idx);
-
-			if (cost == std::numeric_limits<float>::infinity()) {
-				if (offset.x < 0) blocked_left = true;
-				if (offset.x > 0) blocked_right = true;
-				if (offset.y < 0) blocked_down = true;
-				if (offset.y > 0) blocked_up = true;
-				continue;
-			}
-		}
-
-		glm::vec2 cell_position = field_position - glm::vec2(fx * cell_size, fy * cell_size);
-
-		if (blocked_left && dir.x < 0 && (cell_position.x / cell_size) < 0.5f) dir.x = 0.1f;
-		if (blocked_right && dir.x > 0 && (cell_position.x / cell_size) > 0.5f) dir.x = -0.1f;
-		if (blocked_down && dir.y < 0 && (cell_position.y / cell_size) < 0.5f) dir.y = 0.1f;
-		if (blocked_up && dir.y > 0 && (cell_position.y / cell_size) > 0.5f) dir.y = -0.1f;
-
-		return glm::normalize(dir);
+		return adjust_for_blocked_neighbors(fx, fy, field_position, dir);
 	}
 
 	glm::vec2 FlowField2D::sample_wander_direction(glm::vec2 worldspace_position) {
@@ -245,38 +255,7 @@ namespace bnp {
 			dir = best_dir;
 		}
 
-		// calculate blocked cardinal cells to snap movement direction to avoid blocked cells
-		const glm::ivec2 offsets[] = {
-			{ 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 }
-		};
-		for (auto& offset : offsets) {
-			int ox = fx + offset.x;
-			int oy = fy + offset.y;
-
-			if (ox < 0 || ox >= grid_size.x || oy < 0 || oy >= grid_size.y) {
-				continue;
-			}
-
-			int idx = oy * grid_size.x + ox;
-			float cost = cost_field.at(idx);
-
-			if (cost == std::numeric_limits<float>::infinity()) {
-				if (offset.x < 0) blocked_left = true;
-				if (offset.x > 0) blocked_right = true;
-				if (offset.y < 0) blocked_down = true;
-				if (offset.y > 0) blocked_up = true;
-				continue;
-			}
-		}
-
-		glm::vec2 cell_position = field_position - glm::vec2(fx * cell_size, fy * cell_size);
-
-		if (blocked_left && dir.x < 0 && (cell_position.x / cell_size) < 0.5f) dir.x = 0.1f;
-		if (blocked_right && dir.x > 0 && (cell_position.x / cell_size) > 0.5f) dir.x = -0.1f;
-		if (blocked_down && dir.y < 0 && (cell_position.y / cell_size) < 0.5f) dir.y = 0.1f;
-		if (blocked_up && dir.y > 0 && (cell_position.y / cell_size) > 0.5f) dir.y = -0.1f;
-
-		return glm::normalize(dir);
+		return adjust_for_blocked_neighbors(fx, fy, field_position, dir);
 	}
 
 	void FlowField2D::reposition_to_target(glm::vec2 worldspace_target) {

@@ -263,7 +263,7 @@ namespace bnp {
 			render_manager.render_water2d(registry, renderer, camera);
 			render_manager.render_wireframes(registry, renderer, camera);
 			render_manager.render_fullscreen_quad(renderer, renderer.upscale_fb);
-			render_manager.render_flow_field_2ds(registry, renderer, camera);
+			//render_manager.render_flow_field_2ds(registry, renderer, camera);
 			renderer.front_fb.unbind();
 
 			glViewport(0, 0, window.get_width(), window.get_height());
