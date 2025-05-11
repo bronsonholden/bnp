@@ -4,7 +4,7 @@
 namespace bnp {
 
 	PhysicsManager::PhysicsManager()
-		: world(b2Vec2(0.0f, -17.6))
+		: world(b2Vec2(0.0f, -14.6))
 	{
 	}
 
