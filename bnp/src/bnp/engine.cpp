@@ -146,6 +146,10 @@ namespace bnp {
 		squirrel.add_component<Motility>(Motility{ 2.5f });
 		squirrel.add_component<Controllable>(Controllable{ true });
 
+		squirrel.add_component<Camera2DRig>(Camera2DRig{
+			{ 0.0f, 1.0f }
+			});
+
 		// pre-run setup
 		physics_manager.generate_sprite_bodies(registry);
 
@@ -230,26 +234,9 @@ namespace bnp {
 
 			update(dt);
 
-			// camera vertical control
-			// todo: move to a `CameraRig` component or similar
-			auto& transform = squirrel.get_component<Transform>();
-
-			glm::vec2 relative_position = glm::vec2(transform.world_transform[3].x, camera_position.y);
-			float y_diff = camera_position.y - transform.world_transform[3].y;
-
-			if (y_diff > 1.0f) {
-				y_diff = 1.0f;
-				camera_position.y = transform.world_transform[3].y + y_diff;
-
-			}
-			else if (y_diff < -1.0f) {
-				y_diff = -1.0f;
-				camera_position.y = transform.world_transform[3].y + y_diff;
-			}
-
-			relative_position.y = camera_position.y;
-
-			glm::vec2 pixel_space = glm::floor(relative_position * 48.0f);
+			auto& rig = squirrel.get_component<Camera2DRig>();
+			glm::vec2 camera_position = rig.camera_worldspace_position;
+			glm::vec2 pixel_space = glm::floor(camera_position * 48.0f);
 			glm::vec2 snap_position = pixel_space / 48.0f;
 
 			Camera camera({
@@ -325,6 +312,7 @@ namespace bnp {
 		sprite_animation_manager.update(registry, dt);
 		motility_manager.update(registry, dt);
 		world2d_manager.update(registry, dt);
+		camera_manager.update(registry, dt);
 
 		// only apply transforms after all game updates have completed
 		// so we have the most correct transforms

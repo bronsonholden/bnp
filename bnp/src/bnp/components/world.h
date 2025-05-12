@@ -5,6 +5,23 @@
 
 namespace bnp {
 
+	// Attach to an entity with a Transform to be tracked with a
+	// 2D (orthographic projection) camera. The position of the
+	// camera is kept within a certain pan region, beyond which
+	// the camera will be repositioned both horizontally and vertically.
+	struct Camera2DRig {
+		// how far from the position the camera may pan. setting either
+		// to zero will lock the camera to the attached entity's position
+		// along that axis.
+		glm::vec2 pan_limit;
+		// the worldspace position the camera should be
+		glm::vec2 camera_worldspace_position = glm::vec2(0);
+		// camera/entity position is multiplied by this per tick to pan
+		// to entity position over time
+		// todo: alter impl or maybe remove
+		glm::vec2 auto_center_impulse = glm::vec2(1.0f);
+	};
+
 	struct World2D {
 		float tile_size;
 
