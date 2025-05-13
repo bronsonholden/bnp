@@ -8,7 +8,7 @@ namespace bnp {
 		Camera& camera,
 		int window_width,
 		int window_height,
-		int pixels_per_unit = 48,
+		int pixels_per_unit = 64,
 		int target_virtual_width = 360,
 		int target_virtual_height = 240
 	);

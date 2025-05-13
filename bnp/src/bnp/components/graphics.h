@@ -143,7 +143,7 @@ namespace bnp {
 	};
 
 	struct PixelPerfectCamera {
-		int pixels_per_unit = 48;       // 48px = 1 world unit
+		int pixels_per_unit = 64;       // 48px = 1 world unit
 		int target_virtual_width = 360; // Used to determine ideal scaling
 		int target_virtual_height = 240;
 
@@ -257,7 +257,7 @@ namespace bnp {
 			for (int i = 0; i <= steps; ++i) {
 				float t = i / static_cast<float>(steps);
 				glm::vec2 pt = point(t);
-				pt = glm::floor(pt * 48.0f) / 48.0f; // Pixel-snapping!
+				pt = glm::floor(pt * 64.0f) / 64.0f; // Pixel-snapping!
 				points.push_back(pt);
 			}
 

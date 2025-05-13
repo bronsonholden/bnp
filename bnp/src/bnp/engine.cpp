@@ -236,8 +236,8 @@ namespace bnp {
 
 			auto& rig = squirrel.get_component<Camera2DRig>();
 			glm::vec2 camera_position = rig.camera_worldspace_position;
-			glm::vec2 pixel_space = glm::floor(camera_position * 48.0f);
-			glm::vec2 snap_position = pixel_space / 48.0f;
+			glm::vec2 pixel_space = glm::floor(camera_position * 64.0f);
+			glm::vec2 snap_position = pixel_space / 64.0f;
 
 			Camera camera({
 				glm::vec3(snap_position, 0.0f),
