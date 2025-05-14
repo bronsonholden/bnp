@@ -1,3 +1,4 @@
+#include <bnp/core/logger.hpp>
 #include <bnp/graphics/framebuffer.h>
 
 #include <stdexcept>
@@ -88,6 +89,8 @@ namespace bnp {
 
 	void Framebuffer::destroy() {
 		if (!init) return;
+
+		Log::info("Destroying framebuffer %d", fbo);
 
 		glDeleteTextures(1, &color_texture_id);
 		glDeleteRenderbuffers(1, &depth_rbo);
