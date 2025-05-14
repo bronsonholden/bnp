@@ -131,7 +131,6 @@ namespace bnp {
 		std::string fragment_shader_resource_id;
 		GLuint shader_id = 0;
 
-		Material() : shader_id(0) { }
 	};
 
 	struct Camera {
