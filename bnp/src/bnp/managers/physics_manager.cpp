@@ -35,15 +35,6 @@ namespace bnp {
 		update_water2d_collisions(registry, dt);
 	}
 
-	void PhysicsManager::add_body(Node& node, const b2BodyDef& body_def, const b2FixtureDef& fixture_def) {
-		b2Body* body = world.CreateBody(&body_def);
-
-		body->CreateFixture(&fixture_def);
-		body->GetUserData().pointer = static_cast<uintptr_t>(node.get_entity_id());
-
-		node.add_component<PhysicsBody2D>(PhysicsBody2D{ body });
-	}
-
 	void PhysicsManager::generate_sprite_bodies(entt::registry& registry) {
 		auto view = registry.view<Sprite, Transform>();
 
@@ -89,14 +80,6 @@ namespace bnp {
 			registry.emplace<PhysicsBody2D>(entity, PhysicsBody2D{ body });
 		}
 
-	}
-
-	void PhysicsManager::destroy_body(b2Body* body) {
-		world.DestroyBody(body);
-	}
-
-	entt::entity PhysicsManager::get_entity_for_body(b2Body* body) const {
-		return static_cast<entt::entity>(body->GetUserData().pointer);
 	}
 
 	b2World& PhysicsManager::get_world() {
