@@ -178,10 +178,6 @@ namespace bnp {
 			tilemap.width = tilemap.tiles.size() / tilemap.height;
 
 			std::vector<glm::ivec4> rects = tilemap.decompose();
-			for (const auto& r : rects) {
-				std::cout << "Rect: x=" << r.x << " y=" << r.y
-					<< " w=" << r.z << " h=" << r.w << "\n";
-			}
 
 			entt::entity world = registry.create();
 
