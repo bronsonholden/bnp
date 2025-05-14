@@ -131,6 +131,7 @@ namespace bnp {
 		std::string fragment_shader_resource_id;
 		GLuint shader_id = 0;
 
+		void cleanup();
 	};
 
 	struct Camera {

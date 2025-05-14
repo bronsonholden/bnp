@@ -21,6 +21,12 @@ namespace bnp {
 
 	}
 
+	void ResourceManager::cleanup() {
+		for (auto [resource_id, material] : materials) {
+			material.cleanup();
+		}
+	}
+
 	Material ResourceManager::load_material(ResourceIdentifier resource_id, std::unordered_map<ShaderType, std::filesystem::path> shaders) {
 		if (materials.find(resource_id) != materials.end()) {
 			return materials.at(resource_id);

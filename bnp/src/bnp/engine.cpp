@@ -84,6 +84,7 @@ namespace bnp {
 
 	Engine::~Engine() {
 		registry.clear();
+		resource_manager.cleanup();
 		renderer.shutdown();
 	}
 
