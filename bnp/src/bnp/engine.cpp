@@ -58,7 +58,7 @@ namespace bnp {
 		: archive_manager(std::filesystem::path(PROJECT_ROOT) / "bnp/data"),
 		physics_manager(registry),
 		script_factory(resource_manager, physics_manager),
-		behavior_manager(physics_manager),
+		behavior_manager(),
 		world2d_manager()
 	{
 		registry.emplace<Global>(registry.create(), Global{

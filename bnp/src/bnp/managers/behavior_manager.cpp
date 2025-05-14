@@ -7,8 +7,7 @@
 
 namespace bnp {
 
-	BehaviorManager::BehaviorManager(PhysicsManager& _physics_manager)
-		: physics_manager(_physics_manager)
+	BehaviorManager::BehaviorManager()
 	{
 
 	}
