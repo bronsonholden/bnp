@@ -1,3 +1,4 @@
+#include <bnp/core/logger.hpp>
 #include <bnp/managers/physics_manager.h>
 #include <bnp/components/transform.h>
 #include <bnp/components/global.h>
@@ -11,6 +12,8 @@ namespace bnp {
 		auto& body = registry.get<PhysicsBody2D>(entity);
 
 		body.body->GetWorld()->DestroyBody(body.body);
+
+		Log::info("Destroying Box2D body 0x%0X", body.body);
 	}
 
 	PhysicsManager::PhysicsManager(entt::registry& registry)
