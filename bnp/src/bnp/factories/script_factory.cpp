@@ -1,3 +1,4 @@
+#include <bnp/core/logger.hpp>
 #include <bnp/factories/script_factory.h>
 #include <bnp/components/physics.h>
 #include <bnp/bindings/physics.h>
@@ -210,7 +211,7 @@ namespace bnp {
 		lua_newtable(L);
 		lua_pushcfunction(L, [](lua_State* L) -> int {
 			const char* msg = luaL_checkstring(L, 1);
-			cout << msg << endl;
+			Log::info("[LUA] %s", msg);
 			return 0;
 			});
 		lua_setfield(L, -2, "message");
