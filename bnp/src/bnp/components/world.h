@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 #include <glm/glm.hpp>
 
 namespace bnp {
@@ -41,6 +42,17 @@ namespace bnp {
 		}
 
 		bool init = false;
+	};
+
+	struct TilemapIndex {
+		std::vector<std::string> resource_ids;
+	};
+
+	struct Tile {
+		// resource ID index within corresponding `TilemapIndex`
+		uint8_t type;
+		// starting top-left, left-to-right, top-to-bottom
+		uint8_t slice;
 	};
 
 	struct Tilemap {
