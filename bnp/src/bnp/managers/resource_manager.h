@@ -3,8 +3,7 @@
 /* ResourceManager
  *
  * Stores generated meshes, materials, and other resources and cleans up them
- * up via `cleanup()` only if the given registry contains no components that
- * have them attached.
+ * up via `cleanup()`.
  */
 
 #include <bnp/components/graphics.h>
