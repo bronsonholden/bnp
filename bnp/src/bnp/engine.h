@@ -32,7 +32,6 @@ namespace bnp {
 
 	protected:
 		entt::registry registry;
-		Scene test_scene;
 		Window window;
 		TimeSystem time;
 		Renderer renderer;

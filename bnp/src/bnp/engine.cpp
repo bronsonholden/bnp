@@ -56,7 +56,6 @@ namespace bnp {
 
 	Engine::Engine()
 		: archive_manager(std::filesystem::path(PROJECT_ROOT) / "bnp/data"),
-		test_scene(registry),
 		physics_manager(),
 		script_factory(resource_manager, physics_manager),
 		behavior_manager(physics_manager),
@@ -69,10 +68,6 @@ namespace bnp {
 		renderer.initialize(window.get_width(), window.get_height());
 
 		archive_manager.load();
-
-		Node node = test_scene.create_node();
-
-		node.add_component<Transform>(Transform{ glm::vec3(0.0f), glm::quat(), glm::vec3(1.0f) });
 
 		//glEnable(GL_DEBUG_OUTPUT);
 		glDebugMessageCallback(MessageCallback, 0);
@@ -92,7 +87,7 @@ namespace bnp {
 	}
 
 	Node Engine::load_sprite(std::filesystem::path sprite_path, std::filesystem::path json_path) {
-		Node node = test_scene.create_node();
+		Node node(registry);
 		Texture texture = resource_manager.load_texture(sprite_path.string(), sprite_path);
 		Material material = resource_manager.load_material("sprite_material", {
 			{ShaderType::VertexShader, "resources/shaders/sprite_vertex_shader.glsl"},
