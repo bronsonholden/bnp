@@ -56,7 +56,7 @@ namespace bnp {
 
 	Engine::Engine()
 		: archive_manager(std::filesystem::path(PROJECT_ROOT) / "bnp/data"),
-		physics_manager(),
+		physics_manager(registry),
 		script_factory(resource_manager, physics_manager),
 		behavior_manager(physics_manager),
 		world2d_manager()
@@ -83,6 +83,7 @@ namespace bnp {
 	}
 
 	Engine::~Engine() {
+		registry.clear();
 		renderer.shutdown();
 	}
 

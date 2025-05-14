@@ -11,7 +11,8 @@ namespace bnp {
 
 	class PhysicsManager {
 	public:
-		PhysicsManager();
+		PhysicsManager(entt::registry& registry);
+		~PhysicsManager();
 
 		void update(entt::registry& registry, float dt);
 		// for all sprites in the registry without a physics component, generate one

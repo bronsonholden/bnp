@@ -1,11 +1,26 @@
 #include <bnp/managers/physics_manager.h>
 #include <bnp/components/transform.h>
+#include <bnp/components/global.h>
+
+#include <iostream>
+using namespace std;
 
 namespace bnp {
 
-	PhysicsManager::PhysicsManager()
+	void on_physics_body_2d_destroy(entt::registry& registry, entt::entity entity) {
+		auto& body = registry.get<PhysicsBody2D>(entity);
+
+		body.body->GetWorld()->DestroyBody(body.body);
+	}
+
+	PhysicsManager::PhysicsManager(entt::registry& registry)
 		: world(b2Vec2(0.0f, -14.6))
 	{
+		registry.on_destroy<PhysicsBody2D>().connect<&on_physics_body_2d_destroy>();
+	}
+
+	PhysicsManager::~PhysicsManager() {
+		cout << "Shutting down PhysicsManager" << endl;
 	}
 
 	void PhysicsManager::update(entt::registry& registry, float dt) {
