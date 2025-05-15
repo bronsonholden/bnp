@@ -15,9 +15,6 @@ namespace bnp {
 	RenderManager::RenderManager()
 		: sprite_mesh(MeshFactory().box()),
 		line_mesh(MeshFactory().line()),
-		wireframe_material(MaterialFactory().wireframe_material()),
-		quad_material(MaterialFactory().quad_material()),
-		physics_body_2d_material(MaterialFactory().physics_body_2d_material()),
 		debug_render_wireframes(true)
 	{
 	}

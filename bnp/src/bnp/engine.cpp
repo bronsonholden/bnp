@@ -80,6 +80,21 @@ namespace bnp {
 			clear_color.b,
 			clear_color.a
 		);
+
+		render_manager.wireframe_material = material_factory.load_material_from_files({
+			{ ShaderType::VertexShader, "resources/shaders/wireframe_vertex_shader.glsl" },
+			{ ShaderType::FragmentShader, "resources/shaders/wireframe_fragment_shader.glsl" }
+			});
+
+		render_manager.physics_body_2d_material = material_factory.load_material_from_files({
+			{ ShaderType::VertexShader, "resources/shaders/physics_body_2d_vertex_shader.glsl" },
+			{ ShaderType::FragmentShader, "resources/shaders/physics_body_2d_fragment_shader.glsl" }
+			});
+
+		render_manager.quad_material = material_factory.load_material_from_files({
+			{ ShaderType::VertexShader, "resources/shaders/quad_vertex_shader.glsl" },
+			{ ShaderType::FragmentShader, "resources/shaders/quad_fragment_shader.glsl" }
+			});
 	}
 
 	Engine::~Engine() {

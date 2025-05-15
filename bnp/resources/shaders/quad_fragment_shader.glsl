@@ -1,5 +1,3 @@
-// currently baked in to material factory
-// todo: load from file when initializing render manager
 #version 330 core
 in vec2 TexCoord;
 out vec4 FragColor;

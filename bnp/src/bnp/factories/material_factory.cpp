@@ -3,92 +3,6 @@
 #include <iostream>
 #include <filesystem>
 
-const char* obstacle_vertex_shader_source = R"(
-#version 330 core
-layout (location = 0) in vec3 aPos;
-
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-
-out vec3 FragPos;
-
-void main() {
-    FragPos = vec3(model * vec4(aPos, 1.0));
-    gl_Position = projection * view * vec4(FragPos, 1.0);
-}
-)";
-
-const char* obstacle_fragment_shader_source = R"(
-#version 330 core
-
-out vec4 FragColor;
-
-void main() {
-    FragColor = vec4(1.0);
-}
-)";
-
-const char* quad_vertex_shader_source = R"(
-#version 330 core
-layout (location = 0) in vec2 aPos;
-layout (location = 1) in vec3 _aNormal;
-layout (location = 2) in vec2 aTexCoord;
-
-out vec2 TexCoord;
-
-void main() {
-    // quads are {{-0.5, -0.5}, {0.5, 0.5}} so scale it up to {{-1.0, -1.0}, {1.0, 1.0}}
-    // to match clip space
-    gl_Position = vec4(aPos.xy * 2, 0.0, 1.0);
-    TexCoord = aTexCoord;
-}
-)";
-
-const char* quad_fragment_shader_source = R"(
-#version 330 core
-in vec2 TexCoord;
-out vec4 FragColor;
-
-uniform sampler2D screenTexture;
-
-void main() {
-    FragColor = texture(screenTexture, TexCoord);
-}
-)";
-
-const char* wireframe_vertex_shader_source = R"(
-#version 330 core
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec3 aNormal;
-
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-uniform vec4 color;
-
-out vec3 frag_pos;
-out vec4 frag_color;
-
-void main() {
-    frag_pos = vec3(model * vec4(aPos, 1.0));
-    frag_color = color;
-    gl_Position = projection * view * vec4(frag_pos, 1.0);
-}
-)";
-
-const char* wireframe_fragment_shader_source = R"(
-#version 330 core
-
-out vec4 out_frag_color;
-in vec3 frag_pos;
-in vec4 frag_color;
-
-void main() {
-    out_frag_color = frag_color;
-}
-)";
-
 namespace bnp {
 
 	GLuint gl_shader_type(ShaderType shader_type) {
@@ -121,9 +35,9 @@ namespace bnp {
 	Material MaterialFactory::load_material_from_files(const unordered_map<ShaderType, std::filesystem::path>& shader_files) {
 		std::unordered_map<ShaderType, std::string> sources;
 
-		for (auto [type, path] : shader_files) {
+		for (auto [type, resource_path] : shader_files) {
 			std::filesystem::path root = std::filesystem::path(PROJECT_ROOT) / "bnp";
-			std::filesystem::path path = root / path;
+			std::filesystem::path path = root / resource_path;
 			std::ifstream file(path);
 
 			if (!file.is_open()) {
@@ -184,27 +98,6 @@ namespace bnp {
 		Material material;
 		material.shader_id = program;
 		return material;
-	}
-
-	Material MaterialFactory::wireframe_material() {
-		return load_material({
-			{ShaderType::VertexShader, wireframe_vertex_shader_source},
-			{ShaderType::FragmentShader, wireframe_fragment_shader_source},
-			});
-	}
-
-	Material MaterialFactory::quad_material() {
-		return load_material({
-			{ShaderType::VertexShader, quad_vertex_shader_source},
-			{ShaderType::FragmentShader, quad_fragment_shader_source},
-			});
-	}
-
-	Material MaterialFactory::physics_body_2d_material() {
-		return load_material({
-			{ShaderType::VertexShader, obstacle_vertex_shader_source},
-			{ShaderType::FragmentShader, obstacle_fragment_shader_source},
-			});
 	}
 
 } // namespace bnp
