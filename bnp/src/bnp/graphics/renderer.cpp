@@ -44,6 +44,8 @@ namespace bnp {
 	}
 
 	void Renderer::render_line(const Camera& camera, const Mesh& mesh, const Material& material, const glm::mat4& world_transform) const {
+		if (!material.shader_id) return;
+
 		glUseProgram(material.shader_id);
 
 		glm::mat4 view = camera.view;
@@ -72,6 +74,8 @@ namespace bnp {
 	}
 
 	void Renderer::render_sprite(const Camera& camera, const Sprite& sprite, const SpriteFrame& sprite_frame, const Mesh& mesh, const Material& material, const Texture& texture, const glm::mat4& transform) const {
+		if (!material.shader_id) return;
+
 		glUseProgram(material.shader_id);
 
 		if (texture.channels < 4) {
@@ -115,6 +119,8 @@ namespace bnp {
 	}
 
 	void Renderer::render_fullscreen_quad(const Mesh& mesh, const Material& material, const Framebuffer& framebuffer) const {
+		if (!material.shader_id) return;
+
 		glUseProgram(material.shader_id);
 
 		glDisable(GL_DEPTH_TEST);
@@ -140,6 +146,8 @@ namespace bnp {
 	}
 
 	void Renderer::render_bezier_sprite(const Camera& camera, const BezierSprite& sprite, const Material& material, const glm::mat4& world_transform) const {
+		if (!material.shader_id) return;
+
 		glUseProgram(material.shader_id);
 
 		glm::mat4 view = camera.view;
@@ -163,6 +171,8 @@ namespace bnp {
 	}
 
 	void Renderer::render_wireframe(const Camera& camera, const Mesh& mesh, const Material& material, const glm::mat4& world_transform, const glm::vec4& color, bool fill) const {
+		if (!material.shader_id) return;
+
 		glUseProgram(material.shader_id);
 
 		glm::mat4 view = camera.view;
