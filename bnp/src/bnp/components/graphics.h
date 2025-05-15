@@ -143,8 +143,8 @@ namespace bnp {
 	};
 
 	struct PixelPerfectCamera {
-		int pixels_per_unit = 64;       // 48px = 1 world unit
-		int target_virtual_width = 360; // Used to determine ideal scaling
+		int pixels_per_unit = 64;
+		int target_virtual_width = 360;
 		int target_virtual_height = 240;
 
 		int scale = 1;
@@ -155,26 +155,26 @@ namespace bnp {
 		glm::mat4 projection = glm::mat4(1.0f);
 
 		void update(int window_width, int window_height) {
-			// 1. Compute best integer scale that fits window
+			// compute best integer scale that fits window
 			int scale_x = window_width / target_virtual_width;
 			int scale_y = window_height / target_virtual_height;
 			scale = std::max(1, std::min(scale_x, scale_y));
 
-			// 2. Compute the render area in pixels
+			// compute the render area in pixels
 			render_width = window_width / scale;
 			render_height = window_height / scale;
 
-			// 3. Convert to world units
+			// convert to world units
 			float world_width = static_cast<float>(render_width) / pixels_per_unit;
 			float world_height = static_cast<float>(render_height) / pixels_per_unit;
 
-			// 4. Compute centered viewport (for letterboxing/pillarboxing)
+			// compute centered viewport (for letterboxing/pillarboxing)
 			int scaled_render_width = render_width * scale;
 			int scaled_render_height = render_height * scale;
 			viewport_x = (window_width - scaled_render_width) / 2;
 			viewport_y = (window_height - scaled_render_height) / 2;
 
-			// 5. Build orthographic projection
+			// build orthographic projection
 			projection = glm::ortho(
 				-world_width / 2, world_width / 2,
 				-world_height / 2, world_height / 2,   // Flip Y if needed
@@ -257,7 +257,7 @@ namespace bnp {
 			for (int i = 0; i <= steps; ++i) {
 				float t = i / static_cast<float>(steps);
 				glm::vec2 pt = point(t);
-				pt = glm::floor(pt * 64.0f) / 64.0f; // Pixel-snapping!
+				pt = glm::floor(pt * 64.0f) / 64.0f;
 				points.push_back(pt);
 			}
 

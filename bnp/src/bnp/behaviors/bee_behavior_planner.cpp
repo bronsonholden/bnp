@@ -1,3 +1,4 @@
+#include <bnp/core/logger.hpp>
 #include <bnp/components/physics.h>
 #include <bnp/components/transform.h>
 #include <bnp/components/hierarchy.h>
@@ -221,6 +222,7 @@ namespace bnp {
 		auto& motility = registry.get<Motility>(bee);
 
 		if (!registry.all_of<FlowField2D>(goal.target)) {
+			Log::warning("Wander target (entity=%d) has no FlowField2D component", static_cast<int>(goal.target));
 			return;
 		}
 
