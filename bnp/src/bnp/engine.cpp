@@ -221,7 +221,6 @@ namespace bnp {
 		glm::vec2 camera_position = transform.world_transform[3];
 
 		while (window.open) {
-
 			SDL_Event event;
 
 			while (window.poll(event)) {
