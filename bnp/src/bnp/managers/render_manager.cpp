@@ -17,7 +17,7 @@ namespace bnp {
 		line_mesh(MeshFactory().line()),
 		wireframe_material(MaterialFactory().wireframe_material()),
 		quad_material(MaterialFactory().quad_material()),
-		obstacle_material(MaterialFactory().obstacle_material()),
+		physics_body_2d_material(MaterialFactory().physics_body_2d_material()),
 		debug_render_wireframes(true)
 	{
 	}
@@ -290,7 +290,7 @@ namespace bnp {
 			glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0));
 			transform = glm::scale(transform, glm::vec3(width, height, 1.0f));
 
-			renderer.render_wireframe(camera, sprite_mesh, obstacle_material, transform, color, true);
+			renderer.render_wireframe(camera, sprite_mesh, physics_body_2d_material, transform, color, true);
 		}
 	}
 

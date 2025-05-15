@@ -24,12 +24,16 @@ namespace bnp {
 		bool debug_render_wireframes;
 
 	private:
-		// built-in resources
+		// quad mesh for rendering sprites
 		Mesh sprite_mesh;
+		// mesh for rendering a single line
 		Mesh line_mesh;
+		// material for rendering debug wireframes
 		Material wireframe_material;
+		// material for rendering fullscreen quad
 		Material quad_material;
-		Material obstacle_material;
+		// material for rendering 2D physics bodies
+		Material physics_body_2d_material;
 	};
 
 } // namespace bnp

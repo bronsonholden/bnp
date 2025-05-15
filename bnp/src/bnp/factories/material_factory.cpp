@@ -1,6 +1,7 @@
 #include <bnp/factories/material_factory.h>
 
 #include <iostream>
+#include <filesystem>
 
 const char* obstacle_vertex_shader_source = R"(
 #version 330 core
@@ -117,6 +118,28 @@ namespace bnp {
 		return shader;
 	}
 
+	Material MaterialFactory::load_material_from_files(const unordered_map<ShaderType, std::filesystem::path>& shader_files) {
+		std::unordered_map<ShaderType, std::string> sources;
+
+		for (auto [type, path] : shader_files) {
+			std::filesystem::path root = std::filesystem::path(PROJECT_ROOT) / "bnp";
+			std::filesystem::path path = root / path;
+			std::ifstream file(path);
+
+			if (!file.is_open()) {
+				throw std::runtime_error("Failed to shader file: " + path.string());
+			}
+
+			std::ostringstream ss;
+			ss << file.rdbuf();
+			std::string source = ss.str();
+
+			sources.emplace(type, source);
+		}
+
+		return load_material(sources);
+	}
+
 	Material MaterialFactory::load_material(
 		const unordered_map<ShaderType, std::string>& shaders)
 	{
@@ -177,7 +200,7 @@ namespace bnp {
 			});
 	}
 
-	Material MaterialFactory::obstacle_material() {
+	Material MaterialFactory::physics_body_2d_material() {
 		return load_material({
 			{ShaderType::VertexShader, obstacle_vertex_shader_source},
 			{ShaderType::FragmentShader, obstacle_fragment_shader_source},
