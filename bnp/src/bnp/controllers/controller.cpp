@@ -3,9 +3,9 @@
 namespace bnp {
 
 
-	Controller::Controller(entt::registry& registry, entt::entity entity)
-		: registry_(registry), entity_(entity) {
-		if (!registry_.all_of<Motility, Controllable>(entity_)) {
+	Controller::Controller(entt::registry& _registry, entt::entity _entity)
+		: registry(_registry), entity(_entity) {
+		if (!registry.all_of<Motility, Controllable>(entity)) {
 			throw std::runtime_error("Entity does not have required components: Motility and Controllable.");
 		}
 	}
@@ -14,7 +14,7 @@ namespace bnp {
 
 		const Uint8* keyboard = SDL_GetKeyboardState(nullptr);
 
-		auto& motility = registry_.get<Motility>(entity_);
+		auto& motility = registry.get<Motility>(entity);
 
 		glm::vec3 impulse(0.0f);
 
@@ -26,7 +26,7 @@ namespace bnp {
 			impulse.x = 1;
 		}
 
-		auto& body = registry_.get<PhysicsBody2D>(entity_);
+		auto& body = registry.get<PhysicsBody2D>(entity);
 
 		if (glm::length(impulse) > 0.001f) {
 			impulse = glm::normalize(impulse);
@@ -35,7 +35,7 @@ namespace bnp {
 		// todo: move to physics manager
 		//body.body->SetLinearVelocity(b2Vec2{ new_velocity_x, 0 });
 
-		auto& updated_motility = registry_.patch<Motility>(entity_, [=](Motility& m) {
+		auto& updated_motility = registry.patch<Motility>(entity, [=](Motility& m) {
 			m.impulse = impulse;
 
 			if (event.type == SDL_KEYDOWN) {
@@ -70,10 +70,6 @@ namespace bnp {
 				m.crouching = false;
 			}
 			});
-	}
-
-	glm::vec2 Controller::input_direction() const {
-		return input_direction_;
 	}
 
 }

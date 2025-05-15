@@ -14,12 +14,10 @@ namespace bnp {
 		Controller(entt::registry& registry, entt::entity entity);
 
 		void process_event(const SDL_Event& event);
-		glm::vec2 input_direction() const;
 
 	private:
-		entt::registry& registry_;
-		entt::entity entity_;
-		glm::vec2 input_direction_ = glm::vec2(0.0f);
+		entt::registry& registry;
+		entt::entity entity;
 	};
 
 } // namespace bnp
