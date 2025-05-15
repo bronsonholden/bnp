@@ -339,6 +339,8 @@ namespace bnp {
 		std::vector<entt::entity> bees;
 		auto view = registry.view<Identity, Transform>();
 
+		bees.reserve(view.size_hint());
+
 		for (auto entity : view) {
 			auto& identity = view.get<Identity>(entity);
 
