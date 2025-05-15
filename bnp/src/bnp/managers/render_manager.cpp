@@ -1,4 +1,3 @@
-#include <bnp/factories/mesh_factory.h>
 #include <bnp/managers/render_manager.h>
 #include <bnp/components/behavior.h>
 #include <bnp/components/transform.h>
@@ -13,14 +12,11 @@ using namespace std;
 namespace bnp {
 
 	RenderManager::RenderManager()
-		: sprite_mesh(MeshFactory().box()),
-		line_mesh(MeshFactory().line()),
-		debug_render_wireframes(true)
+		: debug_render_wireframes(true)
 	{
 	}
 
 	RenderManager::~RenderManager() {
-		sprite_mesh.cleanup();
 	}
 
 	void RenderManager::render(const entt::registry& registry, const Renderer& renderer, const Camera& camera) {

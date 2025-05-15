@@ -95,9 +95,18 @@ namespace bnp {
 			{ ShaderType::VertexShader, "resources/shaders/quad_vertex_shader.glsl" },
 			{ ShaderType::FragmentShader, "resources/shaders/quad_fragment_shader.glsl" }
 			});
+
+		render_manager.sprite_mesh = MeshFactory().box();
+		render_manager.line_mesh = MeshFactory().line();
 	}
 
 	Engine::~Engine() {
+		render_manager.wireframe_material.cleanup();
+		render_manager.physics_body_2d_material.cleanup();
+		render_manager.quad_material.cleanup();
+		render_manager.sprite_mesh.cleanup();
+		render_manager.line_mesh.cleanup();
+
 		registry.clear();
 		resource_manager.cleanup();
 		renderer.shutdown();
