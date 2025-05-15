@@ -215,6 +215,7 @@ namespace bnp {
 
 	void BeeBehaviorPlanner::execute_wander(entt::registry& registry, BehaviorGoal& goal, entt::entity bee) {
 		if (!registry.all_of<Motility>(bee)) {
+			Log::warning("Bee (entity=%d) has no Motility component", static_cast<int>(bee));
 			return;
 		}
 
@@ -250,6 +251,7 @@ namespace bnp {
 	// todo: querying against a flow field needs to go into a generic function
 	void BeeBehaviorPlanner::execute_visit(entt::registry& registry, BehaviorGoal& goal, entt::entity bee) {
 		if (!registry.all_of<Motility>(bee)) {
+			Log::warning("Bee (entity=%d) has no Motility component", static_cast<int>(bee));
 			return;
 		}
 
@@ -292,6 +294,7 @@ namespace bnp {
 	// todo: querying against a flow field needs to go into a generic function
 	void BeeBehaviorPlanner::execute_flee(entt::registry& registry, BehaviorGoal& goal, entt::entity bee) {
 		if (!registry.all_of<Motility>(bee)) {
+			Log::warning("Bee (entity=%d) has no Motility component", static_cast<int>(bee));
 			return;
 		}
 
