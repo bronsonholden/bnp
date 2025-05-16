@@ -260,7 +260,6 @@ namespace bnp {
 			//render_manager.render_flow_field_2ds(registry, renderer, camera);
 			renderer.front_fb.unbind();
 
-			glViewport(0, 0, window.get_width(), window.get_height());
 			render_manager.render_fullscreen_quad(renderer, renderer.front_fb);
 
 			ImGui_ImplOpenGL3_NewFrame();
