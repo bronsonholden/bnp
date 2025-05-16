@@ -21,6 +21,8 @@
 
 #include <bnp/behaviors/bee_behavior_planner.h>
 
+#include <bnp/game/prefabs/squirrel.h>
+
 #include <vector>
 #include <string>
 #include <fstream>
@@ -141,46 +143,7 @@ namespace bnp {
 		FileBrowser file_browser;
 		SceneInspector scene_inspector(registry);
 
-		Node squirrel = load_sprite(
-			"resources/sprites/squirrel/squirrel.png",
-			"resources/sprites/squirrel/squirrel.json"
-		);
-		squirrel.add_component<Transform>(Transform{
-			glm::vec3(3, 3, 0),
-			glm::quat(),
-			glm::vec3(1)
-			});
-		squirrel.add_component<Identity>(Identity{ "Squirrel" });
-		squirrel.add_component<Perception>(Perception{
-			{
-				{"Bee", 1}
-			}
-			});
-
-		squirrel.add_component<FlowField2D>(FlowField2D{
-			0.25f,
-			{ 40, 40 },
-			{ 0, 0 }
-			});
-
-		squirrel.add_component<Motility>(Motility{ 2.5f });
-		squirrel.add_component<Controllable>(Controllable{ true });
-
-		squirrel.add_component<Camera2DRig>(Camera2DRig{
-			{ 0.0f, 1.0f }
-			});
-
-		squirrel.add_component<SquirrelController>();
-		squirrel.add_component<KeyboardInputObserver>();
-		squirrel.add_component<KeyboardInputMapping>(KeyboardInputMapping{
-			{
-				{ SDL_SCANCODE_A, KeyboardInput::Action::MoveLeft },
-				{ SDL_SCANCODE_D, KeyboardInput::Action::MoveRight },
-				{ SDL_SCANCODE_W, KeyboardInput::Action::MoveUp },
-				{ SDL_SCANCODE_S, KeyboardInput::Action::MoveDown },
-				{ SDL_SCANCODE_SPACE, KeyboardInput::Action::Jump }
-			}
-			});
+		Node squirrel = Prefab::squirrel(registry, resource_manager);
 
 		// pre-run setup
 		physics_manager.generate_sprite_bodies(registry);
@@ -224,10 +187,6 @@ namespace bnp {
 
 			glm::ivec2 partition = world2d.get_active_partition();
 		}
-
-		auto& transform = squirrel.get_component<Transform>();
-
-		glm::vec2 camera_position = transform.world_transform[3];
 
 		while (window.open) {
 			SDL_Event event;
