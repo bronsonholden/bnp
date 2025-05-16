@@ -211,7 +211,6 @@ namespace bnp {
 
 			float dt = time.delta_time();
 
-			controller_manager.update(registry, dt);
 			controller_manager.update_keyboard_input_observers(registry);
 
 			while (time.needs_fixed_update()) {
@@ -284,7 +283,6 @@ namespace bnp {
 			render_manager_inspector.render();
 
 			ImGui::Render();
-
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 			window.swap();
@@ -295,6 +293,7 @@ namespace bnp {
 		//cout << "fps: " << std::to_string(1.0f / dt) << endl;
 
 		// manager updates
+		controller_manager.update(registry, dt);
 		sprite_animation_manager.update(registry, dt);
 		motility_manager.update(registry, dt);
 		world2d_manager.update(registry, dt);
