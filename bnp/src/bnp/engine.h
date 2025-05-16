@@ -19,6 +19,7 @@
 #include <bnp/managers/behavior_manager.h>
 #include <bnp/managers/world2d_manager.h>
 #include <bnp/managers/camera_manager.h>
+#include <bnp/managers/controller_manager.h>
 
 #include <entt/entt.hpp>
 
@@ -52,6 +53,7 @@ namespace bnp {
 		BehaviorManager behavior_manager;
 		World2DManager world2d_manager;
 		CameraManager camera_manager;
+		ControllerManager controller_manager;
 
 		void update(float dt);
 		void fixed_update();

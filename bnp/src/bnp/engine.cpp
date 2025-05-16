@@ -18,7 +18,6 @@
 #include <bnp/ui/scene_inspector.h>
 #include <bnp/ui/node_inspector.h>
 #include <bnp/ui/render_manager_inspector.h>
-#include <bnp/controllers/controller.h>
 
 #include <bnp/behaviors/bee_behavior_planner.h>
 
@@ -171,10 +170,20 @@ namespace bnp {
 			{ 0.0f, 1.0f }
 			});
 
+		squirrel.add_component<SquirrelController>();
+		squirrel.add_component<KeyboardInputObserver>();
+		squirrel.add_component<KeyboardInputMapping>(KeyboardInputMapping{
+			{
+				{ SDL_SCANCODE_A, KeyboardInput::Action::MoveLeft },
+				{ SDL_SCANCODE_D, KeyboardInput::Action::MoveRight },
+				{ SDL_SCANCODE_W, KeyboardInput::Action::MoveUp },
+				{ SDL_SCANCODE_S, KeyboardInput::Action::MoveDown },
+				{ SDL_SCANCODE_SPACE, KeyboardInput::Action::Jump }
+			}
+			});
+
 		// pre-run setup
 		physics_manager.generate_sprite_bodies(registry);
-
-		Controller controller(registry, squirrel.get_entity_id());
 
 		std::filesystem::path root = PROJECT_ROOT;
 		root = root / "bnp";
@@ -236,12 +245,15 @@ namespace bnp {
 				}
 
 				ImGui_ImplSDL2_ProcessEvent(&event);
-				controller.process_event(event);
+				controller_manager.process_event(registry, event);
 			}
 
 			time.new_frame();
 
 			float dt = time.delta_time();
+
+			controller_manager.update(registry, dt);
+			controller_manager.update_keyboard_input_observers(registry);
 
 			while (time.needs_fixed_update()) {
 				fixed_update();
