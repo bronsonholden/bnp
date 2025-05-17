@@ -116,11 +116,7 @@ namespace bnp {
 					glm::vec2 bee_position = transform.world_transform[3];
 
 					if (nest.min_return_distance < glm::length(nest_position - bee_position)) {
-						auto& field = registry.get_or_emplace<FlowField2D>(nest.entity, FlowField2D{
-							0.25f,
-							{ 60, 60 },
-							{ 0, 0 }
-							});
+						auto& field = registry.get<FlowField2D>(nest.entity);
 
 						if (!field.init) {
 							field.reposition_to_target(nest_position);

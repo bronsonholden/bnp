@@ -5,7 +5,7 @@
 
 namespace bnp {
 
-	struct SquirrelController {
+	struct Platform2DController {
 		bool active = true;
 		void update(entt::registry& registry, entt::entity entity, float dt);
 	};

@@ -1,4 +1,5 @@
 #include <bnp/game/prefabs/squirrel.h>
+#include <bnp/components/global.h>
 #include <bnp/components/behavior.h>
 #include <bnp/components/physics.h>
 #include <bnp/components/controllable.h>
@@ -49,7 +50,7 @@ namespace bnp {
 			{ 0.0f, 1.0f }
 			});
 
-		node.add_component<SquirrelController>();
+		node.add_component<Platform2DController>();
 		node.add_component<KeyboardInputObserver>();
 		node.add_component<KeyboardInputMapping>(KeyboardInputMapping{
 			{
@@ -60,6 +61,27 @@ namespace bnp {
 				{ SDL_SCANCODE_SPACE, KeyboardInput::Action::Jump }
 			}
 			});
+
+		auto& global = registry.get<Global>(registry.view<Global>().front());
+		b2World& world = *global.world;
+
+		b2BodyDef body_def;
+		body_def.type = b2_dynamicBody;
+		body_def.fixedRotation = true;
+		b2Body* body = world.CreateBody(&body_def);
+
+		b2FixtureDef fixture_def;
+		fixture_def.restitution = 0.0f;
+		fixture_def.friction = 0.0f;
+		fixture_def.density = 6.5f;
+
+		b2PolygonShape body_shape;
+		body_shape.SetAsBox(0.2f, 0.125f);
+		fixture_def.shape = &body_shape;
+
+		body->CreateFixture(&fixture_def);
+
+		node.add_component<PhysicsBody2D>(PhysicsBody2D{ body });
 
 		return node;
 	}

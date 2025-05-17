@@ -357,6 +357,11 @@ namespace bnp {
 		// []
 
 		node.add_component<BehaviorNest>(nest.get_entity_id());
+		node.get_registry().get_or_emplace<FlowField2D>(nest.get_entity_id(), FlowField2D{
+			0.25f,
+			{ 60, 60 },
+			{ 0, 0 }
+			});
 
 		l_push_script_node(L, nest);
 		luaL_getmetatable(L, "bnp.Node");

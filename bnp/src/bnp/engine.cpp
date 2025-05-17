@@ -145,8 +145,7 @@ namespace bnp {
 
 		Node squirrel = Prefab::squirrel(registry, resource_manager);
 
-		// pre-run setup
-		physics_manager.generate_sprite_bodies(registry);
+		squirrel.get_component<PhysicsBody2D>().body->SetTransform(b2Vec2(2.0f, 1.5f), 0);
 
 		std::filesystem::path root = PROJECT_ROOT;
 		root = root / "bnp";

@@ -3,7 +3,7 @@
 
 namespace bnp {
 
-	void SquirrelController::update(entt::registry& registry, entt::entity entity, float dt) {
+	void Platform2DController::update(entt::registry& registry, entt::entity entity, float dt) {
 		auto& observer = registry.get<KeyboardInputObserver>(entity);
 		auto& motility = registry.get<Motility>(entity);
 		auto& body = registry.get<PhysicsBody2D>(entity);

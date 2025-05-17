@@ -3,10 +3,10 @@
 namespace bnp {
 
 	void ControllerManager::update(entt::registry& registry, float dt) {
-		auto view = registry.view<SquirrelController>();
+		auto view = registry.view<Platform2DController>();
 
 		for (auto entity : view) {
-			auto& controller = view.get<SquirrelController>(entity);
+			auto& controller = view.get<Platform2DController>(entity);
 			controller.update(registry, entity, dt);
 		}
 	}
