@@ -1,4 +1,4 @@
-#include <bnp/managers/water2d_manager.h>
+#include <bnp/managers/water_2d_manager.h>
 
 namespace bnp {
 

@@ -60,7 +60,7 @@ namespace bnp {
 		physics_manager(registry),
 		script_factory(resource_manager, physics_manager),
 		behavior_manager(),
-		world2d_manager()
+		world_2d_manager()
 	{
 		registry.emplace<Global>(registry.create(), Global{
 			&physics_manager.get_world()
@@ -295,7 +295,7 @@ namespace bnp {
 		controller_manager.update(registry, dt);
 		sprite_animation_manager.update(registry, dt);
 		motility_manager.update(registry, dt);
-		world2d_manager.update(registry, dt);
+		world_2d_manager.update(registry, dt);
 		camera_manager.update(registry, dt);
 
 		// only apply transforms after all game updates have completed
@@ -311,7 +311,7 @@ namespace bnp {
 	}
 
 	void Engine::fixed_update() {
-		water2d_manager.update(registry, time.fixed_delta_time());
+		water_2d_manager.update(registry, time.fixed_delta_time());
 		physics_manager.update(registry, time.fixed_delta_time());
 	}
 

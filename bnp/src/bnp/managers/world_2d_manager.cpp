@@ -1,4 +1,4 @@
-#include <bnp/managers/world2d_manager.h>
+#include <bnp/managers/world_2d_manager.h>
 #include <bnp/components/physics.h>
 
 namespace bnp {

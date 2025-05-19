@@ -15,9 +15,9 @@
 #include <bnp/managers/physics_manager.h>
 #include <bnp/managers/motility_manager.h>
 #include <bnp/managers/hierarchy_manager.h>
-#include <bnp/managers/water2d_manager.h>
+#include <bnp/managers/water_2d_manager.h>
 #include <bnp/managers/behavior_manager.h>
-#include <bnp/managers/world2d_manager.h>
+#include <bnp/managers/world_2d_manager.h>
 #include <bnp/managers/camera_manager.h>
 #include <bnp/managers/controller_manager.h>
 
@@ -49,9 +49,9 @@ namespace bnp {
 		PhysicsManager physics_manager;
 		MotilityManager motility_manager;
 		HierarchyManager hierarchy_manager;
-		Water2DManager water2d_manager;
+		Water2DManager water_2d_manager;
 		BehaviorManager behavior_manager;
-		World2DManager world2d_manager;
+		World2DManager world_2d_manager;
 		CameraManager camera_manager;
 		ControllerManager controller_manager;
 
