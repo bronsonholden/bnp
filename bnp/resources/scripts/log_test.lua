@@ -25,7 +25,6 @@ for i=1,30 do
 		queen:AddComponent("BehaviorNest", nest)
 		queen:GetComponent("Transform")
 		     :SetPosition({ x = 3 + math.random(-200, 200) * 0.001, y = 1 + math.random(40, 50) * 0.01, z = 0 })
-		     :SetScale({ x = 0.25, y = 0.25, z = 0.25 })
 	else
 		bee = prefab.load("resources/scripts/bee_prefab.lua")
 		bee:AddComponent("BehaviorNest", nest)

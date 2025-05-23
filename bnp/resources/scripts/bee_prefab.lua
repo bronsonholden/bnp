@@ -2,7 +2,8 @@
 Creates a bee sprite
 ]]
 
-node:AddComponent("Transform"):SetScale({ x = 0.25, y = 0.25, z = 0.25 })
+node:AddComponent("Transform")
+	:SetScale({ x = 0.25, y = 0.25, z = 0.25 })
 node:AddComponent("Texture", { path = "resources/sprites/bee/bee.png" })
 node:AddComponent("Sprite", { path = "resources/sprites/bee/bee.json" })
 node:AddComponent("Material", {
