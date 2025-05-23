@@ -58,8 +58,6 @@ namespace bnp {
 		void update(float dt);
 		void fixed_update();
 
-		Node load_sprite(std::filesystem::path sprite_path, std::filesystem::path json_path);
-
 		void handle_window_event(SDL_Event& event);
 	};
 }

@@ -113,23 +113,6 @@ namespace bnp {
 		renderer.shutdown();
 	}
 
-	Node Engine::load_sprite(std::filesystem::path sprite_path, std::filesystem::path json_path) {
-		Node node(registry);
-		Texture texture = resource_manager.load_texture(sprite_path.string(), sprite_path);
-		Material material = resource_manager.load_material("sprite_material", {
-			{ShaderType::VertexShader, "resources/shaders/sprite_vertex_shader.glsl"},
-			{ShaderType::FragmentShader, "resources/shaders/sprite_fragment_shader.glsl"}
-			});
-		node.add_component<Texture>(texture);
-		node.add_component<Renderable>(true);
-		node.add_component<Material>(material);
-
-		SpriteFactory sprite_factory;
-		sprite_factory.load_from_aseprite(node, json_path);
-
-		return node;
-	}
-
 	void Engine::run() {
 		const float fixed_dt = 1.0f / 60.0f;
 
