@@ -1,4 +1,4 @@
-#include <bnp/game/prefabs/cloaked_figure.h>
+#include <bnp/game/prefabs/planet_2d.h>
 #include <bnp/components/global.h>
 #include <bnp/components/behavior.h>
 #include <bnp/components/physics.h>
@@ -8,7 +8,7 @@
 
 namespace bnp {
 
-	Node Prefab::cloaked_figure(entt::registry& registry, ResourceManager& resource_manager) {
+	Node Prefab::planet_2d(entt::registry& registry, ResourceManager& resource_manager) {
 		Node node(registry);
 
 		Material material = resource_manager.load_material("planet_material", {

@@ -8,7 +8,7 @@
 namespace bnp {
 	namespace Prefab {
 
-		Node cloaked_figure(entt::registry& registry, ResourceManager& resource_manager);
+		Node planet_2d(entt::registry& registry, ResourceManager& resource_manager);
 
 	}
 }
