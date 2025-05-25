@@ -247,7 +247,8 @@ void main() {
     }
 
     float cap_shimmer = abs(noiseValue * 0.15f);
-    if (abs(dot(normalize(coord), normalize(axis))) > clamp(0.9f - sin(cap_shimmer), 0.75, 1.0f))
+    float equator_dist = abs(dot(normalize(coord), normalize(axis)));
+    if (equator_dist > clamp(0.9f - sin(cap_shimmer), 0.75, 1.0f))
     {
         color = vec3(0.9f, 0.9f, 1.0f) + vec3(0, 0, cap_shimmer);
     }

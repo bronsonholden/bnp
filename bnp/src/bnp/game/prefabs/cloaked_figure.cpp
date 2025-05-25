@@ -28,13 +28,13 @@ namespace bnp {
 			glm::vec3(0.1f, 0.15f, 0.76f),
 			glm::vec3(0.15f, 0.2f, 0.5f),
 			glm::vec3(0.1f, 0.35f, 0.1f),
-			glm::vec3(0.15f, 0.46f, 0.14f)
+			glm::vec3(0.25f, 0.36f, 0.14f)
 		);
 
 		node.add_component<Transform>(Transform{
 			glm::vec3(2, 2, 0),
 			glm::quat(), //glm::angleAxis(glm::radians(32.0f), glm::vec3(0,0, 1)),
-			glm::vec3(1.0f)
+			glm::vec3(2.0f)
 			});
 
 		node.add_component<Camera2DRig>(Camera2DRig{

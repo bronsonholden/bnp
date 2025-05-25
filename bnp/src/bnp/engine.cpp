@@ -276,13 +276,8 @@ namespace bnp {
 	void Engine::update(float dt) {
 		//cout << "fps: " << std::to_string(1.0f / dt) << endl;
 
-		for (auto entity : registry.view<Planet2D>()) {
-			registry.patch<Planet2D>(entity, [=](Planet2D& p) {
-				p.time += dt;
-				});
-		}
-
 		// manager updates
+		planet_2d_manager.update(registry, dt);
 		controller_manager.update(registry, dt);
 		sprite_animation_manager.update(registry, dt);
 		motility_manager.update(registry, dt);
