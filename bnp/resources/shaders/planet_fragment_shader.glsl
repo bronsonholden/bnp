@@ -7,6 +7,7 @@ uniform float time;
 uniform float noise_radius;
 uniform float noise_seed;
 uniform vec3 axis;
+uniform vec3 sun_direction;
 
 uniform float water_depth;
 uniform float coast_depth;
@@ -198,15 +199,6 @@ vec3 spherical_coord(vec2 texCoord, float time) {
     float radius = sqrt(0.25f - (centerTexCoord.y * centerTexCoord.y));
     vec3 sphereCoord = vec3(centerTexCoord.x, centerTexCoord.y, sqrt((radius * radius) - (centerTexCoord.x * centerTexCoord.x)));
 
-    // Rotation angle based on time (adjust rotation speed as needed)
-    float rotationAngle = time * 0.1;  // Adjust speed of rotation
-
-    // Rotate the spherical coordinates around the arbitrary axis
-    mat3 rotationMatrix = rotateAroundAxis(axis, rotationAngle);
-
-    // Apply rotation
-    sphereCoord = rotationMatrix * sphereCoord;
-
     return sphereCoord;
 }
 
@@ -215,6 +207,11 @@ void main() {
     //vec2 snapped_coord = floor(TexCoord / snap_interval) * snap_interval;
     vec2 snapped_coord = TexCoord;
     vec3 coord = spherical_coord(snapped_coord, time);
+    
+    // Rotation angle based on time (adjust rotation speed as needed)
+    float rotationAngle = time * 0.1;  // Adjust speed of rotation
+
+    float brightness = clamp(sqrt(10 * dot(coord, normalize(sun_direction))), 0.25f, 1.0f);
 
     // The circle is always centered at (0.5, 0.5) with a fixed radius of 0.5
     float dist = distance(snapped_coord, vec2(0.5f, 0.5f));  // Distance from center of quad
@@ -224,8 +221,14 @@ void main() {
         discard;
     }
 
+    // Rotate the spherical coordinates around the arbitrary axis
+    mat3 rotationMatrix = rotateAroundAxis(axis, rotationAngle);
+
+    // Apply rotation
+    vec3 rotated_coord = rotationMatrix * coord;
+
     // Sample the Perlin noise value (this is your "heightmap")
-    float noiseValue = cnoise(vec4(coord * noise_radius, noise_seed)); // Scale the texture coordinates for detail
+    float noiseValue = cnoise(vec4(rotated_coord * noise_radius, noise_seed)); // Scale the texture coordinates for detail
 
     // Use the Perlin noise to determine the planet's color: green for land, blue for water
     vec3 color;
@@ -253,5 +256,5 @@ void main() {
         color = vec3(0.9f, 0.9f, 1.0f) + vec3(0, 0, cap_shimmer);
     }
 
-    FragColor = vec4(color, 1.0f);
+    FragColor = vec4(brightness * color, 1.0f);
 }

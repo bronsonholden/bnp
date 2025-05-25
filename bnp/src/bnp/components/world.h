@@ -6,15 +6,19 @@
 
 namespace bnp {
 
+	// Properties for rendering a pixel-style 2D planet using a quad
 	struct Planet2D {
 		float time;
 		float noise_radius;
 		float noise_seed;
 		glm::vec3 axis;
+		glm::vec3 sun_direction;
 
 		float water_depth;
 		float coast_depth;
 		float mainland_depth;
+
+		// layer colors
 		glm::vec3 water_color;
 		glm::vec3 coast_color;
 		glm::vec3 mainland_color;

@@ -134,6 +134,7 @@ namespace bnp {
 		GLuint noise_radius_loc = glGetUniformLocation(material.shader_id, "noise_radius");
 		GLuint noise_seed_loc = glGetUniformLocation(material.shader_id, "noise_seed");
 		GLuint axis_loc = glGetUniformLocation(material.shader_id, "axis");
+		GLuint sun_direction_loc = glGetUniformLocation(material.shader_id, "sun_direction");
 		GLuint water_depth_loc = glGetUniformLocation(material.shader_id, "water_depth");
 		GLuint coast_depth_loc = glGetUniformLocation(material.shader_id, "coast_depth");
 		GLuint mainland_depth_loc = glGetUniformLocation(material.shader_id, "mainland_depth");
@@ -149,6 +150,7 @@ namespace bnp {
 		glUniform1f(noise_radius_loc, planet_2d.noise_radius);
 		glUniform1f(noise_seed_loc, planet_2d.noise_seed);
 		glUniform3f(axis_loc, planet_2d.axis.x, planet_2d.axis.y, planet_2d.axis.z);
+		glUniform3f(sun_direction_loc, planet_2d.sun_direction.x, planet_2d.sun_direction.y, planet_2d.sun_direction.z);
 		glUniform1f(water_depth_loc, planet_2d.water_depth);
 		glUniform1f(coast_depth_loc, planet_2d.coast_depth);
 		glUniform1f(mainland_depth_loc, planet_2d.mainland_depth);

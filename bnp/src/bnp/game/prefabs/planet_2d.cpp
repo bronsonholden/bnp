@@ -4,7 +4,6 @@
 #include <bnp/components/physics.h>
 #include <bnp/components/controllable.h>
 #include <bnp/components/world.h>
-#include <bnp/factories/sprite_factory.h>
 
 namespace bnp {
 
@@ -22,6 +21,7 @@ namespace bnp {
 			6.345f,
 			1.14f,
 			glm::vec3(0.4f, 1.0f, 0.3f),
+			glm::vec3(-0.4f, 0.2f, 1.1f),
 			0.1f,
 			0.05f,
 			0.15f,
