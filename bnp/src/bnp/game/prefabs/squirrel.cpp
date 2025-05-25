@@ -9,8 +9,8 @@
 namespace bnp {
 
 	Node Prefab::squirrel(entt::registry& registry, ResourceManager& resource_manager) {
-		std::filesystem::path sprite_path = "resources/sprites/squirrel/squirrel.png";
-		std::filesystem::path json_path = "resources/sprites/squirrel/squirrel.json";
+		std::filesystem::path sprite_path = "resources/sprites/ship/ship.png";
+		std::filesystem::path json_path = "resources/sprites/ship/ship.json";
 		Node node(registry);
 
 		Texture texture = resource_manager.load_texture(sprite_path.string(), sprite_path);
@@ -27,7 +27,7 @@ namespace bnp {
 
 		node.add_component<Transform>(Transform{
 			glm::vec3(3, 3, 0),
-			glm::quat(),
+			glm::angleAxis(glm::radians(45.0f), glm::vec3(0, 0, 1)),
 			glm::vec3(1)
 			});
 		node.add_component<Identity>(Identity{ "Squirrel" });

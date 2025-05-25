@@ -3,8 +3,10 @@
 #include <bnp/components/transform.h>
 #include <bnp/components/graphics.h>
 #include <bnp/components/physics.h>
+#include <bnp/components/world.h>
 
 #include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 #include <iostream>
 using namespace std;
@@ -281,6 +283,21 @@ namespace bnp {
 			transform = glm::scale(transform, glm::vec3(width, height, 1.0f));
 
 			renderer.render_wireframe(camera, sprite_mesh, physics_body_2d_material, transform, color, true);
+		}
+	}
+
+	void RenderManager::render_planet_2ds(const entt::registry& registry, const Renderer& renderer, const Camera& camera) {
+		auto view = registry.view<Material, Transform, Renderable, Planet2D>();
+
+		for (auto entity : view) {
+			auto& planet_2d = view.get<Planet2D>(entity);
+			auto& material = view.get<Material>(entity);
+			auto& transform = view.get<Transform>(entity);
+			auto& renderable = view.get<Renderable>(entity);
+
+			if (!renderable.value) continue;
+
+			renderer.render_planet_2d(camera, planet_2d, sprite_mesh, material, transform.world_transform);
 		}
 	}
 

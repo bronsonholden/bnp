@@ -6,6 +6,21 @@
 
 namespace bnp {
 
+	struct Planet2D {
+		float time;
+		float noise_radius;
+		float noise_seed;
+		glm::vec3 axis;
+
+		float water_depth;
+		float coast_depth;
+		float mainland_depth;
+		glm::vec3 water_color;
+		glm::vec3 coast_color;
+		glm::vec3 mainland_color;
+		glm::vec3 mountain_color;
+	};
+
 	// Attach to an entity with a Transform to be tracked with a
 	// 2D (orthographic projection) camera. The position of the
 	// camera is kept within a certain pan region, beyond which

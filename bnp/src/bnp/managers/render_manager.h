@@ -18,6 +18,7 @@ namespace bnp {
 		void render_sprites(const entt::registry& registry, const Renderer& renderer, const Camera& camera);
 		void render_water2d(const entt::registry& registry, const Renderer& renderer, const Camera& camera);
 		void render_physics_body_2ds(const entt::registry& registry, const Renderer& renderer, const Camera& camera);
+		void render_planet_2ds(const entt::registry& registry, const Renderer& renderer, const Camera& camera);
 		void render_bezier_sprites(const entt::registry& registry, const Renderer& renderer, const Camera& camera);
 
 		bool debug_render_wireframes;

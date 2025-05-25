@@ -37,7 +37,7 @@ namespace bnp {
 		// downscale but keep aspect ratio
 		int downscaled_height = height / 5;
 		int downscaled_width = static_cast<int>(std::floor(height * aspect));
-		upscale_fb.create(downscaled_width, downscaled_height, 4);
+		upscale_fb.create(480, 360, 4);
 
 		front_fb.create(width, height);
 		obstacle_fb.create(width, height);
@@ -116,6 +116,54 @@ namespace bnp {
 		if (texture.channels < 4) {
 			glEnable(GL_BLEND);
 		}
+	}
+
+	void Renderer::render_planet_2d(const Camera& camera, const Planet2D& planet_2d, const Mesh& mesh, const Material& material, const glm::mat4& transform) const {
+		if (!material.shader_id) return;
+
+		glUseProgram(material.shader_id);
+
+		glm::mat4 view = camera.view;
+		glm::mat4 projection = camera.perspective;
+
+		// Set the transform matrices
+		GLuint model_loc = glGetUniformLocation(material.shader_id, "model");
+		GLuint view_loc = glGetUniformLocation(material.shader_id, "view");
+		GLuint proj_loc = glGetUniformLocation(material.shader_id, "projection");
+		GLuint time_loc = glGetUniformLocation(material.shader_id, "time");
+		GLuint noise_radius_loc = glGetUniformLocation(material.shader_id, "noise_radius");
+		GLuint noise_seed_loc = glGetUniformLocation(material.shader_id, "noise_seed");
+		GLuint axis_loc = glGetUniformLocation(material.shader_id, "axis");
+		GLuint water_depth_loc = glGetUniformLocation(material.shader_id, "water_depth");
+		GLuint coast_depth_loc = glGetUniformLocation(material.shader_id, "coast_depth");
+		GLuint mainland_depth_loc = glGetUniformLocation(material.shader_id, "mainland_depth");
+		GLuint water_color_loc = glGetUniformLocation(material.shader_id, "water_color");
+		GLuint coast_color_loc = glGetUniformLocation(material.shader_id, "coast_color");
+		GLuint mainland_color_loc = glGetUniformLocation(material.shader_id, "mainland_color");
+		GLuint mountain_color_loc = glGetUniformLocation(material.shader_id, "mountain_color");
+
+		glUniformMatrix4fv(model_loc, 1, GL_FALSE, &transform[0][0]);
+		glUniformMatrix4fv(view_loc, 1, GL_FALSE, &view[0][0]);
+		glUniformMatrix4fv(proj_loc, 1, GL_FALSE, &projection[0][0]);
+		glUniform1f(time_loc, planet_2d.time);
+		glUniform1f(noise_radius_loc, planet_2d.noise_radius);
+		glUniform1f(noise_seed_loc, planet_2d.noise_seed);
+		glUniform3f(axis_loc, planet_2d.axis.x, planet_2d.axis.y, planet_2d.axis.z);
+		glUniform1f(water_depth_loc, planet_2d.water_depth);
+		glUniform1f(coast_depth_loc, planet_2d.coast_depth);
+		glUniform1f(mainland_depth_loc, planet_2d.mainland_depth);
+		glUniform3f(water_color_loc, planet_2d.water_color.x, planet_2d.water_color.y, planet_2d.water_color.z);
+		glUniform3f(coast_color_loc, planet_2d.coast_color.x, planet_2d.coast_color.y, planet_2d.coast_color.z);
+		glUniform3f(mainland_color_loc, planet_2d.mainland_color.x, planet_2d.mainland_color.y, planet_2d.mainland_color.z);
+		glUniform3f(mountain_color_loc, planet_2d.mountain_color.x, planet_2d.mountain_color.y, planet_2d.mountain_color.z);
+
+		glBindVertexArray(mesh.va_id);
+
+		if (mesh.eb_id) {
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.eb_id);
+		}
+
+		glDrawElements(GL_TRIANGLES, mesh.vertex_count, GL_UNSIGNED_INT, 0);
 	}
 
 	void Renderer::render_fullscreen_quad(const Mesh& mesh, const Material& material, const Framebuffer& framebuffer) const {

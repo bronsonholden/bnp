@@ -1,0 +1,29 @@
+{ "frames": [
+   {
+    "filename": "test_level.aseprite",
+    "frame": { "x": 0, "y": 0, "w": 480, "h": 320 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 480, "h": 320 },
+    "sourceSize": { "w": 480, "h": 320 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.13-x64",
+  "image": "test_level.png",
+  "format": "RGBA8888",
+  "size": { "w": 480, "h": 320 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+   { "name": "ground_1", "color": "#0000ffff", "data": "static_body()", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 304, "w": 480, "h": 16 } }] },
+   { "name": "Slice 1", "color": "#0000ffff", "data": "spawn(20, \"Bee\")", "keys": [{ "frame": 0, "bounds": {"x": 112, "y": 256, "w": 16, "h": 16 } }] }
+  ]
+ }
+}

@@ -43,7 +43,7 @@ namespace bnp {
 			registry.patch<Transform>(entity, [&](Transform& t) {
 				glm::mat4 world_transform =
 					glm::translate(glm::mat4(1.0f), glm::vec3(pos.x, pos.y, 0)) *
-					glm::mat4_cast(glm::quat()) *
+					glm::mat4_cast(t.rotation) *
 					glm::scale(glm::mat4(1.0f), t.scale);
 				t.world_transform = world_transform;
 				t.dirty = false;
