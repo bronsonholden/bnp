@@ -156,14 +156,6 @@ float cnoise(vec4 P){
   return 2.2 * n_xyzw;
 }
 
-// Function to rotate the texture coordinates
-vec2 rotate(vec2 coord, float angle) {
-    float cosAngle = cos(angle);
-    float sinAngle = sin(angle);
-    mat2 rotationMatrix = mat2(cosAngle, -sinAngle, sinAngle, cosAngle);
-    return rotationMatrix * (coord - vec2(0.5, 0.5)) + vec2(0.5, 0.5);  // Rotate around the center
-}
-
 // Rodrigues' rotation formula for rotating a vector around an arbitrary axis
 mat3 rotateAroundAxis(vec3 axis, float angle) {
     axis = normalize(axis);  // Normalize the axis of rotation
