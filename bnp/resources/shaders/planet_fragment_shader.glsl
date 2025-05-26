@@ -17,7 +17,7 @@ uniform vec3 coast_color;
 uniform vec3 mainland_color;
 uniform vec3 mountain_color;
 
-uniform float coverage_depth;
+uniform float cloud_depth;
 uniform float cloud_banding_equator_exp;
 uniform float cloud_radius;
 uniform float cloud_radius_equator_exp;
@@ -256,7 +256,7 @@ vec3 atmosphere_color(vec3 sphere_coord) {
     float atmosphere_noise_value = cnoise(vec4(atmosphere_coord * atmosphere_radius_factor, noise_seed + sin(time * 0.03)));
 
     // check below value so clouds (mostly) form over water
-    if (atmosphere_noise_value < coverage_depth) {
+    if (atmosphere_noise_value < cloud_depth) {
         return vec3(1.0f);
     }
 
