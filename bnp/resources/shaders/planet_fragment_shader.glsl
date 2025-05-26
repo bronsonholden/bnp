@@ -234,6 +234,59 @@ vec3 surface_color(vec3 sphere_coord) {
     return color;
 }
 
+vec3 atmosphere_color(vec3 sphere_coord) {
+    float rotationAngle = time * 0.09; // todo: rotation speed
+    mat3 rotationMatrix = rotateAroundAxis(axis, rotationAngle);
+
+    // Apply rotation
+    vec3 rotated_coord = rotationMatrix * sphere_coord;
+    float equator_dist = abs(dot(normalize(rotated_coord), normalize(axis)));
+
+    /////////////////////////////////
+    // todo: shader inputs
+
+    // affects thickness of clouds
+    float coverage_depth = -0.125;
+
+    // affects banding towards the equator, lower exponents increase banding
+    float banding_exp = 1.7;
+
+    // base sampling radius
+    float base_radius = 5.0;
+
+    // affects how exacerbated banding is by smoothing the radius gradient
+    // between the equator and poles. values < 1 have less of a gradient,
+    // while values > 1 have a more noticeable difference
+    float radius_exp = 0.4;
+
+    // end of inputs
+    /////////////////////////////////
+
+    float banding_factor = pow(equator_dist, banding_exp);
+    // min of 0.5 so we never sample at origin
+    float radius_factor = 0.5 + pow(1.0 - equator_dist, radius_exp);
+
+    vec3 atmosphere_coord = rotated_coord;
+
+    // stretch the sphere coordinate along axis to simulate banding
+    // in tandem with increasing sample radius
+    if (dot(atmosphere_coord, axis) > 0) {
+        atmosphere_coord += axis * banding_factor;
+    } else {
+        atmosphere_coord -= axis * banding_factor;
+    }
+
+    float atmosphere_radius_factor = base_radius * radius_factor;
+    float atmosphere_noise_value = cnoise(vec4(atmosphere_coord * atmosphere_radius_factor, noise_seed + sin(time * 0.03)));
+
+    // check below value so clouds (mostly) form over water
+    if (atmosphere_noise_value < coverage_depth) {
+        return vec3(1.0f);
+    }
+
+    return vec3(0.0f);
+}
+
 void main() {
     float snap_interval = 0.02f;
     //vec2 snapped_coord = floor(TexCoord / snap_interval) * snap_interval;
@@ -253,9 +306,10 @@ void main() {
 
     // Use the Perlin noise to determine the planet's color: green for land, blue for water
     vec3 surface_color = surface_color(coord);
+    vec3 atmosphere_color = atmosphere_color(coord);
 
     // calculate brightness of fragment based on sun position
     float brightness = clamp(sqrt(10 * dot(coord, normalize(sun_direction))), 0.25f, 1.0f);
 
-    FragColor = vec4(brightness * surface_color , 1.0f);
+    FragColor = vec4(brightness * (surface_color + atmosphere_color), 1.0f);
 }
