@@ -17,6 +17,11 @@ uniform vec3 coast_color;
 uniform vec3 mainland_color;
 uniform vec3 mountain_color;
 
+uniform float coverage_depth;
+uniform float cloud_banding_equator_exp;
+uniform float cloud_radius;
+uniform float cloud_radius_equator_exp;
+
 // Classic Perlin 3D Noise
 // by Stefan Gustavson (https://github.com/stegu/webgl-noise)
 vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
@@ -233,29 +238,9 @@ vec3 atmosphere_color(vec3 sphere_coord) {
     vec3 rotated_coord = rotationMatrix * sphere_coord;
     float equator_dist = abs(dot(normalize(rotated_coord), normalize(axis)));
 
-    /////////////////////////////////
-    // todo: shader inputs
-
-    // affects thickness of clouds
-    float coverage_depth = -0.125;
-
-    // affects banding towards the equator, lower exponents increase banding
-    float banding_exp = 1.7;
-
-    // base sampling radius
-    float base_radius = 5.0;
-
-    // affects how exacerbated banding is by smoothing the radius gradient
-    // between the equator and poles. values < 1 have less of a gradient,
-    // while values > 1 have a more noticeable difference
-    float radius_exp = 0.4;
-
-    // end of inputs
-    /////////////////////////////////
-
-    float banding_factor = pow(equator_dist, banding_exp);
+    float banding_factor = pow(equator_dist, cloud_banding_equator_exp);
     // min of 0.5 so we never sample at origin
-    float radius_factor = 0.5 + pow(1.0 - equator_dist, radius_exp);
+    float radius_factor = 0.5 + pow(1.0 - equator_dist, cloud_radius_equator_exp);
 
     vec3 atmosphere_coord = rotated_coord;
 
@@ -267,7 +252,7 @@ vec3 atmosphere_color(vec3 sphere_coord) {
         atmosphere_coord -= axis * banding_factor;
     }
 
-    float atmosphere_radius_factor = base_radius * radius_factor;
+    float atmosphere_radius_factor = cloud_radius * radius_factor;
     float atmosphere_noise_value = cnoise(vec4(atmosphere_coord * atmosphere_radius_factor, noise_seed + sin(time * 0.03)));
 
     // check below value so clouds (mostly) form over water
@@ -302,5 +287,5 @@ void main() {
     // calculate brightness of fragment based on sun position
     float brightness = clamp(sqrt(10 * dot(coord, normalize(sun_direction))), 0.25f, 1.0f);
 
-    FragColor = vec4(brightness * (surface_color + atmosphere_color), 1.0f);
+    FragColor = vec4(brightness * (atmosphere_color + surface_color), 1.0f);
 }

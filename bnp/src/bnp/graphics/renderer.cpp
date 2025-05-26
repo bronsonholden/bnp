@@ -142,6 +142,10 @@ namespace bnp {
 		GLuint coast_color_loc = glGetUniformLocation(material.shader_id, "coast_color");
 		GLuint mainland_color_loc = glGetUniformLocation(material.shader_id, "mainland_color");
 		GLuint mountain_color_loc = glGetUniformLocation(material.shader_id, "mountain_color");
+		GLuint cloud_depth_loc = glGetUniformLocation(material.shader_id, "cloud_depth");
+		GLuint cloud_radius_loc = glGetUniformLocation(material.shader_id, "cloud_radius");
+		GLuint cloud_radius_equator_exp_loc = glGetUniformLocation(material.shader_id, "cloud_radius_equator_exp");
+		GLuint cloud_banding_equator_exp_loc = glGetUniformLocation(material.shader_id, "cloud_banding_equator_exp");
 
 		glUniformMatrix4fv(model_loc, 1, GL_FALSE, &transform[0][0]);
 		glUniformMatrix4fv(view_loc, 1, GL_FALSE, &view[0][0]);
@@ -158,6 +162,10 @@ namespace bnp {
 		glUniform3f(coast_color_loc, planet_2d.coast_color.x, planet_2d.coast_color.y, planet_2d.coast_color.z);
 		glUniform3f(mainland_color_loc, planet_2d.mainland_color.x, planet_2d.mainland_color.y, planet_2d.mainland_color.z);
 		glUniform3f(mountain_color_loc, planet_2d.mountain_color.x, planet_2d.mountain_color.y, planet_2d.mountain_color.z);
+		glUniform1f(cloud_depth_loc, planet_2d.cloud_depth);
+		glUniform1f(cloud_radius_loc, planet_2d.cloud_radius);
+		glUniform1f(cloud_radius_equator_exp_loc, planet_2d.cloud_radius_equator_exp);
+		glUniform1f(cloud_banding_equator_exp_loc, planet_2d.cloud_banding_equator_exp);
 
 		glBindVertexArray(mesh.va_id);
 

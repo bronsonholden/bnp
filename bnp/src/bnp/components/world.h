@@ -23,6 +23,18 @@ namespace bnp {
 		glm::vec3 coast_color;
 		glm::vec3 mainland_color;
 		glm::vec3 mountain_color;
+
+		// affects thickness of clouds
+		float cloud_depth = -0.125f;
+		// base noise sampling radius for cloud formation
+		float cloud_radius = 5.0;
+		// affects radius of noise sampling near equator. lower exponents
+		// have less of a gradient between the equator and poles, while higher
+		// exponents exacerbate the difference
+		float cloud_radius_equator_exp = 0.4f;
+		// affects banding of clouds. lower exponents introduce more banding
+		// towards the equator, while greater exponents have more uniform banding
+		float cloud_banding_equator_exp = 1.7f;
 	};
 
 	// Attach to an entity with a Transform to be tracked with a
