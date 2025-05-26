@@ -146,6 +146,8 @@ namespace bnp {
 		GLuint cloud_radius_loc = glGetUniformLocation(material.shader_id, "cloud_radius");
 		GLuint cloud_radius_equator_exp_loc = glGetUniformLocation(material.shader_id, "cloud_radius_equator_exp");
 		GLuint cloud_banding_equator_exp_loc = glGetUniformLocation(material.shader_id, "cloud_banding_equator_exp");
+		GLuint crater_step_loc = glGetUniformLocation(material.shader_id, "crater_step");
+		GLuint num_craters_loc = glGetUniformLocation(material.shader_id, "num_craters");
 
 		glUniformMatrix4fv(model_loc, 1, GL_FALSE, &transform[0][0]);
 		glUniformMatrix4fv(view_loc, 1, GL_FALSE, &view[0][0]);
@@ -166,6 +168,8 @@ namespace bnp {
 		glUniform1f(cloud_radius_loc, planet_2d.cloud_radius);
 		glUniform1f(cloud_radius_equator_exp_loc, planet_2d.cloud_radius_equator_exp);
 		glUniform1f(cloud_banding_equator_exp_loc, planet_2d.cloud_banding_equator_exp);
+		glUniform1f(crater_step_loc, planet_2d.crater_step);
+		glUniform1i(num_craters_loc, planet_2d.num_craters);
 
 		glBindVertexArray(mesh.va_id);
 

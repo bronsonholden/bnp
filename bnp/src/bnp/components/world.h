@@ -35,6 +35,10 @@ namespace bnp {
 		// affects banding of clouds. lower exponents introduce more banding
 		// towards the equator, while greater exponents have more uniform banding
 		float cloud_banding_equator_exp = 1.7f;
+
+		// how far to step when sampling for crater axis values
+		float crater_step = 2.0f;
+		int num_craters = 0;
 	};
 
 	// Attach to an entity with a Transform to be tracked with a

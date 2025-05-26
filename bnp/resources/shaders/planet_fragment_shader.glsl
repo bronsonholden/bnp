@@ -22,6 +22,9 @@ uniform float cloud_banding_equator_exp;
 uniform float cloud_radius;
 uniform float cloud_radius_equator_exp;
 
+uniform float crater_step;
+uniform int num_craters;
+
 // Classic Perlin 3D Noise
 // by Stefan Gustavson (https://github.com/stegu/webgl-noise)
 vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
@@ -206,10 +209,52 @@ vec3 surface_color(vec3 sphere_coord) {
     vec3 rotated_coord = rotationMatrix * sphere_coord;
 
     // Sample the Perlin noise value (this is your "heightmap")
-    float surface_noise_value = cnoise(vec4(rotated_coord * noise_radius, noise_seed));
+    float surface_noise_value;
     vec3 color;
 
-    if (surface_noise_value < water_depth) {
+    surface_noise_value = cnoise(vec4(rotated_coord * noise_radius, noise_seed));
+
+    // cratering
+    vec4 sample_coord = vec4(5.0, 0.0, 25.0, 3.0);
+    for (int i = 0; i < num_craters; ++i) {
+        float sample_dist = i * crater_step;
+
+        float x = cnoise(sample_coord);
+        sample_coord.z += crater_step;
+        sample_coord.x += crater_step * 3.0;
+        float y = -1.5 * cnoise(permute(sample_coord));
+        sample_coord.z += crater_step;
+        sample_coord.x += crater_step * 3.0;
+        float z = 2.0 * cnoise(sample_coord);
+        sample_coord.z += crater_step;
+        sample_coord.y += crater_step * 3.0;
+        sample_coord = permute(sample_coord);
+        float w = cnoise(permute(sample_coord));
+        sample_coord.y += crater_step;
+        sample_coord.z += crater_step * 3.0;
+        sample_coord = permute(sample_coord);
+
+        // min dot value to generate crater
+        float radius_scale = (w + 1) / 2.0;
+        float crater_min = 0.98;
+        float crater_max = 0.99999;
+        float dot_min = pow((radius_scale * (crater_max - crater_min)) + crater_min, 2.0);
+
+        vec3 crater_coord = normalize(vec3(x, y, z));
+
+        float crater_location = pow(dot(normalize(crater_coord), normalize(rotated_coord)), 5.0);
+        if (crater_location > dot_min) {
+            surface_noise_value = -200;
+        } else if (crater_location > dot_min * 0.995) {
+            surface_noise_value = -100;
+        }
+    }
+
+    if (surface_noise_value <= -200) {
+        color = vec3(0.3, 0.23, 0.23);
+    } else if (surface_noise_value <= -100) {
+        color = vec3(0.4, 0.3, 0.2);
+    } else if (surface_noise_value < water_depth) {
         color = water_color;
     } else if (surface_noise_value - water_depth < coast_depth) {
         color = coast_color;
