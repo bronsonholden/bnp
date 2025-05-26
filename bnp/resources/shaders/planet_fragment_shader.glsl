@@ -202,6 +202,38 @@ vec3 spherical_coord(vec2 texCoord, float time) {
     return sphereCoord;
 }
 
+vec3 surface_color(vec3 sphere_coord) {
+    float rotationAngle = time * 0.1; // todo: rotation speed
+    mat3 rotationMatrix = rotateAroundAxis(axis, rotationAngle);
+
+    // Apply rotation
+    vec3 rotated_coord = rotationMatrix * sphere_coord;
+
+    // Sample the Perlin noise value (this is your "heightmap")
+    float surface_noise_value = cnoise(vec4(rotated_coord * noise_radius, noise_seed));
+    vec3 color;
+
+    if (surface_noise_value < water_depth) {
+        color = water_color;
+    } else if (surface_noise_value - water_depth < coast_depth) {
+        color = coast_color;
+    } else if (surface_noise_value - water_depth - coast_depth < mainland_depth) {
+        color = mainland_color;
+    } else {
+        color = mountain_color;
+    }
+    
+    // ice caps
+    float cap_shimmer = abs(surface_noise_value * 0.15f);
+    float equator_dist = abs(dot(normalize(rotated_coord), normalize(axis)));
+    if (equator_dist > clamp(0.9f - sin(cap_shimmer), 0.75, 1.0f))
+    {
+        color = vec3(0.9f, 0.9f, 1.0f) + vec3(0, 0, cap_shimmer);
+    }
+
+    return color;
+}
+
 void main() {
     float snap_interval = 0.02f;
     //vec2 snapped_coord = floor(TexCoord / snap_interval) * snap_interval;
@@ -211,8 +243,6 @@ void main() {
     // Rotation angle based on time (adjust rotation speed as needed)
     float rotationAngle = time * 0.1;  // Adjust speed of rotation
 
-    float brightness = clamp(sqrt(10 * dot(coord, normalize(sun_direction))), 0.25f, 1.0f);
-
     // The circle is always centered at (0.5, 0.5) with a fixed radius of 0.5
     float dist = distance(snapped_coord, vec2(0.5f, 0.5f));  // Distance from center of quad
 
@@ -221,40 +251,11 @@ void main() {
         discard;
     }
 
-    // Rotate the spherical coordinates around the arbitrary axis
-    mat3 rotationMatrix = rotateAroundAxis(axis, rotationAngle);
-
-    // Apply rotation
-    vec3 rotated_coord = rotationMatrix * coord;
-
-    // Sample the Perlin noise value (this is your "heightmap")
-    float noiseValue = cnoise(vec4(rotated_coord * noise_radius, noise_seed)); // Scale the texture coordinates for detail
-
     // Use the Perlin noise to determine the planet's color: green for land, blue for water
-    vec3 color;
-    if (noiseValue < water_depth)
-    {
-        color = water_color;
-    }
-    else if (noiseValue - water_depth < coast_depth)
-    {
-        color = coast_color;
-    }
-    else if (noiseValue - water_depth - coast_depth < mainland_depth)
-    {
-        color = mainland_color;
-    }
-    else
-    {
-        color = mountain_color;
-    }
+    vec3 surface_color = surface_color(coord);
 
-    float cap_shimmer = abs(noiseValue * 0.15f);
-    float equator_dist = abs(dot(normalize(coord), normalize(axis)));
-    if (equator_dist > clamp(0.9f - sin(cap_shimmer), 0.75, 1.0f))
-    {
-        color = vec3(0.9f, 0.9f, 1.0f) + vec3(0, 0, cap_shimmer);
-    }
+    // calculate brightness of fragment based on sun position
+    float brightness = clamp(sqrt(10 * dot(coord, normalize(sun_direction))), 0.25f, 1.0f);
 
-    FragColor = vec4(brightness * color, 1.0f);
+    FragColor = vec4(brightness * surface_color , 1.0f);
 }
