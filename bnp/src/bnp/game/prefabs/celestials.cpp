@@ -34,7 +34,8 @@ namespace bnp {
 				glm::vec3(0.1f, 0.15f, 0.76f),
 				glm::vec3(0.15f, 0.2f, 0.5f),
 				glm::vec3(0.1f, 0.35f, 0.1f),
-				glm::vec3(0.3f, 0.36f, 0.2f)
+				glm::vec3(0.3f, 0.36f, 0.2f),
+				-0.325f
 			);
 
 			node.add_component<Transform>(Transform{

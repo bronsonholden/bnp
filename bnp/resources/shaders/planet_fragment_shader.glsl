@@ -214,6 +214,7 @@ vec3 surface_color(vec3 sphere_coord) {
     vec3 color;
 
     surface_noise_value = cnoise(vec4(rotated_coord * noise_radius, noise_seed));
+    surface_noise_value += cnoise(vec4(rotated_coord * noise_radius * 3, noise_seed));
 
     // cratering
     vec4 sample_coord = vec4(5.0, 0.0, 25.0, 3.0);
@@ -300,6 +301,8 @@ vec3 atmosphere_color(vec3 sphere_coord) {
 
     float atmosphere_radius_factor = cloud_radius * radius_factor;
     float atmosphere_noise_value = cnoise(vec4(atmosphere_coord * atmosphere_radius_factor, noise_seed + sin(time * 0.03)));
+
+    atmosphere_noise_value += cnoise(vec4(atmosphere_coord * atmosphere_radius_factor * 3.0, noise_seed + sin(time * 0.03)));
 
     // check below value so clouds (mostly) form over water
     if (atmosphere_noise_value < cloud_depth) {
