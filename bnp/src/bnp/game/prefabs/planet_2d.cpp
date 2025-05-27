@@ -14,6 +14,7 @@ namespace bnp {
 			{ShaderType::VertexShader, "resources/shaders/planet_vertex_shader.glsl"},
 			{ShaderType::FragmentShader, "resources/shaders/planet_fragment_shader.glsl"}
 			});
+
 		node.add_component<Renderable>(true);
 		node.add_component<Material>(material);
 		node.add_component<Planet2D>(
@@ -33,7 +34,7 @@ namespace bnp {
 
 		node.add_component<Transform>(Transform{
 			glm::vec3(0, 0, 0),
-			glm::quat(), //glm::angleAxis(glm::radians(32.0f), glm::vec3(0,0, 1)),
+			glm::quat(),
 			glm::vec3(2.0f)
 			});
 
