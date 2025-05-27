@@ -11,8 +11,8 @@
 
 ## Four Pillars
 
-1. Creature Interactions
-2. Problem Solving
+1. Crafting
+2. Logistics
 3. Exploration
 4. Collection
 
