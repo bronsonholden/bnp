@@ -74,9 +74,6 @@ namespace bnp {
 
 		if (node.has_component<Material>()) {
 			if (ImGui::TreeNode("Material")) {
-				SpriteInspector sprite_inspector(node);
-
-				sprite_inspector.render();
 				ImGui::TreePop();
 			}
 		}
