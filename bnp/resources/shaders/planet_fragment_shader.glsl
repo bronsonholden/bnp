@@ -165,6 +165,32 @@ float cnoise(vec4 P){
     return 2.2 * n_xyzw;
 }
 
+float mod289(float x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
+vec4 mod289(vec4 x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
+vec4 perm(vec4 x){return mod289(((x * 34.0) + 1.0) * x);}
+
+float noise(vec3 p) {
+    vec3 a = floor(p);
+    vec3 d = p - a;
+    d = d * d * (3.0 - 2.0 * d);
+
+    vec4 b = a.xxyy + vec4(0.0, 1.0, 0.0, 1.0);
+    vec4 k1 = perm(b.xyxy);
+    vec4 k2 = perm(k1.xyxy + b.zzww);
+
+    vec4 c = k2 + a.zzzz;
+    vec4 k3 = perm(c);
+    vec4 k4 = perm(c + 1.0);
+
+    vec4 o1 = fract(k3 * (1.0 / 41.0));
+    vec4 o2 = fract(k4 * (1.0 / 41.0));
+
+    vec4 o3 = o2 * d.z + o1 * (1.0 - d.z);
+    vec2 o4 = o3.yw * d.x + o3.xz * (1.0 - d.x);
+
+    return o4.y * d.y + o4.x * (1.0 - d.y);
+}
+
 // Rodrigues' rotation formula for rotating a vector around an arbitrary axis
 mat3 rotateAroundAxis(vec3 axis, float angle) {
     axis = normalize(axis);  // Normalize the axis of rotation
@@ -202,6 +228,18 @@ vec3 spherical_coord(vec2 texCoord, float time) {
     return sphereCoord;
 }
 
+vec3 random_spherical_coord(vec3 sample_coord) {
+    float phi = noise(sample_coord) * 2 * 3.14159265;
+
+    float theta = asin(2.0 * noise(-sample_coord) - 1.0);
+
+    float x = cos(theta) * cos(phi);
+    float y = cos(theta) * sin(phi);
+    float z = sin(theta);
+
+    return vec3(x, y, z);  // Return the 3D spherical coordinate (unit vector on the sphere)
+}
+
 vec3 surface_color(vec3 sphere_coord) {
     float rotationAngle = time * rotation_speed; // todo: rotation speed
     mat3 rotationMatrix = rotateAroundAxis(axis, rotationAngle);
@@ -217,45 +255,35 @@ vec3 surface_color(vec3 sphere_coord) {
     surface_noise_value += cnoise(vec4(rotated_coord * noise_radius * 2.0, noise_seed));
 
     // cratering
-    vec4 sample_coord = vec4(5.0, 0.0, 25.0, 3.0);
+    vec3 sample_coord = vec3(115.0, 35.0, 25.0);
     for (int i = 0; i < num_craters; ++i) {
-        float sample_dist = i * crater_step;
-
-        float x = cnoise(sample_coord);
-        sample_coord.z += crater_step;
-        sample_coord.x += crater_step * 3.0;
-        float y = -1.5 * cnoise(permute(sample_coord));
-        sample_coord.z += crater_step;
-        sample_coord.x += crater_step * 3.0;
-        float z = 2.0 * cnoise(sample_coord);
-        sample_coord.z += crater_step;
-        sample_coord.y += crater_step * 3.0;
-        sample_coord = permute(sample_coord);
-        float w = cnoise(permute(sample_coord));
+        sample_coord.x += crater_step;
         sample_coord.y += crater_step;
-        sample_coord.z += crater_step * 3.0;
-        sample_coord = permute(sample_coord);
+        sample_coord.z += crater_step;
+        vec3 crater_coord = random_spherical_coord(sample_coord);
+        sample_coord.x += crater_step;
+        sample_coord.y += crater_step;
+        sample_coord.z += crater_step;
+        float w = noise(sample_coord);
 
         // min dot value to generate crater
         float radius_scale = (w + 1) / 2.0;
         float crater_min = 0.98;
         float crater_max = 0.99999;
-        float dot_min = pow((radius_scale * (crater_max - crater_min)) + crater_min, 2.0);
-
-        vec3 crater_coord = normalize(vec3(x, y, z));
+        float dot_min = pow((radius_scale * (crater_max - crater_min)) + crater_min, 8.0);
 
         float crater_location = pow(dot(normalize(crater_coord), normalize(rotated_coord)), 5.0);
         if (crater_location > dot_min) {
-            surface_noise_value = -200;
-        } else if (crater_location > dot_min * 0.995) {
             surface_noise_value = -100;
+        } else if (crater_location > dot_min - 0.006) {
+            surface_noise_value = -200;
         }
     }
 
     if (surface_noise_value <= -200) {
-        color = vec3(0.3, 0.23, 0.23);
+        color = vec3(0.28, 0.22, 0.223);
     } else if (surface_noise_value <= -100) {
-        color = vec3(0.4, 0.3, 0.2);
+        color = vec3(0.319, 0.244, 0.241);
     } else if (surface_noise_value < water_depth) {
         color = water_color;
     } else if (surface_noise_value - water_depth < coast_depth) {
@@ -336,5 +364,7 @@ void main() {
     // calculate brightness of fragment based on sun position
     float brightness = clamp(sqrt(10 * dot(coord, normalize(sun_direction))), 0.25f, 1.0f);
 
-    FragColor = vec4(brightness * (atmosphere_color + surface_color), 1.0f);
+    vec3 color = surface_color + atmosphere_color;
+
+    FragColor = vec4(brightness * color, 1.0f);
 }

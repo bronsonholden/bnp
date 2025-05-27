@@ -38,7 +38,7 @@ namespace bnp {
 		float cloud_banding_equator_exp = 1.7f;
 
 		// how far to step when sampling for crater axis values
-		float crater_step = 2.0f;
+		float crater_step = 1000.0f;
 		int num_craters = 0;
 	};
 
