@@ -22,7 +22,7 @@
 #include <bnp/behaviors/bee_behavior_planner.h>
 
 #include <bnp/game/prefabs/squirrel.h>
-#include <bnp/game/prefabs/planet_2d.h>
+#include <bnp/game/prefabs/celestials.h>
 
 #include <vector>
 #include <string>
@@ -127,7 +127,7 @@ namespace bnp {
 		FileBrowser file_browser;
 		SceneInspector scene_inspector(registry);
 
-		Node squirrel = Prefab::planet_2d(registry, resource_manager);
+		Node squirrel = Prefab::Celestials::eden(registry, resource_manager);
 
 		//squirrel.get_component<PhysicsBody2D>().body->SetTransform(b2Vec2(2.0f, 1.5f), 0);
 

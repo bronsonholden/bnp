@@ -7,8 +7,10 @@
 
 namespace bnp {
 	namespace Prefab {
+		namespace Celestials {
 
-		Node planet_2d(entt::registry& registry, ResourceManager& resource_manager);
+			Node eden(entt::registry& registry, ResourceManager& resource_manager);
 
+		}
 	}
 }
