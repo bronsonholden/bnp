@@ -4,6 +4,7 @@ out vec4 FragColor;
 in vec2 TexCoord;
 
 uniform float time;
+uniform float rotation_speed;
 uniform float noise_radius;
 uniform float noise_seed;
 uniform vec3 axis;
@@ -202,7 +203,7 @@ vec3 spherical_coord(vec2 texCoord, float time) {
 }
 
 vec3 surface_color(vec3 sphere_coord) {
-    float rotationAngle = time * 0.1; // todo: rotation speed
+    float rotationAngle = time * rotation_speed; // todo: rotation speed
     mat3 rotationMatrix = rotateAroundAxis(axis, rotationAngle);
 
     // Apply rotation
@@ -276,7 +277,7 @@ vec3 surface_color(vec3 sphere_coord) {
 }
 
 vec3 atmosphere_color(vec3 sphere_coord) {
-    float rotationAngle = time * 0.09; // todo: rotation speed
+    float rotationAngle = time * 0.9 * rotation_speed;
     mat3 rotationMatrix = rotateAroundAxis(axis, rotationAngle);
 
     // Apply rotation
@@ -315,7 +316,7 @@ void main() {
     vec3 coord = spherical_coord(snapped_coord, time);
     
     // Rotation angle based on time (adjust rotation speed as needed)
-    float rotationAngle = time * 0.1;  // Adjust speed of rotation
+    float rotationAngle = time * rotation_speed;  // Adjust speed of rotation
 
     // The circle is always centered at (0.5, 0.5) with a fixed radius of 0.5
     float dist = distance(snapped_coord, vec2(0.5f, 0.5f));  // Distance from center of quad

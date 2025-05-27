@@ -23,6 +23,7 @@ namespace bnp {
 
 			node.add_component<Planet2D>(
 				0.0f,
+				0.07f,
 				6.345f,
 				1.14f,
 				glm::vec3(0.4f, 1.0f, 0.3f),

@@ -131,6 +131,7 @@ namespace bnp {
 		GLuint view_loc = glGetUniformLocation(material.shader_id, "view");
 		GLuint proj_loc = glGetUniformLocation(material.shader_id, "projection");
 		GLuint time_loc = glGetUniformLocation(material.shader_id, "time");
+		GLuint rotation_speed_loc = glGetUniformLocation(material.shader_id, "rotation_speed");
 		GLuint noise_radius_loc = glGetUniformLocation(material.shader_id, "noise_radius");
 		GLuint noise_seed_loc = glGetUniformLocation(material.shader_id, "noise_seed");
 		GLuint axis_loc = glGetUniformLocation(material.shader_id, "axis");
@@ -153,6 +154,7 @@ namespace bnp {
 		glUniformMatrix4fv(view_loc, 1, GL_FALSE, &view[0][0]);
 		glUniformMatrix4fv(proj_loc, 1, GL_FALSE, &projection[0][0]);
 		glUniform1f(time_loc, planet_2d.time);
+		glUniform1f(rotation_speed_loc, planet_2d.rotation_speed);
 		glUniform1f(noise_radius_loc, planet_2d.noise_radius);
 		glUniform1f(noise_seed_loc, planet_2d.noise_seed);
 		glUniform3f(axis_loc, planet_2d.axis.x, planet_2d.axis.y, planet_2d.axis.z);
