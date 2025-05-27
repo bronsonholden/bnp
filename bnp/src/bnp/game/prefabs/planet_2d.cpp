@@ -32,7 +32,7 @@ namespace bnp {
 		);
 
 		node.add_component<Transform>(Transform{
-			glm::vec3(2, 2, 0),
+			glm::vec3(0, 0, 0),
 			glm::quat(), //glm::angleAxis(glm::radians(32.0f), glm::vec3(0,0, 1)),
 			glm::vec3(2.0f)
 			});
