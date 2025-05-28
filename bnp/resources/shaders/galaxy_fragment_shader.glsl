@@ -277,14 +277,14 @@ vec3 detail_color(vec3 sphere_coord, float dist_from_center, float seed_mult = 1
     surface_noise_value += cnoise(vec4(rotated_coord * 15.0 * noise_radius, noise_seed * seed_mult));
 
     if (surface_noise_value > (dist_from_center * 2.0)) {
-        return vec3(0.08, 0.08, 0.1);
+        return vec3(0.08, 0.08, 0.08);
     }
 
     return vec3(0);
 }
 
 vec3 negative_detail(vec3 sphere_coord, float dist_from_center, float seed_mult = 1.0) {
-    float noise_radius = 3.0;
+    float noise_radius = 2.0;
     float rotationAngle = 0;
     mat3 rotationMatrix = rotateAroundAxis(vec3(0, 0, 1), rotationAngle);
 
@@ -294,11 +294,11 @@ vec3 negative_detail(vec3 sphere_coord, float dist_from_center, float seed_mult 
     // Sample the Perlin noise value (this is your "heightmap")
     float surface_noise_value;
 
-    surface_noise_value = cnoise(vec4(rotated_coord * noise_radius / (0.1 + dist_from_center), noise_seed * seed_mult));
+    surface_noise_value = cnoise(vec4(rotated_coord * noise_radius / (0.03 + dist_from_center), noise_seed * seed_mult));
     surface_noise_value += cnoise(vec4(rotated_coord * noise_radius * 3, noise_seed * seed_mult));
 
     if (surface_noise_value > 0.4) {
-        return vec3(0.24, 0.24, 0.39) * (0.4 + dist_from_center);
+        return vec3(0.06) * (1.1 + dist_from_center);
     }
 
     return vec3(0);
@@ -332,11 +332,11 @@ void main() {
     // calculate brightness of fragment based on sun position
 
     vec3 color = surface_color;
-    
+
     color = max(surface_color, detail_color(rotated_coord, dist));
     color += subtle_detail_color(rotated_coord, dist);
 
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 7; ++i) {
         color += detail_color(rotated_coord, dist, 2.0 + i);
     }
 
@@ -347,7 +347,7 @@ void main() {
 
     color -= negative_color;
 
-    color /= (0.3 + dist);
+    color /= (0.6 + pow(dist, 1.5));
 
     FragColor = vec4(color, 1);
 }
