@@ -21,6 +21,7 @@
 #include <bnp/managers/camera_manager.h>
 #include <bnp/managers/controller_manager.h>
 #include <bnp/managers/planet_2d_manager.h>
+#include <bnp/managers/ui_manager.h>
 
 #include <entt/entt.hpp>
 
@@ -56,10 +57,14 @@ namespace bnp {
 		CameraManager camera_manager;
 		ControllerManager controller_manager;
 		Planet2DManager planet_2d_manager;
+		UIManager ui_manager;
+
+		Camera camera;
 
 		void update(float dt);
 		void fixed_update();
 
 		void handle_window_event(SDL_Event& event);
+		void handle_mouse_button_event(SDL_Event& event);
 	};
 }

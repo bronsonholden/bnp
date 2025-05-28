@@ -209,7 +209,9 @@ namespace bnp {
 					sprite_frame = layer.frames.at(frame_index);
 				}
 				else {
-					sprite_frame = sprite.layers.at(0).frames.at(0);
+					//sprite_frame.size = { sprite.spritesheet_width, sprite.spritesheet_height };
+					sprite_frame.uv0 = { 0, 1 };
+					sprite_frame.uv1 = { 1, 0 };
 				}
 
 				glDisable(GL_DEPTH_TEST);

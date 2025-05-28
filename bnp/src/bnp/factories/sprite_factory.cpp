@@ -29,21 +29,33 @@ namespace bnp {
 
 		std::vector<SpriteFrame> all_frames;
 
-		for (int i = 0; i < frames.size(); ++i) {
-			const auto& frame_data = frames.at(i);
-			auto duration = frame_data["duration"].get<float>() / 1000.0f;
+		if (frames.size()) {
+			for (int i = 0; i < frames.size(); ++i) {
+				const auto& frame_data = frames.at(i);
+				auto duration = frame_data["duration"].get<float>() / 1000.0f;
 
-			auto x = frame_data["frame"]["x"].get<int>();
-			auto y = frame_data["frame"]["y"].get<int>();
-			auto w = frame_data["frame"]["w"].get<int>();
-			auto h = frame_data["frame"]["h"].get<int>();
+				auto x = frame_data["frame"]["x"].get<int>();
+				auto y = frame_data["frame"]["y"].get<int>();
+				auto w = frame_data["frame"]["w"].get<int>();
+				auto h = frame_data["frame"]["h"].get<int>();
 
+				SpriteFrame frame;
+				frame.duration = duration;
+				frame.size = { w, h };
+				frame.uv0 = glm::vec2((float)x / sprite.spritesheet_width, (float)(y + h) / sprite.spritesheet_height);
+				frame.uv1 = glm::vec2((float)(x + w) / sprite.spritesheet_width, (float)(y) / sprite.spritesheet_height);
+				frame.coords = glm::ivec4(x, y, w, h);
+
+				all_frames.push_back(frame);
+			}
+		}
+		else {
 			SpriteFrame frame;
-			frame.duration = duration;
-			frame.size = { w, h };
-			frame.uv0 = glm::vec2((float)x / sprite.spritesheet_width, (float)(y + h) / sprite.spritesheet_height);
-			frame.uv1 = glm::vec2((float)(x + w) / sprite.spritesheet_width, (float)(y) / sprite.spritesheet_height);
-			frame.coords = glm::ivec4(x, y, w, h);
+			frame.duration = 0;
+			frame.size = { sprite.spritesheet_width, sprite.spritesheet_height };
+			frame.uv0 = glm::vec2(0, 1);
+			frame.uv1 = glm::vec2(1, 0);
+			frame.coords = glm::ivec4(0, 0, frame.size.x, frame.size.y);
 
 			all_frames.push_back(frame);
 		}

@@ -1,6 +1,7 @@
 #include <bnp/engine.h>
 
 #include <bnp/core/node.hpp>
+#include <bnp/core/logger.hpp>
 #include <bnp/components/transform.h>
 #include <bnp/components/graphics.h>
 #include <bnp/components/controllable.h>
@@ -23,6 +24,7 @@
 
 #include <bnp/game/prefabs/squirrel.h>
 #include <bnp/game/prefabs/celestials.h>
+#include <bnp/game/prefabs/ui.h>
 
 #include <vector>
 #include <string>
@@ -129,6 +131,8 @@ namespace bnp {
 
 		Node squirrel = Prefab::Celestials::galaxy(registry, resource_manager);
 
+		Node play_button = Prefab::UI::play_button(registry, resource_manager);
+
 		//squirrel.get_component<PhysicsBody2D>().body->SetTransform(b2Vec2(2.0f, 1.5f), 0);
 
 		std::filesystem::path root = PROJECT_ROOT;
@@ -142,6 +146,10 @@ namespace bnp {
 				switch (event.type) {
 				case SDL_QUIT:
 					window.open = false;
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+				case SDL_MOUSEBUTTONUP:
+					handle_mouse_button_event(event);
 					break;
 				case SDL_WINDOWEVENT:
 					handle_window_event(event);
@@ -172,12 +180,12 @@ namespace bnp {
 			glm::vec2 pixel_space = glm::floor(camera_position * 64.0f);
 			glm::vec2 snap_position = pixel_space / 64.0f;
 
-			Camera camera({
+			camera = Camera{
 				glm::vec3(snap_position, 0.0f),
 				glm::vec3(snap_position, 0.0f),
 				glm::vec3(0.0f, 1.0f, 0.0f),
 				glm::mat4(1.0)
-				});
+			};
 
 			configure_pixel_perfect_camera(camera, window.get_width(), window.get_height());
 
@@ -201,10 +209,10 @@ namespace bnp {
 			//render_manager.render_instances(registry, renderer, camera);
 			renderer.front_fb.bind();
 			renderer.front_fb.clear();
+			render_manager.render_fullscreen_quad(renderer, renderer.upscale_fb);
 			render_manager.render_sprites(registry, renderer, camera);
 			render_manager.render_water2d(registry, renderer, camera);
 			render_manager.render_wireframes(registry, renderer, camera);
-			render_manager.render_fullscreen_quad(renderer, renderer.upscale_fb);
 			//render_manager.render_flow_field_2ds(registry, renderer, camera);
 			renderer.front_fb.unbind();
 
@@ -277,6 +285,21 @@ namespace bnp {
 			break;
 		default:
 			;
+		}
+	}
+
+	void Engine::handle_mouse_button_event(SDL_Event& event) {
+		if (event.type != SDL_MOUSEBUTTONDOWN) return;
+
+		int screen_width = window.get_width();
+		int screen_height = window.get_height();
+
+		if (event.button.button == SDL_BUTTON_LEFT) {
+			float x = (2.0f * event.button.x) / static_cast<float>(screen_width) - 1.0f;
+			float y = 1.0f - (2.0f * event.button.y) / static_cast<float>(screen_height);
+			glm::vec4 click_world_pos = glm::inverse(camera.perspective) * glm::vec4(x, y, 0.0f, 1.0f);
+
+			ui_manager.process_click(registry, click_world_pos);
 		}
 	}
 }

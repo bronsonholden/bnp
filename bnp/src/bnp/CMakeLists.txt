@@ -74,7 +74,7 @@ add_library(imgui_lib
     ${imgui_SOURCE_DIR}/imgui_draw.cpp
     ${imgui_SOURCE_DIR}/imgui_tables.cpp
     ${imgui_SOURCE_DIR}/imgui_widgets.cpp
-)
+ "game/prefabs/ui.h")
 
 target_include_directories(imgui_lib PUBLIC
     ${imgui_SOURCE_DIR}
@@ -83,7 +83,7 @@ target_include_directories(imgui_lib PUBLIC
 add_library(imgui_backend
     ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl2.cpp
     ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
-)
+ "game/prefabs/ui.h")
 
 target_include_directories(imgui_backend PUBLIC
     ${imgui_SOURCE_DIR}
