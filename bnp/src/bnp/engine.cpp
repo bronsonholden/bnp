@@ -202,12 +202,12 @@ namespace bnp {
 			renderer.upscale_fb.clear();
 			render_manager.render_planet_2ds(registry, renderer, camera);
 			render_manager.render_galaxy_2ds(registry, renderer, camera);
-			render_manager.render_sprites(registry, renderer, camera);
 			renderer.upscale_fb.unbind();
 
 			renderer.front_fb.bind();
 			renderer.front_fb.clear();
 			render_manager.render_fullscreen_quad(renderer, renderer.upscale_fb);
+			render_manager.render_sprites(registry, renderer, camera);
 			renderer.front_fb.unbind();
 
 			render_manager.render_fullscreen_quad(renderer, renderer.front_fb);
