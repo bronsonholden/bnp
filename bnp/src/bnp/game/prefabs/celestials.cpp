@@ -10,6 +10,32 @@
 namespace bnp {
 	namespace Prefab {
 
+		Node Celestials::galaxy(entt::registry& registry, ResourceManager& resource_manager) {
+			Node node(registry);
+
+			Material material = resource_manager.load_material("planet_material", {
+				{ShaderType::VertexShader, "resources/shaders/galaxy_vertex_shader.glsl"},
+				{ShaderType::FragmentShader, "resources/shaders/galaxy_fragment_shader.glsl"}
+				});
+
+			node.add_component<Material>(material);
+			node.add_component<Renderable>(true);
+
+			node.add_component<Galaxy2D>(Galaxy2D{});
+
+			node.add_component<Transform>(Transform{
+				glm::vec3(0, 0, 0),
+				glm::quat(),
+				glm::vec3(6.0f)
+				});
+
+			node.add_component<Camera2DRig>(Camera2DRig{
+				{ 0.0f, 0.0f }
+				});
+
+			return node;
+		}
+
 		Node Celestials::eden(entt::registry& registry, ResourceManager& resource_manager) {
 			Node node(registry);
 

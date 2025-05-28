@@ -182,6 +182,32 @@ namespace bnp {
 		glDrawElements(GL_TRIANGLES, mesh.vertex_count, GL_UNSIGNED_INT, 0);
 	}
 
+	void Renderer::render_galaxy_2d(const Camera& camera, const Galaxy2D& planet_2d, const Mesh& mesh, const Material& material, const glm::mat4& transform) const {
+		if (!material.shader_id) return;
+
+		glUseProgram(material.shader_id);
+
+		glm::mat4 view = camera.view;
+		glm::mat4 projection = camera.perspective;
+
+		// Set the transform matrices
+		GLuint model_loc = glGetUniformLocation(material.shader_id, "model");
+		GLuint view_loc = glGetUniformLocation(material.shader_id, "view");
+		GLuint proj_loc = glGetUniformLocation(material.shader_id, "projection");
+
+		glUniformMatrix4fv(model_loc, 1, GL_FALSE, &transform[0][0]);
+		glUniformMatrix4fv(view_loc, 1, GL_FALSE, &view[0][0]);
+		glUniformMatrix4fv(proj_loc, 1, GL_FALSE, &projection[0][0]);
+
+		glBindVertexArray(mesh.va_id);
+
+		if (mesh.eb_id) {
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.eb_id);
+		}
+
+		glDrawElements(GL_TRIANGLES, mesh.vertex_count, GL_UNSIGNED_INT, 0);
+	}
+
 	void Renderer::render_fullscreen_quad(const Mesh& mesh, const Material& material, const Framebuffer& framebuffer) const {
 		if (!material.shader_id) return;
 
