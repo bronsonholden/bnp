@@ -35,9 +35,9 @@ namespace bnp {
 	void Renderer::resize(int width, int height) {
 		float aspect = static_cast<float>(width) / static_cast<float>(height);
 		// downscale but keep aspect ratio
-		int downscaled_height = height / 5;
-		int downscaled_width = static_cast<int>(std::floor(height * aspect));
-		upscale_fb.create(480, 360, 4);
+		int downscaled_height = 360;
+		int downscaled_width = static_cast<int>(std::floor(downscaled_height * aspect));
+		upscale_fb.create(downscaled_width, downscaled_height, 4);
 
 		front_fb.create(width, height);
 		obstacle_fb.create(width, height);
