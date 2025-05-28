@@ -233,17 +233,17 @@ vec3 base_color(vec3 sphere_coord, float dist_from_center) {
     float surface_noise_value;
 
     surface_noise_value = cnoise(vec4(rotated_coord * noise_radius / (0.1 + dist_from_center), noise_seed));
-    surface_noise_value += 2 * cnoise(vec4(rotated_coord * noise_radius * 8, noise_seed));
+    surface_noise_value += 2 * cnoise(vec4(rotated_coord * noise_radius * 4, noise_seed));
 
     if (surface_noise_value > 0.4) {
-        return vec3(0.06, 0.06, 0.09);
+        return vec3(0.01, 0.01, 0.02);
     }
 
     return vec3(0);
 }
 
-vec3 detail_color(vec3 sphere_coord, float dist_from_center) {
-    float noise_radius = 15.0;
+vec3 subtle_detail_color(vec3 sphere_coord, float dist_from_center) {
+    float noise_radius = 30.0;
     float rotationAngle = 0;
     mat3 rotationMatrix = rotateAroundAxis(vec3(0, 0, 1), rotationAngle);
 
@@ -253,12 +253,52 @@ vec3 detail_color(vec3 sphere_coord, float dist_from_center) {
     // Sample the Perlin noise value (this is your "heightmap")
     float surface_noise_value;
 
-    surface_noise_value = cnoise(vec4(rotated_coord * noise_radius, noise_seed));
-    surface_noise_value += cnoise(vec4(rotated_coord * 15.0 * noise_radius, noise_seed));
+    surface_noise_value = cnoise(vec4(rotated_coord * noise_radius, noise_seed * 2.0));
 
-    if (surface_noise_value > -0.1 + (dist_from_center * 2.0)) {
-        return vec3(0.77, 0.83, 0.85);
-        //return vec3(0.37, 0.43, 0.45);
+    if (surface_noise_value > 0) {
+        return vec3(0.023, 0.023, 0.029);
+    }
+
+    return vec3(0);
+}
+
+vec3 detail_color(vec3 sphere_coord, float dist_from_center, float seed_mult = 1.0) {
+    float noise_radius = 9.0;
+    float rotationAngle = 0;
+    mat3 rotationMatrix = rotateAroundAxis(vec3(0, 0, 1), rotationAngle);
+
+    // Apply rotation
+    vec3 rotated_coord = rotationMatrix * sphere_coord;
+
+    // Sample the Perlin noise value (this is your "heightmap")
+    float surface_noise_value;
+
+    surface_noise_value = cnoise(vec4(rotated_coord * noise_radius, noise_seed * seed_mult));
+    surface_noise_value += cnoise(vec4(rotated_coord * 15.0 * noise_radius, noise_seed * seed_mult));
+
+    if (surface_noise_value > (dist_from_center * 2.0)) {
+        return vec3(0.08, 0.08, 0.1);
+    }
+
+    return vec3(0);
+}
+
+vec3 negative_detail(vec3 sphere_coord, float dist_from_center, float seed_mult = 1.0) {
+    float noise_radius = 3.0;
+    float rotationAngle = 0;
+    mat3 rotationMatrix = rotateAroundAxis(vec3(0, 0, 1), rotationAngle);
+
+    // Apply rotation
+    vec3 rotated_coord = rotationMatrix * sphere_coord;
+
+    // Sample the Perlin noise value (this is your "heightmap")
+    float surface_noise_value;
+
+    surface_noise_value = cnoise(vec4(rotated_coord * noise_radius / (0.1 + dist_from_center), noise_seed * seed_mult));
+    surface_noise_value += cnoise(vec4(rotated_coord * noise_radius * 3, noise_seed * seed_mult));
+
+    if (surface_noise_value > 0.4) {
+        return vec3(0.24, 0.24, 0.39) * (0.4 + dist_from_center);
     }
 
     return vec3(0);
@@ -281,7 +321,7 @@ void main() {
     // Rotation angle based on time (adjust rotation speed as needed)
     float angle = dist;  // Adjust speed of rotation
 
-    mat3 rotationMatrix = rotateAroundAxis(vec3(0, 0, 1), spin_dir * dist * 15.0);
+    mat3 rotationMatrix = rotateAroundAxis(vec3(0, 0, 1), spin_dir / (0.3 + dist) * 3);
 
     // Apply rotation
     vec3 rotated_coord = rotationMatrix * coord;
@@ -294,6 +334,20 @@ void main() {
     vec3 color = surface_color;
     
     color = max(surface_color, detail_color(rotated_coord, dist));
+    color += subtle_detail_color(rotated_coord, dist);
+
+    for (int i = 0; i < 4; ++i) {
+        color += detail_color(rotated_coord, dist, 2.0 + i);
+    }
+
+    vec3 negative_color = vec3(0);
+
+    negative_color += negative_detail(rotated_coord, dist);
+    negative_color += negative_detail(rotated_coord, dist, 2.0);
+
+    color -= negative_color;
+
+    color /= (0.3 + dist);
 
     FragColor = vec4(color, 1);
 }
