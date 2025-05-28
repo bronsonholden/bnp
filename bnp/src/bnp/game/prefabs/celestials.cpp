@@ -13,7 +13,7 @@ namespace bnp {
 		Node Celestials::galaxy(entt::registry& registry, ResourceManager& resource_manager) {
 			Node node(registry);
 
-			Material material = resource_manager.load_material("planet_material", {
+			Material material = resource_manager.load_material("galaxy_material", {
 				{ShaderType::VertexShader, "resources/shaders/galaxy_vertex_shader.glsl"},
 				{ShaderType::FragmentShader, "resources/shaders/galaxy_fragment_shader.glsl"}
 				});
