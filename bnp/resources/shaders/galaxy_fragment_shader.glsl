@@ -311,11 +311,11 @@ void main() {
     // The circle is always centered at (0.5, 0.5) with a fixed radius of 0.5
     float dist = distance(TexCoord, vec2(0.5, 0.5));  // Distance from center of quad
 
-    if (dist >= 0.45f)  // If the fragment is outside the circle, discard it
+    if (dist >= 0.42f * (0.9 + 0.05 * tan(TexCoord.x))) // If the fragment is outside the circle, discard it
     {
         discard;
     }
-    
+
     // Rotation angle based on time (adjust rotation speed as needed)
     float angle = dist;  // Adjust speed of rotation
 
