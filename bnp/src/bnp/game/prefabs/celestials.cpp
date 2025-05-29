@@ -1,6 +1,7 @@
 #include <bnp/game/prefabs/celestials.h>
 #include <bnp/components/game/universe.h>
 #include <bnp/components/game/extraction.h>
+#include <bnp/components/game/maps.h>
 #include <bnp/components/global.h>
 #include <bnp/components/behavior.h>
 #include <bnp/components/physics.h>
