@@ -5,10 +5,20 @@
 namespace bnp {
 
 	void SceneManager::galaxy_map(entt::registry& registry, bool shown) {
-		auto view = registry.view<GalaxyMapTag>();
+		{
+			auto view = registry.view<GalaxyMap>();
 
-		for (auto entity : view) {
-			registry.emplace_or_replace<Renderable>(entity, shown);
+			for (auto entity : view) {
+				registry.emplace_or_replace<Renderable>(entity, shown);
+			}
+		}
+
+		{
+			auto view = registry.view<GalaxyMapSystem>();
+
+			for (auto entity : view) {
+				registry.emplace_or_replace<Renderable>(entity, shown);
+			}
 		}
 	}
 
