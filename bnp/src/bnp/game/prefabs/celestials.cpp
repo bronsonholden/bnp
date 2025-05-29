@@ -65,10 +65,6 @@ namespace bnp {
 				glm::vec3(8.0f / 64.0f)
 				});
 
-			//node.add_component<QuadPrimitive>(
-			//	glm::vec4(1.0f)
-			//);
-
 			return node;
 		}
 
