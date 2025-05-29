@@ -8,4 +8,8 @@ namespace bnp {
 		std::string name;
 	};
 
+	struct GalaxyMapTag {
+		char _;
+	};
+
 }

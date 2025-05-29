@@ -53,6 +53,10 @@ namespace bnp {
 		uint32_t repeat = 0;
 	};
 
+	struct QuadPrimitive {
+		glm::vec4 color = glm::vec4(1.0f);
+	};
+
 	struct Sprite {
 		int z = 0;
 		SpriteFrame default_frame;

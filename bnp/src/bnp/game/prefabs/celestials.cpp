@@ -20,7 +20,7 @@ namespace bnp {
 
 			node.add_component<Material>(material);
 			node.add_component<Renderable>(true);
-
+			node.add_component<GalaxyMapTag>();
 			node.add_component<Galaxy2D>(Galaxy2D{});
 
 			node.add_component<Transform>(Transform{
@@ -32,6 +32,31 @@ namespace bnp {
 			node.add_component<Camera2DRig>(Camera2DRig{
 				{ 0.0f, 0.0f }
 				});
+
+			return node;
+		}
+
+		Node Celestials::galaxy_map_dot(entt::registry& registry, ResourceManager& resource_manager) {
+			Node node(registry);
+
+			Material material = resource_manager.load_material("galaxy_map_dot_material", {
+				{ShaderType::VertexShader, "resources/shaders/galaxy_map_dot_vertex_shader.glsl"},
+				{ShaderType::FragmentShader, "resources/shaders/galaxy_map_dot_fragment_shader.glsl"}
+				});
+
+			node.add_component<Material>(material);
+			node.add_component<Renderable>(true);
+			node.add_component<GalaxyMapTag>();
+
+			node.add_component<Transform>(Transform{
+				glm::vec3(-0.34, 0.126, 1),
+				glm::quat(),
+				glm::vec3(3.0f / 64.0f)
+				});
+
+			node.add_component<QuadPrimitive>(
+				glm::vec4(1.0f)
+			);
 
 			return node;
 		}

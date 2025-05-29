@@ -23,6 +23,8 @@
 #include <bnp/managers/planet_2d_manager.h>
 #include <bnp/managers/ui_manager.h>
 
+#include <bnp/managers/game/scene_manager.h>
+
 #include <entt/entt.hpp>
 
 namespace bnp {
@@ -58,6 +60,8 @@ namespace bnp {
 		ControllerManager controller_manager;
 		Planet2DManager planet_2d_manager;
 		UIManager ui_manager;
+
+		SceneManager scene_manager;
 
 		Camera camera;
 

@@ -99,6 +99,23 @@ namespace bnp {
 		glEnable(GL_DEPTH_TEST);
 	}
 
+	void RenderManager::render_primitives(const entt::registry& registry, const Renderer& renderer, const Camera& camera) {
+		// quads
+		{
+			auto view = registry.view<Transform, Renderable, QuadPrimitive, Material>();
+
+			for (auto entity : view) {
+				auto& material = view.get<Material>(entity);
+				auto& transform = view.get<Transform>(entity);
+				auto& renderable = view.get<Renderable>(entity);
+
+				if (!renderable.value) continue;
+
+				renderer.render_wireframe(camera, sprite_mesh, material, transform.world_transform, glm::vec4(1), true);
+			}
+		}
+	}
+
 	void RenderManager::render_wireframes(const entt::registry& registry, const Renderer& renderer, const Camera& camera) {
 		if (!debug_render_wireframes) return;
 

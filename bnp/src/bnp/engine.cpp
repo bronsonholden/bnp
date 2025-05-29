@@ -129,9 +129,11 @@ namespace bnp {
 		FileBrowser file_browser;
 		SceneInspector scene_inspector(registry);
 
-		Node squirrel = Prefab::Celestials::galaxy(registry, resource_manager);
+		Node galaxy = Prefab::Celestials::galaxy(registry, resource_manager);
 
-		Node play_button = Prefab::UI::play_button(registry, resource_manager);
+		Node dot = Prefab::Celestials::galaxy_map_dot(registry, resource_manager);
+
+		//Node play_button = Prefab::UI::play_button(registry, resource_manager);
 
 		//squirrel.get_component<PhysicsBody2D>().body->SetTransform(b2Vec2(2.0f, 1.5f), 0);
 
@@ -175,7 +177,7 @@ namespace bnp {
 
 			update(dt);
 
-			auto& rig = squirrel.get_component<Camera2DRig>();
+			auto& rig = galaxy.get_component<Camera2DRig>();
 			glm::vec2 camera_position = rig.camera_worldspace_position;
 			glm::vec2 pixel_space = glm::floor(camera_position * 64.0f);
 			glm::vec2 snap_position = pixel_space / 64.0f;
@@ -202,6 +204,7 @@ namespace bnp {
 			renderer.upscale_fb.clear();
 			render_manager.render_planet_2ds(registry, renderer, camera);
 			render_manager.render_galaxy_2ds(registry, renderer, camera);
+			render_manager.render_primitives(registry, renderer, camera);
 			renderer.upscale_fb.unbind();
 
 			renderer.front_fb.bind();
