@@ -15,4 +15,13 @@ namespace bnp {
 		int system_id;
 	};
 
+	struct SystemMap {
+		int system_id;
+	};
+
+	// component for celestials displayed on the system map
+	struct SystemMapCelestial {
+		int celestial_id;
+	};
+
 }
