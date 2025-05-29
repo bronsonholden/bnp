@@ -20,6 +20,7 @@ namespace bnp {
 
 		int get_width() const;
 		int get_height() const;
+		void get_mouse_position(int* x, int* y) const;
 
 	private:
 		SDL_Window* w;

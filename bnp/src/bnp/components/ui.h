@@ -6,4 +6,8 @@ namespace bnp {
 		bool enabled = true;
 	};
 
+	struct Hoverable {
+		bool hovered = false;
+	};
+
 }

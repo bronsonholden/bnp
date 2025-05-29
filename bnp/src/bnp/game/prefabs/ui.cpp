@@ -19,7 +19,8 @@ namespace bnp {
 			node.add_component<Texture>(texture);
 			node.add_component<Renderable>(true);
 			node.add_component<Material>(material);
-			node.add_component<Button>(Button{});
+			node.add_component<Button>();
+			node.add_component<Hoverable>();
 
 			SpriteFactory sprite_factory;
 			sprite_factory.load_from_aseprite(node, json_path);

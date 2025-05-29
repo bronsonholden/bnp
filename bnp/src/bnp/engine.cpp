@@ -58,6 +58,12 @@ MessageCallback(GLenum source,
 
 namespace bnp {
 
+	glm::vec4 ui_space_to_world_space(glm::mat4 projection, float screen_width, float screen_height, float x, float y) {
+		x = (2.0f * x) / screen_width - 1.0f;
+		y = 1.0f - (2.0f * y) / screen_height;
+		return glm::inverse(projection) * glm::vec4(x, y, 0.0f, 1.0f);
+	}
+
 	Engine::Engine()
 		: archive_manager(std::filesystem::path(PROJECT_ROOT) / "bnp/data"),
 		physics_manager(registry),
@@ -177,6 +183,20 @@ namespace bnp {
 
 			update(dt);
 
+			int x, y;
+			window.get_mouse_position(&x, &y);
+			glm::vec4 mouse_worldspace_pos = ui_space_to_world_space(
+				camera.perspective,
+				static_cast<float>(window.get_width()),
+				static_cast<float>(window.get_height()),
+				static_cast<float>(x),
+				static_cast<float>(y)
+			);
+			ui_manager.update_mouse_position(
+				registry,
+				mouse_worldspace_pos
+			);
+
 			auto& rig = galaxy.get_component<Camera2DRig>();
 			glm::vec2 camera_position = rig.camera_worldspace_position;
 			glm::vec2 pixel_space = glm::floor(camera_position * 64.0f);
@@ -253,6 +273,7 @@ namespace bnp {
 		motility_manager.update(registry, dt);
 		world_2d_manager.update(registry, dt);
 		camera_manager.update(registry, dt);
+		ui_manager.update(registry, dt);
 
 		// only apply transforms after all game updates have completed
 		// so we have the most correct transforms
@@ -292,11 +313,17 @@ namespace bnp {
 		int screen_height = window.get_height();
 
 		if (event.button.button == SDL_BUTTON_LEFT) {
-			float x = (2.0f * event.button.x) / static_cast<float>(screen_width) - 1.0f;
-			float y = 1.0f - (2.0f * event.button.y) / static_cast<float>(screen_height);
-			glm::vec4 click_world_pos = glm::inverse(camera.perspective) * glm::vec4(x, y, 0.0f, 1.0f);
+			glm::vec4 click_world_pos = ui_space_to_world_space(
+				camera.perspective,
+				static_cast<float>(screen_width),
+				static_cast<float>(screen_height),
+				static_cast<float>(event.button.x),
+				static_cast<float>(event.button.y)
+			);
 
 			ui_manager.process_click(registry, click_world_pos);
+
+			Log::info("Clicked %.2f, %.2f", click_world_pos.x, click_world_pos.y);
 		}
 	}
 }

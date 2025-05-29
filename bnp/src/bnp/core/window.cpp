@@ -75,6 +75,10 @@ namespace bnp {
 		return height;
 	}
 
+	void Window::get_mouse_position(int* x, int* y) const {
+		SDL_GetMouseState(x, y);
+	}
+
 	SDL_Window* Window::get_sdl_window() {
 		return w;
 	}

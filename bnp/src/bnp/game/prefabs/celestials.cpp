@@ -6,6 +6,7 @@
 #include <bnp/components/physics.h>
 #include <bnp/components/controllable.h>
 #include <bnp/components/world.h>
+#include <bnp/components/ui.h>
 #include <bnp/factories/sprite_factory.h>
 
 namespace bnp {
@@ -52,6 +53,8 @@ namespace bnp {
 			node.add_component<Material>(material);
 			node.add_component<Renderable>(true);
 			node.add_component<GalaxyMapSystem>();
+			node.add_component<Button>();
+			node.add_component<Hoverable>();
 
 			SpriteFactory sprite_factory;
 			sprite_factory.load_from_aseprite(node, json_path);
