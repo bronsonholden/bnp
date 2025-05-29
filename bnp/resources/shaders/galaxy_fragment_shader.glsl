@@ -306,12 +306,10 @@ vec3 negative_detail(vec3 sphere_coord, float dist_from_center, float seed_mult 
 
 void main() {
     float snap_interval = 0.02f;
-    //vec2 snapped_coord = floor(TexCoord / snap_interval) * snap_interval;
-    vec2 snapped_coord = TexCoord;
-    vec3 coord = spherical_coord(snapped_coord);
+    vec3 coord = spherical_coord(TexCoord);
 
     // The circle is always centered at (0.5, 0.5) with a fixed radius of 0.5
-    float dist = distance(snapped_coord, vec2(0.5, 0.5));  // Distance from center of quad
+    float dist = distance(TexCoord, vec2(0.5, 0.5));  // Distance from center of quad
 
     if (dist >= 0.45f)  // If the fragment is outside the circle, discard it
     {
