@@ -12,6 +12,7 @@
 #include <bnp/factories/script_factory.h>
 #include <bnp/helpers/color_helper.hpp>
 #include <bnp/helpers/camera_helper.h>
+#include <bnp/helpers/ui_helper.h>
 #include <bnp/serializers/scene.hpp>
 #include <bnp/serializers/graphics.hpp>
 #include <bnp/managers/archive_manager.h>
@@ -57,12 +58,6 @@ MessageCallback(GLenum source,
 }
 
 namespace bnp {
-
-	glm::vec4 ui_space_to_world_space(glm::mat4 projection, float screen_width, float screen_height, float x, float y) {
-		x = (2.0f * x) / screen_width - 1.0f;
-		y = 1.0f - (2.0f * y) / screen_height;
-		return glm::inverse(projection) * glm::vec4(x, y, 0.0f, 1.0f);
-	}
 
 	Engine::Engine()
 		: archive_manager(std::filesystem::path(PROJECT_ROOT) / "bnp/data"),
