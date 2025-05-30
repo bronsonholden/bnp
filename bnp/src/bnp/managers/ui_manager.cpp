@@ -16,10 +16,13 @@ void UIManager::update_mouse_position(entt::registry& registry, glm::vec2 worlds
 }
 
 void UIManager::process_click(entt::registry& registry, glm::vec2 worldspace_pos) {
-	auto view = registry.view<Button, Transform>();
+	auto view = registry.view<Button, Transform, Renderable>();
 
 	for (auto entity : view) {
 		auto& transform = view.get<Transform>(entity);
+		auto& renderable = view.get<Renderable>(entity);
+
+		if (!renderable.value) continue;
 
 		glm::vec2 bottom_left = glm::vec2(transform.position) - glm::vec2(transform.scale.x / 2, transform.scale.y / 2);
 		glm::vec2 top_right = bottom_left + glm::vec2(transform.scale);
