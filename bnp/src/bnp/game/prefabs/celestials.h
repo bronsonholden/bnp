@@ -9,6 +9,7 @@ namespace bnp {
 	namespace Prefab {
 		namespace Celestials {
 
+			Node celestial_orbit(entt::registry& registry, ResourceManager& resource_manager);
 			Node galaxy(entt::registry& registry, ResourceManager& resource_manager);
 			Node galaxy_map_dot(entt::registry& registry, ResourceManager& resource_manager);
 			Node eden(entt::registry& registry, ResourceManager& resource_manager);

@@ -29,6 +29,8 @@ namespace bnp {
 		Mesh sprite_mesh;
 		// mesh for rendering a single line
 		Mesh line_mesh;
+		// mesh for rendering circles
+		Mesh circle_mesh;
 		// material for rendering debug wireframes
 		Material wireframe_material;
 		// material for rendering fullscreen quad

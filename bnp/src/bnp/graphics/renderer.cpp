@@ -70,7 +70,8 @@ namespace bnp {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.eb_id);
 		}
 
-		glDrawArrays(GL_LINES, 0, 2);
+		//glDrawArrays(GL_LINES, 0, mesh.vertex_count * 4);
+		glDrawElements(GL_LINES, mesh.index_count, GL_UNSIGNED_INT, 0);
 	}
 
 	void Renderer::render_sprite(const Camera& camera, const Sprite& sprite, const SpriteFrame& sprite_frame, const Mesh& mesh, const Material& material, const Texture& texture, const glm::mat4& transform) const {
@@ -111,7 +112,7 @@ namespace bnp {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.eb_id);
 		}
 
-		glDrawElements(GL_TRIANGLES, mesh.vertex_count, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, mesh.index_count, GL_UNSIGNED_INT, 0);
 
 		if (texture.channels < 4) {
 			glEnable(GL_BLEND);
@@ -179,7 +180,7 @@ namespace bnp {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.eb_id);
 		}
 
-		glDrawElements(GL_TRIANGLES, mesh.vertex_count, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, mesh.index_count, GL_UNSIGNED_INT, 0);
 	}
 
 	void Renderer::render_galaxy_2d(const Camera& camera, const Galaxy2D& planet_2d, const Mesh& mesh, const Material& material, const glm::mat4& transform) const {
@@ -205,7 +206,7 @@ namespace bnp {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.eb_id);
 		}
 
-		glDrawElements(GL_TRIANGLES, mesh.vertex_count, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, mesh.index_count, GL_UNSIGNED_INT, 0);
 	}
 
 	void Renderer::render_fullscreen_quad(const Mesh& mesh, const Material& material, const Framebuffer& framebuffer) const {
@@ -230,7 +231,7 @@ namespace bnp {
 		glBindTexture(GL_TEXTURE_2D, framebuffer.color_texture_id);
 
 		// Draw the quad
-		glDrawElements(GL_TRIANGLES, mesh.vertex_count, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, mesh.index_count, GL_UNSIGNED_INT, 0);
 
 		glEnable(GL_DEPTH_TEST);
 	}
@@ -284,7 +285,7 @@ namespace bnp {
 		}
 
 		if (!fill) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glDrawElements(GL_TRIANGLES, mesh.vertex_count, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, mesh.index_count, GL_UNSIGNED_INT, 0);
 		if (!fill) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
@@ -318,7 +319,7 @@ namespace bnp {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.eb_id);
 		}
 
-		glDrawElements(GL_TRIANGLES, mesh.vertex_count, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, mesh.index_count, GL_UNSIGNED_INT, 0);
 
 		if (texture.channels == 4) {
 			glDisable(GL_BLEND);
@@ -362,7 +363,7 @@ namespace bnp {
 		}
 
 		// Draw instanced
-		glDrawElementsInstanced(GL_TRIANGLES, mesh.vertex_count, GL_UNSIGNED_INT, 0, instances.transforms.size());
+		glDrawElementsInstanced(GL_TRIANGLES, mesh.index_count, GL_UNSIGNED_INT, 0, instances.transforms.size());
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);

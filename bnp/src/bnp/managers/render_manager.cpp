@@ -114,6 +114,21 @@ namespace bnp {
 				renderer.render_wireframe(camera, sprite_mesh, material, transform.world_transform, glm::vec4(1), true);
 			}
 		}
+
+		// circles
+		{
+			auto view = registry.view<Transform, Renderable, CirclePrimitive, Material>();
+
+			for (auto entity : view) {
+				auto& material = view.get<Material>(entity);
+				auto& transform = view.get<Transform>(entity);
+				auto& renderable = view.get<Renderable>(entity);
+
+				if (!renderable.value) continue;
+
+				renderer.render_line(camera, circle_mesh, material, transform.world_transform);
+			}
+		}
 	}
 
 	void RenderManager::render_wireframes(const entt::registry& registry, const Renderer& renderer, const Camera& camera) {

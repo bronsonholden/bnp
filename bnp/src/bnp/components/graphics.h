@@ -57,6 +57,10 @@ namespace bnp {
 		glm::vec4 color = glm::vec4(1.0f);
 	};
 
+	struct CirclePrimitive {
+		glm::vec4 color = glm::vec4(1.0f);
+	};
+
 	struct Sprite {
 		int z = 0;
 		SpriteFrame default_frame;
@@ -95,6 +99,7 @@ namespace bnp {
 		GLuint eb_id = 0;
 
 		size_t vertex_count = 0;
+		size_t index_count = 0;
 
 		void cleanup() {
 			if (va_id) glDeleteVertexArrays(1, &va_id);

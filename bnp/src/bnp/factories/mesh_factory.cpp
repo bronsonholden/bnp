@@ -2,6 +2,34 @@
 
 namespace bnp {
 
+	void MeshFactory::create_circle(std::vector<Vertex>& out_vertices, std::vector<unsigned int>& out_indices) {
+		const int num_vertices = 64;
+
+		// Calculate the angle between consecutive vertices
+		float step = 2.0f * 3.14159f / num_vertices;
+
+		// Create vertices for the circle (in polar coordinates, converted to Cartesian)
+		for (int i = 0; i < num_vertices; ++i) {
+			float angle = i * step;
+			float x = 0.5f * cos(angle);
+			float y = 0.5f * sin(angle);
+
+			// Add the vertex to the list
+			out_vertices.push_back({
+				{ x, y, 0 },
+				{ 0.0f, 0.0f, 1.0f },
+				{ 0.0f, 0.0f } // no need for texcoords
+				});
+		}
+
+		// Create indices for the lines (connecting consecutive vertices)
+		for (int i = 0; i < num_vertices; ++i) {
+			int next_idx = (i + 1) % num_vertices; // Wrap around to create a closed circle
+			out_indices.push_back(i);
+			out_indices.push_back(next_idx);
+		}
+	}
+
 	void MeshFactory::create_cube(std::vector<Vertex>& out_vertices, std::vector<uint32_t>& out_indices, float size) {
 		float half = size / 2.0f;
 
@@ -86,8 +114,16 @@ namespace bnp {
 		return create(vertices, indices);
 	}
 
-	Mesh MeshFactory::create(const std::vector<Vertex>& vertices, const std::vector<uint32_t> indices) {
+	Mesh MeshFactory::circle() {
+		std::vector<Vertex> vertices;
+		std::vector<uint32_t> indices;
 
+		create_circle(vertices, indices);
+
+		return create(vertices, indices);
+	}
+
+	Mesh MeshFactory::create(const std::vector<Vertex>& vertices, const std::vector<uint32_t> indices) {
 		Mesh mesh = Mesh();
 
 		glGenVertexArrays(1, &mesh.va_id);
@@ -112,7 +148,8 @@ namespace bnp {
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(6 * sizeof(float)));
 		glEnableVertexAttribArray(2);
 
-		mesh.vertex_count = 36;
+		mesh.vertex_count = vertices.size();
+		mesh.index_count = indices.size();
 
 		return mesh;
 	}
