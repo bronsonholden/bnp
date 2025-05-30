@@ -1,7 +1,7 @@
 #include <bnp/game/prefabs/celestials.h>
-#include <bnp/components/game/universe.h>
-#include <bnp/components/game/extraction.h>
-#include <bnp/components/game/maps.h>
+#include <bnp/game/components/universe.h>
+#include <bnp/game/components/extraction.h>
+#include <bnp/game/components/maps.h>
 #include <bnp/components/global.h>
 #include <bnp/components/behavior.h>
 #include <bnp/components/physics.h>
@@ -86,7 +86,7 @@ Node Celestials::galaxy_map_dot(entt::registry& registry, ResourceManager& resou
 	sprite_factory.load_from_aseprite(node, json_path);
 
 	node.add_component<Transform>(Transform{
-		glm::vec3(-1.54, 1.226, 1),
+		glm::vec3(-1.54, 0.926, 1),
 		glm::quat(),
 		glm::vec3(8.0f / 64.0f)
 		});

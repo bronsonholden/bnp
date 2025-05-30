@@ -1,7 +1,7 @@
-#include <bnp/managers/game/scene_manager.h>
 #include <bnp/components/graphics.h>
-#include <bnp/components/game/universe.h>
-#include <bnp/components/game/maps.h>
+#include <bnp/game/managers/scene_manager.h>
+#include <bnp/game/components/universe.h>
+#include <bnp/game/components/maps.h>
 
 namespace bnp {
 

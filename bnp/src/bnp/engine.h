@@ -23,7 +23,7 @@
 #include <bnp/managers/planet_2d_manager.h>
 #include <bnp/managers/ui_manager.h>
 
-#include <bnp/managers/game/scene_manager.h>
+#include <bnp/game/managers/scene_manager.h>
 
 #include <entt/entt.hpp>
 

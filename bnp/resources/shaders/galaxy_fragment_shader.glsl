@@ -256,7 +256,7 @@ vec3 subtle_detail_color(vec3 sphere_coord, float dist_from_center) {
     surface_noise_value = cnoise(vec4(rotated_coord * noise_radius, noise_seed * 2.0));
 
     if (surface_noise_value > 0 || dist_from_center < 0.04) {
-        return vec3(0.13, 0.16, 0.15);
+        return vec3(0.43, 0.16, 0.25);
     }
 
     return vec3(0);
