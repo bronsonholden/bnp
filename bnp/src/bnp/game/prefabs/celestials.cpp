@@ -11,6 +11,7 @@
 #include <bnp/factories/sprite_factory.h>
 
 namespace bnp {
+namespace Game {
 namespace Prefab {
 
 Node Celestials::celestial_orbit(entt::registry& registry, ResourceManager& resource_manager) {
@@ -48,7 +49,7 @@ Node Celestials::galaxy(entt::registry& registry, ResourceManager& resource_mana
 
 	node.add_component<Material>(material);
 	node.add_component<Renderable>(true);
-	node.add_component<GalaxyMap>();
+	node.add_component<Game::Component::GalaxyMap>();
 	node.add_component<Galaxy2D>(Galaxy2D{});
 
 	node.add_component<Transform>(Transform{
@@ -78,7 +79,7 @@ Node Celestials::galaxy_map_dot(entt::registry& registry, ResourceManager& resou
 	node.add_component<Texture>(texture);
 	node.add_component<Material>(material);
 	node.add_component<Renderable>(true);
-	node.add_component<GalaxyMapSystem>();
+	node.add_component<Game::Component::GalaxyMapSystem>();
 	node.add_component<Button>();
 	node.add_component<Hoverable>();
 
@@ -132,14 +133,15 @@ Node Celestials::eden(entt::registry& registry, ResourceManager& resource_manage
 		{ 0.0f, 0.0f }
 		});
 
-	node.add_component<Celestial>(
+	node.add_component<Game::Component::Celestial>(
 		"Eden"
 	);
 
-	node.add_component<CelestialExtractionTable>();
+	node.add_component<Game::Component::CelestialExtractionTable>();
 
 	return node;
 }
 
+}
 }
 }

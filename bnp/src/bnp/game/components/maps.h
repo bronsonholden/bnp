@@ -1,6 +1,8 @@
 #pragma once
 
 namespace bnp {
+namespace Game {
+namespace Component {
 
 struct GalaxyMapTag {
 	char _;
@@ -24,4 +26,6 @@ struct SystemMapCelestial {
 	int celestial_id;
 };
 
+}
+}
 }

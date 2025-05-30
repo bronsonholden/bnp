@@ -131,9 +131,9 @@ void Engine::run() {
 	FileBrowser file_browser;
 	SceneInspector scene_inspector(registry);
 
-	Node galaxy = Prefab::Celestials::galaxy(registry, resource_manager);
-	Node dot = Prefab::Celestials::galaxy_map_dot(registry, resource_manager);
-	Node orbit = Prefab::Celestials::celestial_orbit(registry, resource_manager);
+	Node galaxy = Game::Prefab::Celestials::galaxy(registry, resource_manager);
+	Node dot = Game::Prefab::Celestials::galaxy_map_dot(registry, resource_manager);
+	Node orbit = Game::Prefab::Celestials::celestial_orbit(registry, resource_manager);
 
 	//Node play_button = Prefab::UI::play_button(registry, resource_manager);
 

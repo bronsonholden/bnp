@@ -3,6 +3,7 @@
 #include <bnp/components/ui.h>
 
 namespace bnp {
+namespace Game {
 namespace Prefab {
 
 Node UI::play_button(entt::registry& registry, ResourceManager& resource_manager) {
@@ -39,5 +40,6 @@ Node UI::play_button(entt::registry& registry, ResourceManager& resource_manager
 	return node;
 }
 
+}
 }
 }

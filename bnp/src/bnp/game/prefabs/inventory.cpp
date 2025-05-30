@@ -2,6 +2,7 @@
 #include <bnp/components/inventory.h>
 
 namespace bnp {
+namespace Game {
 namespace Prefab {
 
 Node Inventory::item_database(entt::registry& registry) {
@@ -16,5 +17,6 @@ Node Inventory::item_database(entt::registry& registry) {
 	return node;
 }
 
+}
 }
 }

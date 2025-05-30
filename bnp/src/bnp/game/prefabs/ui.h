@@ -6,11 +6,13 @@
 #include <entt/entt.hpp>
 
 namespace bnp {
+namespace Game {
 namespace Prefab {
 namespace UI {
 
 Node play_button(entt::registry& registry, ResourceManager& resource_manager);
 
+}
 }
 }
 }

@@ -6,6 +6,7 @@
 #include <entt/entt.hpp>
 
 namespace bnp {
+namespace Game {
 namespace Prefab {
 namespace Celestials {
 
@@ -14,6 +15,7 @@ Node galaxy(entt::registry& registry, ResourceManager& resource_manager);
 Node galaxy_map_dot(entt::registry& registry, ResourceManager& resource_manager);
 Node eden(entt::registry& registry, ResourceManager& resource_manager);
 
+}
 }
 }
 }
