@@ -235,8 +235,8 @@ vec3 base_color(vec3 sphere_coord, float dist_from_center) {
     surface_noise_value = cnoise(vec4(rotated_coord * noise_radius / (0.1 + dist_from_center), noise_seed));
     surface_noise_value += 2 * cnoise(vec4(rotated_coord * noise_radius * 4, noise_seed));
 
-    if (surface_noise_value > 0.4) {
-        return vec3(0.12, 0.08, 0.05) * 5;
+    if (surface_noise_value > 0.4 || dist_from_center < 0.03) {
+        return vec3(0.6, 0.4, 0.25);
     }
 
     return vec3(0);
@@ -255,7 +255,7 @@ vec3 subtle_detail_color(vec3 sphere_coord, float dist_from_center) {
 
     surface_noise_value = cnoise(vec4(rotated_coord * noise_radius, noise_seed * 2.0));
 
-    if (surface_noise_value > 0) {
+    if (surface_noise_value > 0 || dist_from_center < 0.04) {
         return vec3(0.13, 0.16, 0.15);
     }
 
@@ -275,6 +275,8 @@ vec3 detail_color(vec3 sphere_coord, float dist_from_center, float seed_mult = 1
 
     surface_noise_value = cnoise(vec4(rotated_coord * noise_radius, noise_seed * seed_mult));
     surface_noise_value += cnoise(vec4(rotated_coord * 15.0 * noise_radius, noise_seed * seed_mult));
+
+    surface_noise_value += max(0.2 - dist_from_center, 0);
 
     float dist_scale = dist_from_center * 2.0;
     if (surface_noise_value > dist_scale) {
@@ -298,6 +300,10 @@ float negative_detail(vec3 sphere_coord, float dist_from_center, float seed_mult
     surface_noise_value = cnoise(vec4(rotated_coord * noise_radius / (0.03 + dist_from_center), noise_seed * seed_mult));
     surface_noise_value += cnoise(vec4(rotated_coord * noise_radius * 3, noise_seed * seed_mult));
 
+    if (dist_from_center < 0.04) {
+        return 0;
+    }
+
     if (surface_noise_value > 0.4) {
         return dist_from_center;
     }
@@ -312,9 +318,17 @@ void main() {
     // The circle is always centered at (0.5, 0.5) with a fixed radius of 0.5
     float dist = distance(TexCoord, vec2(0.5, 0.5));  // Distance from center of quad
 
-    if (dist >= 0.42f * (0.9 + 0.05 * tan(TexCoord.x))) // If the fragment is outside the circle, discard it
-    {
+    // check if outside circle
+    if (dist >= 0.42f * (0.9 + 0.05 * tan(TexCoord.x))) {
         discard;
+    }
+
+    if (dist < 0.008) {
+        FragColor = vec4(1);
+        return;
+    } else if (dist < 0.013) {
+        FragColor = vec4(1, 1, 0.97, 1.0);
+        return;
     }
 
     // Rotation angle based on time (adjust rotation speed as needed)
