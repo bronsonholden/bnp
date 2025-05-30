@@ -236,7 +236,7 @@ vec3 base_color(vec3 sphere_coord, float dist_from_center) {
     surface_noise_value += 2 * cnoise(vec4(rotated_coord * noise_radius * 4, noise_seed));
 
     if (surface_noise_value > 0.4) {
-        return vec3(0.01, 0.01, 0.02);
+        return vec3(0.12, 0.08, 0.05) * 5;
     }
 
     return vec3(0);
@@ -256,7 +256,7 @@ vec3 subtle_detail_color(vec3 sphere_coord, float dist_from_center) {
     surface_noise_value = cnoise(vec4(rotated_coord * noise_radius, noise_seed * 2.0));
 
     if (surface_noise_value > 0) {
-        return vec3(0.023, 0.023, 0.029);
+        return vec3(0.13, 0.16, 0.15);
     }
 
     return vec3(0);
@@ -276,14 +276,15 @@ vec3 detail_color(vec3 sphere_coord, float dist_from_center, float seed_mult = 1
     surface_noise_value = cnoise(vec4(rotated_coord * noise_radius, noise_seed * seed_mult));
     surface_noise_value += cnoise(vec4(rotated_coord * 15.0 * noise_radius, noise_seed * seed_mult));
 
-    if (surface_noise_value > (dist_from_center * 2.0)) {
-        return vec3(0.08, 0.08, 0.08);
+    float dist_scale = dist_from_center * 2.0;
+    if (surface_noise_value > dist_scale) {
+        return mix(vec3(0.96, 0.94, 0.68), vec3(0.1, 0.17, 0.5), pow(dist_scale, 0.55));
     }
 
     return vec3(0);
 }
 
-vec3 negative_detail(vec3 sphere_coord, float dist_from_center, float seed_mult = 1.0) {
+float negative_detail(vec3 sphere_coord, float dist_from_center, float seed_mult = 1.0) {
     float noise_radius = 2.0;
     float rotationAngle = 0;
     mat3 rotationMatrix = rotateAroundAxis(vec3(0, 0, 1), rotationAngle);
@@ -298,10 +299,10 @@ vec3 negative_detail(vec3 sphere_coord, float dist_from_center, float seed_mult 
     surface_noise_value += cnoise(vec4(rotated_coord * noise_radius * 3, noise_seed * seed_mult));
 
     if (surface_noise_value > 0.4) {
-        return vec3(0.06) * (1.1 + dist_from_center);
+        return dist_from_center;
     }
 
-    return vec3(0);
+    return 0;
 }
 
 void main() {
@@ -331,21 +332,22 @@ void main() {
 
     vec3 color = surface_color;
 
-    color = max(surface_color, detail_color(rotated_coord, dist));
-    color += subtle_detail_color(rotated_coord, dist);
+    color = mix(color, detail_color(rotated_coord, dist), 0.5);
+    color = mix(color, subtle_detail_color(rotated_coord, dist), 0.5);
 
     for (int i = 0; i < 7; ++i) {
-        color += detail_color(rotated_coord, dist, 2.0 + i);
+        color = mix(color, detail_color(rotated_coord, dist, 2.0 + i), 0.26);
     }
 
     vec3 negative_color = vec3(0);
 
     negative_color += negative_detail(rotated_coord, dist);
     negative_color += negative_detail(rotated_coord, dist, 2.0);
+    negative_color = clamp(negative_color, 0.0, 1.0);
 
-    color -= negative_color;
+    color = mix(color, vec3(0), negative_color);
 
-    color /= (0.6 + pow(dist, 1.5));
+    color *= 2.3 * (1 - pow(dist, 0.7));
 
     FragColor = vec4(color, 1);
 }
