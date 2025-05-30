@@ -4,12 +4,12 @@
 
 namespace bnp {
 
-	void Planet2DManager::update(entt::registry& registry, float dt) {
-		for (auto entity : registry.view<Planet2D>()) {
-			registry.patch<Planet2D>(entity, [=](Planet2D& p) {
-				p.time += dt;
-				});
-		}
+void Planet2DManager::update(entt::registry& registry, float dt) {
+	for (auto entity : registry.view<Planet2D>()) {
+		registry.patch<Planet2D>(entity, [=](Planet2D& p) {
+			p.time += dt;
+			});
 	}
+}
 
 }

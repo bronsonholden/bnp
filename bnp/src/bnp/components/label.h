@@ -5,12 +5,12 @@
 
 namespace bnp {
 
-	struct Label {
-		std::string value;
-	};
+struct Label {
+	std::string value;
+};
 
-	struct Tags {
-		std::unordered_set<std::string> values;
-	};
+struct Tags {
+	std::unordered_set<std::string> values;
+};
 
 }

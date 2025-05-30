@@ -6,11 +6,11 @@
 #include <entt/entt.hpp>
 
 namespace bnp {
-	namespace Prefab {
-		namespace UI {
+namespace Prefab {
+namespace UI {
 
-			Node play_button(entt::registry& registry, ResourceManager& resource_manager);
+Node play_button(entt::registry& registry, ResourceManager& resource_manager);
 
-		}
-	}
+}
+}
 }

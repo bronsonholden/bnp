@@ -5,39 +5,39 @@
 
 namespace bnp {
 
-	struct Platform2DController {
-		bool active = true;
-		void update(entt::registry& registry, entt::entity entity, float dt);
+struct Platform2DController {
+	bool active = true;
+	void update(entt::registry& registry, entt::entity entity, float dt);
+};
+
+struct Controllable {
+	bool active = true;
+};
+
+struct KeyboardInput {
+	enum Action {
+		MoveLeft = 0,
+		MoveRight,
+		MoveUp,
+		MoveDown,
+		Jump
 	};
 
-	struct Controllable {
-		bool active = true;
+	enum State {
+		Pressed = 0,
+		Held,
+		Released
 	};
+};
 
-	struct KeyboardInput {
-		enum Action {
-			MoveLeft = 0,
-			MoveRight,
-			MoveUp,
-			MoveDown,
-			Jump
-		};
+typedef SDL_Scancode KeyScancode;
 
-		enum State {
-			Pressed = 0,
-			Held,
-			Released
-		};
-	};
+struct KeyboardInputMapping {
+	std::unordered_map<KeyScancode, KeyboardInput::Action> values;
+};
 
-	typedef SDL_Scancode KeyScancode;
-
-	struct KeyboardInputMapping {
-		std::unordered_map<KeyScancode, KeyboardInput::Action> values;
-	};
-
-	struct KeyboardInputObserver {
-		std::unordered_map<KeyboardInput::Action, KeyboardInput::State> inputs;
-	};
+struct KeyboardInputObserver {
+	std::unordered_map<KeyboardInput::Action, KeyboardInput::State> inputs;
+};
 
 }

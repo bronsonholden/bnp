@@ -6,13 +6,13 @@
 
 namespace bnp {
 
-	class NodeInspector {
-	public:
-		explicit NodeInspector(Node node);
-		void render();
+class NodeInspector {
+public:
+	explicit NodeInspector(Node node);
+	void render();
 
-	private:
-		Node node;
-	};
+private:
+	Node node;
+};
 
 }

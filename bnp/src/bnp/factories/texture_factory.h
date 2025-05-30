@@ -7,11 +7,11 @@
 
 namespace bnp {
 
-	class TextureFactory {
-	public:
-		TextureFactory() = default;
+class TextureFactory {
+public:
+	TextureFactory() = default;
 
-		Texture load_from_file(std::filesystem::path);
-	};
+	Texture load_from_file(std::filesystem::path);
+};
 
 }

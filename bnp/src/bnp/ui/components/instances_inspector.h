@@ -7,16 +7,16 @@
 
 namespace bnp {
 
-	class InstancesInspector {
-	public:
-		InstancesInspector(Node& node);
+class InstancesInspector {
+public:
+	InstancesInspector(Node& node);
 
-		void render();
+	void render();
 
-	private:
-		Node& node;
+private:
+	Node& node;
 
-		bool render_instance_transform(Transform& transform);
-	};
+	bool render_instance_transform(Transform& transform);
+};
 
 }

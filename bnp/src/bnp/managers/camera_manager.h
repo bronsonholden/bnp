@@ -6,11 +6,11 @@
 
 namespace bnp {
 
-	class CameraManager {
-	public:
-		CameraManager() = default;
+class CameraManager {
+public:
+	CameraManager() = default;
 
-		void update(entt::registry& registry, float dt);
-	};
+	void update(entt::registry& registry, float dt);
+};
 
 }

@@ -6,11 +6,11 @@
 
 namespace bnp {
 
-	class MotilityManager {
-	public:
-		MotilityManager() = default;
+class MotilityManager {
+public:
+	MotilityManager() = default;
 
-		void update(entt::registry& registry, float dt);
-	};
+	void update(entt::registry& registry, float dt);
+};
 
 }

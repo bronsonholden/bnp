@@ -13,62 +13,62 @@ extern "C" {
 
 namespace bnp {
 
-	// sprite:getSlice("SliceName")
-	int l_sprite_get_slice(lua_State* L) {
-		// [sprite, name]
-		Node node = l_pop_script_node(L, 1);
+// sprite:getSlice("SliceName")
+int l_sprite_get_slice(lua_State* L) {
+	// [sprite, name]
+	Node node = l_pop_script_node(L, 1);
 
-		Sprite& sprite = node.get_component<Sprite>();
+	Sprite& sprite = node.get_component<Sprite>();
 
-		int current_frame = 0;
+	int current_frame = 0;
 
-		if (node.has_component<SpriteAnimator>()) {
-			current_frame = node.get_component<SpriteAnimator>().current_framelist_index;
-		}
-
-		std::string slice_name = luaL_checkstring(L, -1);
-
-		auto& slice_keys = sprite.slices.at(slice_name);
-
-		if (slice_keys.find(current_frame) != slice_keys.end()) {
-			glm::ivec4 slice = slice_keys.at(current_frame);
-			lua_newtable(L);
-			lua_pushnumber(L, slice.x);
-			lua_setfield(L, -2, "x");
-			lua_pushnumber(L, slice.y);
-			lua_setfield(L, -2, "y");
-			lua_pushnumber(L, slice.z);
-			lua_setfield(L, -2, "z");
-			lua_pushnumber(L, slice.w);
-			lua_setfield(L, -2, "w");
-		}
-		else {
-			lua_pushnil(L);
-		}
-
-
-		return 1;
+	if (node.has_component<SpriteAnimator>()) {
+		current_frame = node.get_component<SpriteAnimator>().current_framelist_index;
 	}
 
-	int l_sprite_set_layer_visible(lua_State* L) {
-		// [sprite, name, visibility]
-		Node node = l_pop_script_node(L, 1);
-		// [name, visibility]
+	std::string slice_name = luaL_checkstring(L, -1);
 
-		std::string name = lua_tostring(L, 1);
-		bool visible = lua_toboolean(L, 2);
+	auto& slice_keys = sprite.slices.at(slice_name);
 
-
-		node.get_registry().patch<Sprite>(node.get_entity_id(), [&](Sprite& sprite) {
-			for (auto& layer : sprite.layers) {
-				if (layer.name != name) continue;
-
-				layer.visible = visible;
-				break;
-			}
-			});
-
-		return 0;
+	if (slice_keys.find(current_frame) != slice_keys.end()) {
+		glm::ivec4 slice = slice_keys.at(current_frame);
+		lua_newtable(L);
+		lua_pushnumber(L, slice.x);
+		lua_setfield(L, -2, "x");
+		lua_pushnumber(L, slice.y);
+		lua_setfield(L, -2, "y");
+		lua_pushnumber(L, slice.z);
+		lua_setfield(L, -2, "z");
+		lua_pushnumber(L, slice.w);
+		lua_setfield(L, -2, "w");
 	}
+	else {
+		lua_pushnil(L);
+	}
+
+
+	return 1;
+}
+
+int l_sprite_set_layer_visible(lua_State* L) {
+	// [sprite, name, visibility]
+	Node node = l_pop_script_node(L, 1);
+	// [name, visibility]
+
+	std::string name = lua_tostring(L, 1);
+	bool visible = lua_toboolean(L, 2);
+
+
+	node.get_registry().patch<Sprite>(node.get_entity_id(), [&](Sprite& sprite) {
+		for (auto& layer : sprite.layers) {
+			if (layer.name != name) continue;
+
+			layer.visible = visible;
+			break;
+		}
+		});
+
+	return 0;
+}
 
 }

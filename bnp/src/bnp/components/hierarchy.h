@@ -5,12 +5,12 @@
 
 namespace bnp {
 
-	struct Parent {
-		entt::entity value;
-	};
+struct Parent {
+	entt::entity value;
+};
 
-	struct Child {
-		entt::entity value;
-	};
+struct Child {
+	entt::entity value;
+};
 
 }

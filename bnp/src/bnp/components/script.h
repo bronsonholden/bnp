@@ -12,13 +12,13 @@ extern "C" {
 
 namespace bnp {
 
-	struct Scripts {
-		std::unordered_map<std::filesystem::path, lua_State*> list;
-	};
+struct Scripts {
+	std::unordered_map<std::filesystem::path, lua_State*> list;
+};
 
-	struct ScriptNode {
-		entt::registry& registry;
-		entt::entity entity;
-	};
+struct ScriptNode {
+	entt::registry& registry;
+	entt::entity entity;
+};
 
 }

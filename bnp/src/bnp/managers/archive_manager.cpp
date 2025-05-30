@@ -5,12 +5,12 @@
 
 namespace bnp {
 
-	ArchiveManager::ArchiveManager(std::filesystem::path _dir) : dir(_dir) {
-		dir = _dir;
-	}
+ArchiveManager::ArchiveManager(std::filesystem::path _dir) : dir(_dir) {
+	dir = _dir;
+}
 
-	ArchiveManager::~ArchiveManager() {
+ArchiveManager::~ArchiveManager() {
 
-	}
+}
 
 } // namespace bnp

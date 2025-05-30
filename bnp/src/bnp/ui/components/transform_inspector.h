@@ -8,15 +8,15 @@
 
 namespace bnp {
 
-	class TransformInspector {
-	public:
-		TransformInspector(Node& node);
-		~TransformInspector();
+class TransformInspector {
+public:
+	TransformInspector(Node& node);
+	~TransformInspector();
 
-		void render();
+	void render();
 
-	private:
-		Node& node;
-	};
+private:
+	Node& node;
+};
 
 }

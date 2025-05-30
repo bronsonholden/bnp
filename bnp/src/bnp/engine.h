@@ -28,47 +28,49 @@
 #include <entt/entt.hpp>
 
 namespace bnp {
-	class Engine {
-	public:
-		Engine();
-		~Engine();
 
-		void run();
+class Engine {
+public:
+	Engine();
+	~Engine();
 
-	protected:
-		entt::registry registry;
-		Window window;
-		TimeSystem time;
-		Renderer renderer;
+	void run();
 
-		MeshFactory factory;
-		MaterialFactory material_factory;
-		TextureFactory texture_factory;
-		ScriptFactory script_factory;
+protected:
+	entt::registry registry;
+	Window window;
+	TimeSystem time;
+	Renderer renderer;
 
-		ArchiveManager archive_manager;
-		RenderManager render_manager;
-		ResourceManager resource_manager;
-		SpriteAnimationManager sprite_animation_manager;
-		PhysicsManager physics_manager;
-		MotilityManager motility_manager;
-		HierarchyManager hierarchy_manager;
-		Water2DManager water_2d_manager;
-		BehaviorManager behavior_manager;
-		World2DManager world_2d_manager;
-		CameraManager camera_manager;
-		ControllerManager controller_manager;
-		Planet2DManager planet_2d_manager;
-		UIManager ui_manager;
+	MeshFactory factory;
+	MaterialFactory material_factory;
+	TextureFactory texture_factory;
+	ScriptFactory script_factory;
 
-		SceneManager scene_manager;
+	ArchiveManager archive_manager;
+	RenderManager render_manager;
+	ResourceManager resource_manager;
+	SpriteAnimationManager sprite_animation_manager;
+	PhysicsManager physics_manager;
+	MotilityManager motility_manager;
+	HierarchyManager hierarchy_manager;
+	Water2DManager water_2d_manager;
+	BehaviorManager behavior_manager;
+	World2DManager world_2d_manager;
+	CameraManager camera_manager;
+	ControllerManager controller_manager;
+	Planet2DManager planet_2d_manager;
+	UIManager ui_manager;
 
-		Camera camera;
+	SceneManager scene_manager;
 
-		void update(float dt);
-		void fixed_update();
+	Camera camera;
 
-		void handle_window_event(SDL_Event& event);
-		void handle_mouse_button_event(SDL_Event& event);
-	};
+	void update(float dt);
+	void fixed_update();
+
+	void handle_window_event(SDL_Event& event);
+	void handle_mouse_button_event(SDL_Event& event);
+};
+
 }

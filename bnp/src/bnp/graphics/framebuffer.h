@@ -4,23 +4,23 @@
 
 namespace bnp {
 
-	class Framebuffer {
-	public:
-		Framebuffer();
-		~Framebuffer();
+class Framebuffer {
+public:
+	Framebuffer();
+	~Framebuffer();
 
-		void create(int w, int h, int channels = 3);
-		void bind();
-		void clear();
-		void unbind();
-		void destroy();
+	void create(int w, int h, int channels = 3);
+	void bind();
+	void clear();
+	void unbind();
+	void destroy();
 
-		bool init;
-		int width;
-		int height;
-		GLuint fbo;
-		GLuint color_texture_id;
-		GLuint depth_rbo;
-	};
+	bool init;
+	int width;
+	int height;
+	GLuint fbo;
+	GLuint color_texture_id;
+	GLuint depth_rbo;
+};
 
 }

@@ -8,12 +8,12 @@
 
 namespace bnp {
 
-	class SpriteFactory {
-	public:
-		SpriteFactory() = default;
+class SpriteFactory {
+public:
+	SpriteFactory() = default;
 
-		void load_from_aseprite(Node& node, const std::filesystem::path& json_path);
-		glm::ivec4 load_body_slice(const nlohmann::json& meta);
-	};
+	void load_from_aseprite(Node& node, const std::filesystem::path& json_path);
+	glm::ivec4 load_body_slice(const nlohmann::json& meta);
+};
 
 } // namespace bnp

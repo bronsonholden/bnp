@@ -4,8 +4,8 @@
 
 namespace bnp {
 
-	struct Celestial {
-		std::string name;
-	};
+struct Celestial {
+	std::string name;
+};
 
 }

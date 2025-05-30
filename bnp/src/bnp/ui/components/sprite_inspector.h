@@ -7,14 +7,14 @@
 
 namespace bnp {
 
-	class SpriteInspector {
-	public:
-		SpriteInspector(Node& node);
+class SpriteInspector {
+public:
+	SpriteInspector(Node& node);
 
-		void render();
+	void render();
 
-	private:
-		Node& node;
-	};
+private:
+	Node& node;
+};
 
 }

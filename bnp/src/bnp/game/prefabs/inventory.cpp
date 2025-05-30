@@ -2,19 +2,19 @@
 #include <bnp/components/inventory.h>
 
 namespace bnp {
-	namespace Prefab {
+namespace Prefab {
 
-		Node Inventory::item_database(entt::registry& registry) {
-			Node node(registry);
+Node Inventory::item_database(entt::registry& registry) {
+	Node node(registry);
 
-			node.add_component<ItemDatabase>(ItemDatabase{
-				{
-					{"Iron Ore"}
-				}
-				});
-
-			return node;
+	node.add_component<ItemDatabase>(ItemDatabase{
+		{
+			{"Iron Ore"}
 		}
+		});
 
-	}
+	return node;
+}
+
+}
 }

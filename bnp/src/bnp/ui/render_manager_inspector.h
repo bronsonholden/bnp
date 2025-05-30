@@ -4,13 +4,13 @@
 
 namespace bnp {
 
-	class RenderManagerInspector {
-	public:
-		RenderManagerInspector(RenderManager& render_manager);
-		void render();
+class RenderManagerInspector {
+public:
+	RenderManagerInspector(RenderManager& render_manager);
+	void render();
 
-	private:
-		RenderManager& render_manager;
-	};
+private:
+	RenderManager& render_manager;
+};
 
 }

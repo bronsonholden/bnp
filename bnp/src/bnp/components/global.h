@@ -4,8 +4,8 @@
 
 namespace bnp {
 
-	struct Global {
-		b2World* world;
-	};
+struct Global {
+	b2World* world;
+};
 
 }

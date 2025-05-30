@@ -8,12 +8,12 @@
 
 namespace bnp {
 
-	class World2DManager {
-	public:
-		World2DManager();
-		~World2DManager();
+class World2DManager {
+public:
+	World2DManager();
+	~World2DManager();
 
-		void update(entt::registry& registry, float dt);
-	};
+	void update(entt::registry& registry, float dt);
+};
 
 }

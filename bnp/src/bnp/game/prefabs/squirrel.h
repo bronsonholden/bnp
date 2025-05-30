@@ -6,9 +6,9 @@
 #include <entt/entt.hpp>
 
 namespace bnp {
-	namespace Prefab {
+namespace Prefab {
 
-		Node squirrel(entt::registry& registry, ResourceManager& resource_manager);
+Node squirrel(entt::registry& registry, ResourceManager& resource_manager);
 
-	}
+}
 }

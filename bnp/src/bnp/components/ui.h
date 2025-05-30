@@ -2,12 +2,12 @@
 
 namespace bnp {
 
-	struct Button {
-		bool enabled = true;
-	};
+struct Button {
+	bool enabled = true;
+};
 
-	struct Hoverable {
-		bool hovered = false;
-	};
+struct Hoverable {
+	bool hovered = false;
+};
 
 }

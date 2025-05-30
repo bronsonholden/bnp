@@ -6,10 +6,10 @@
 
 namespace bnp {
 
-	// stores the resources that can be extracted from a celestial body
-	// (planet, moon, asteroid)
-	struct CelestialExtractionTable {
-		std::vector<Item::ID> entries;
-	};
+// stores the resources that can be extracted from a celestial body
+// (planet, moon, asteroid)
+struct CelestialExtractionTable {
+	std::vector<Item::ID> entries;
+};
 
 }

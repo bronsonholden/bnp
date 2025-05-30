@@ -4,17 +4,17 @@
 
 namespace bnp {
 
-	RenderManagerInspector::RenderManagerInspector(RenderManager& _render_manager)
-		: render_manager(_render_manager)
-	{
+RenderManagerInspector::RenderManagerInspector(RenderManager& _render_manager)
+	: render_manager(_render_manager)
+{
 
-	}
+}
 
-	void RenderManagerInspector::render() {
-		ImGui::Begin("Debug Rendering");
+void RenderManagerInspector::render() {
+	ImGui::Begin("Debug Rendering");
 
-		ImGui::Checkbox("Render wireframes", &render_manager.debug_render_wireframes);
+	ImGui::Checkbox("Render wireframes", &render_manager.debug_render_wireframes);
 
-		ImGui::End();
-	}
+	ImGui::End();
+}
 }

@@ -7,14 +7,14 @@
 
 namespace bnp {
 
-	class BehaviorBrainInspector {
-	public:
-		BehaviorBrainInspector(Node& node);
+class BehaviorBrainInspector {
+public:
+	BehaviorBrainInspector(Node& node);
 
-		void render();
+	void render();
 
-	private:
-		Node& node;
-	};
+private:
+	Node& node;
+};
 
 }
