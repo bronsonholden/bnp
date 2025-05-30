@@ -26,6 +26,7 @@
 #include <bnp/game/prefabs/squirrel.h>
 #include <bnp/game/prefabs/celestials.h>
 #include <bnp/game/prefabs/ui.h>
+#include <bnp/game/prefabs/galaxy.h>
 
 #include <vector>
 #include <string>
@@ -261,6 +262,9 @@ void Engine::run() {
 
 void Engine::update(float dt) {
 	//cout << "fps: " << std::to_string(1.0f / dt) << endl;
+
+	// game managers
+	scene_manager.update(registry, dt);
 
 	// manager updates
 	planet_2d_manager.update(registry, dt);

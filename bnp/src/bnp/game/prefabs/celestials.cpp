@@ -1,7 +1,7 @@
 #include <bnp/game/prefabs/celestials.h>
 #include <bnp/game/components/universe.h>
 #include <bnp/game/components/extraction.h>
-#include <bnp/game/components/maps.h>
+#include <bnp/game/components/navigation.h>
 #include <bnp/components/global.h>
 #include <bnp/components/behavior.h>
 #include <bnp/components/physics.h>
@@ -49,7 +49,11 @@ Node Celestials::galaxy(entt::registry& registry, ResourceManager& resource_mana
 
 	node.add_component<Material>(material);
 	node.add_component<Renderable>(true);
-	node.add_component<Game::Component::GalaxyMap>();
+
+	// tag for updating renderable when viewing galaxy map
+	node.add_component<Game::Component::GalaxyMap>(Game::Component::GalaxyMap{});
+
+	// for rendering
 	node.add_component<Galaxy2D>(Galaxy2D{});
 
 	node.add_component<Transform>(Transform{
@@ -79,7 +83,12 @@ Node Celestials::galaxy_map_dot(entt::registry& registry, ResourceManager& resou
 	node.add_component<Texture>(texture);
 	node.add_component<Material>(material);
 	node.add_component<Renderable>(true);
-	node.add_component<Game::Component::GalaxyMapSystem>();
+
+	// tag for rendering when viewing galaxy map
+	node.add_component<Game::Component::GalaxyMapSystem>(Game::Component::GalaxyMapSystem{
+		1
+		});
+
 	node.add_component<Button>();
 	node.add_component<Hoverable>();
 
@@ -132,10 +141,6 @@ Node Celestials::eden(entt::registry& registry, ResourceManager& resource_manage
 	node.add_component<Camera2DRig>(Camera2DRig{
 		{ 0.0f, 0.0f }
 		});
-
-	node.add_component<Game::Component::Celestial>(
-		"Eden"
-	);
 
 	node.add_component<Game::Component::CelestialExtractionTable>();
 

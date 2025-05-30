@@ -9,6 +9,7 @@ class SceneManager {
 public:
 	SceneManager() = default;
 
+	void update(entt::registry& registry, float dt);
 	void galaxy_map(entt::registry& registry, bool shown);
 };
 
