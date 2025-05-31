@@ -4,11 +4,38 @@
 #include <bnp/game/managers/scene_manager.h>
 #include <bnp/game/components/universe.h>
 #include <bnp/game/components/navigation.h>
+#include <bnp/game/components/fleet.h>
 #include <bnp/game/prefabs/celestials.h>
 
 namespace bnp {
 
 void SceneManager::update(entt::registry& registry, float dt) {
+	{
+		auto capital_ship_view = registry.view<Game::Component::CapitalShip>();
+		entt::entity capital_ship_entity = capital_ship_view.front();
+		if (capital_ship_entity != entt::null) {
+			auto& capital_ship = capital_ship_view.get<Game::Component::CapitalShip>(capital_ship_entity);
+			auto view = registry.view<Game::Component::GalaxyMapSystem, Sprite>();
+
+			for (auto entity : view) {
+				auto& system = view.get<Game::Component::GalaxyMapSystem>(entity);
+				auto& sprite = view.get<Sprite>(entity);
+
+				if (system.system_id == capital_ship.system_id) {
+					for (auto& layer : sprite.layers) {
+						if (layer.name == "Present") {
+							layer.visible = true;
+						}
+						else {
+							layer.visible = false;
+						}
+					}
+				}
+			}
+		}
+	}
+
+
 	// clicking on system dot in galaxy map transfers to that system
 	{
 		auto view = registry.view<Game::Component::GalaxyMapSystem, Button, Renderable>();

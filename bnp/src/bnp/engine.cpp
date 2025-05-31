@@ -27,6 +27,7 @@
 #include <bnp/game/prefabs/celestials.h>
 #include <bnp/game/prefabs/ui.h>
 #include <bnp/game/prefabs/galaxy.h>
+#include <bnp/game/components/fleet.h>
 
 #include <vector>
 #include <string>
@@ -138,6 +139,10 @@ void Engine::run() {
 	//Node orbit = Game::Prefab::Celestials::celestial_orbit(registry, resource_manager);
 
 	scene_manager.show_galaxy_map(registry);
+
+	Node capital_ship(registry);
+
+	capital_ship.add_component<Game::Component::CapitalShip>(1, 1);
 
 	//Node play_button = Prefab::UI::play_button(registry, resource_manager);
 
