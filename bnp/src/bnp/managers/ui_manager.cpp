@@ -33,6 +33,10 @@ void UIManager::process_click(entt::registry& registry, glm::vec2 worldspace_pos
 
 		Log::info("Clicked %d", (int)entity);
 
+		registry.patch<Button>(entity, [](Button& b) {
+			b.clicked = true;
+			});
+
 		return;
 	}
 }

@@ -105,6 +105,8 @@ Engine::Engine()
 	render_manager.sprite_mesh = MeshFactory().box();
 	render_manager.line_mesh = MeshFactory().line();
 	render_manager.circle_mesh = MeshFactory().circle();
+
+	ResourceManager::singleton = &resource_manager;
 }
 
 Engine::~Engine() {
@@ -132,9 +134,10 @@ void Engine::run() {
 	FileBrowser file_browser;
 	SceneInspector scene_inspector(registry);
 
-	Node galaxy = Game::Prefab::Celestials::galaxy(registry, resource_manager);
-	Node dot = Game::Prefab::Celestials::galaxy_map_dot(registry, resource_manager);
-	Node orbit = Game::Prefab::Celestials::celestial_orbit(registry, resource_manager);
+	Game::Prefab::Galaxy::model(registry);
+	//Node orbit = Game::Prefab::Celestials::celestial_orbit(registry, resource_manager);
+
+	scene_manager.show_galaxy_map(registry);
 
 	//Node play_button = Prefab::UI::play_button(registry, resource_manager);
 
@@ -194,8 +197,9 @@ void Engine::run() {
 			mouse_worldspace_pos
 		);
 
-		auto& rig = galaxy.get_component<Camera2DRig>();
-		glm::vec2 camera_position = rig.camera_worldspace_position;
+		/*auto& rig = galaxy.get_component<Camera2DRig>();
+		glm::vec2 camera_position = rig.camera_worldspace_position;*/
+		glm::vec2 camera_position(0);
 		glm::vec2 pixel_space = glm::floor(camera_position * 64.0f);
 		glm::vec2 snap_position = pixel_space / 64.0f;
 

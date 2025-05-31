@@ -32,10 +32,6 @@ Node Celestials::celestial_orbit(entt::registry& registry, ResourceManager& reso
 		glm::vec3(4.0f, 4.0f, 1.0f)
 		});
 
-	node.add_component<Camera2DRig>(Camera2DRig{
-		{ 0.0f, 0.0f }
-		});
-
 	return node;
 }
 
@@ -84,11 +80,6 @@ Node Celestials::galaxy_map_dot(entt::registry& registry, ResourceManager& resou
 	node.add_component<Material>(material);
 	node.add_component<Renderable>(true);
 
-	// tag for rendering when viewing galaxy map
-	node.add_component<Game::Component::GalaxyMapSystem>(Game::Component::GalaxyMapSystem{
-		1
-		});
-
 	node.add_component<Button>();
 	node.add_component<Hoverable>();
 
@@ -96,7 +87,7 @@ Node Celestials::galaxy_map_dot(entt::registry& registry, ResourceManager& resou
 	sprite_factory.load_from_aseprite(node, json_path);
 
 	node.add_component<Transform>(Transform{
-		glm::vec3(-1.54, 0.926, 1),
+		glm::vec3(0),
 		glm::quat(),
 		glm::vec3(8.0f / 64.0f)
 		});

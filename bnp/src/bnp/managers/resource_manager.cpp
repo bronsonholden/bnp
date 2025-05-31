@@ -11,6 +11,8 @@ using namespace std;
 
 namespace bnp {
 
+ResourceManager* ResourceManager::singleton = nullptr;
+
 ResourceManager::ResourceManager()
 	: root(std::filesystem::path(PROJECT_ROOT) / "bnp")
 {

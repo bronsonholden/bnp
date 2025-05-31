@@ -9,10 +9,12 @@
 namespace bnp {
 namespace Game {
 namespace Prefab {
+namespace Galaxy {
 
 // creates entities that represent that model of the galaxy
-void galaxy_model(entt::registry& registry);
+void model(entt::registry& registry);
 
+}
 }
 }
 }

@@ -8,16 +8,12 @@ namespace bnp {
 namespace Game {
 namespace Component {
 
-struct GalaxyMapTag {
-	char _;
-};
-
 struct GalaxyMap {
 	char placeholder = 0;
 };
 
 struct SystemMap {
-	char placeholder;
+	System::ID system_id;
 };
 
 // component for systems displayed on the galaxy map
@@ -27,6 +23,7 @@ struct GalaxyMapSystem {
 
 // component for celestials displayed on the system map
 struct SystemMapCelestial {
+	System::ID system_id;
 	int celestial_id;
 };
 

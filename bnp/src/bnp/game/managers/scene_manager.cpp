@@ -1,8 +1,10 @@
+#include <bnp/core/logger.hpp>
 #include <bnp/components/graphics.h>
 #include <bnp/components/ui.h>
 #include <bnp/game/managers/scene_manager.h>
 #include <bnp/game/components/universe.h>
 #include <bnp/game/components/navigation.h>
+#include <bnp/game/prefabs/celestials.h>
 
 namespace bnp {
 
@@ -17,20 +19,98 @@ void SceneManager::update(entt::registry& registry, float dt) {
 			auto& system = view.get<Game::Component::GalaxyMapSystem>(entity);
 
 			if (button.clicked) {
-				registry.patch<Button>(entity, [](Button& b) {
-					b.clicked = false;
-					});
+				Log::info("Clicked galaxy map dot (system_id=%d)", system.system_id);
+
+				hide_galaxy_map(registry);
+				show_system_map(registry, system.system_id);
 			}
 		}
 	}
 }
 
-void SceneManager::galaxy_map(entt::registry& registry, bool shown) {
+void SceneManager::show_system_map(entt::registry& registry, Game::Component::System::ID system_id) {
+	auto view = registry.view<Game::Component::System>();
+	entt::entity system_entity = entt::null;
+
+	for (auto entity : view) {
+		auto& system = view.get<Game::Component::System>(entity);
+
+		if (system.id == system_id) {
+			system_entity = entity;
+			break;
+		}
+	}
+
+	if (system_entity == entt::null) {
+		Log::error("Unable to find system model (system_id=%d)", system_id);
+	}
+
+	{
+		auto view = registry.view<Game::Component::Celestial>();
+
+		for (auto entity : view) {
+			auto& celestial = view.get<Game::Component::Celestial>(entity);
+
+			if (celestial.system_id != system_id) continue;
+
+			{
+				Node orbit = Game::Prefab::Celestials::celestial_orbit(registry, *ResourceManager::singleton);
+				orbit.add_component<Game::Component::SystemMap>(system_id);
+				auto& transform = orbit.get_component<Transform>();
+				transform.position = glm::vec3(0.0f);
+				transform.scale = glm::vec3(celestial.orbit_radius, celestial.orbit_radius, 1.0f);
+				transform.dirty = true;
+			}
+
+			{
+				Node dot = Game::Prefab::Celestials::galaxy_map_dot(registry, *ResourceManager::singleton);
+				dot.add_component<Game::Component::SystemMap>(system_id);
+				auto& transform = dot.get_component<Transform>();
+				transform.position = glm::vec3(celestial.orbit_radius / 2.0f, 0.0f, 0.0f);
+				transform.dirty = true;
+			}
+
+		}
+	}
+}
+
+void SceneManager::hide_system_map(entt::registry& registry) {
+	{
+		auto view = registry.view<Game::Component::SystemMap>();
+
+		for (auto entity : view) {
+			registry.destroy(entity);
+		}
+	}
+}
+
+void SceneManager::show_galaxy_map(entt::registry& registry) {
+	Game::Prefab::Celestials::galaxy(registry, *ResourceManager::singleton);
+
+	{
+		auto view = registry.view<Game::Component::System>();
+
+		for (auto entity : view) {
+			auto& system = view.get<Game::Component::System>(entity);
+			Node dot = Game::Prefab::Celestials::galaxy_map_dot(registry, *ResourceManager::singleton);
+
+			dot.add_component<Game::Component::GalaxyMapSystem>(Game::Component::GalaxyMapSystem{
+				system.id
+				});
+
+			auto& transform = dot.get_component<Transform>();
+			transform.position = glm::vec3(system.galaxy_position, 0);
+			transform.dirty = true;
+		}
+	}
+}
+
+void SceneManager::hide_galaxy_map(entt::registry& registry) {
 	{
 		auto view = registry.view<Game::Component::GalaxyMap>();
 
 		for (auto entity : view) {
-			registry.emplace_or_replace<Renderable>(entity, shown);
+			registry.destroy(entity);
 		}
 	}
 
@@ -38,7 +118,7 @@ void SceneManager::galaxy_map(entt::registry& registry, bool shown) {
 		auto view = registry.view<Game::Component::GalaxyMapSystem>();
 
 		for (auto entity : view) {
-			registry.emplace_or_replace<Renderable>(entity, shown);
+			registry.destroy(entity);
 		}
 	}
 }
