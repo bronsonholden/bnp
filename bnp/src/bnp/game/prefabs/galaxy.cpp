@@ -13,20 +13,24 @@ void Galaxy::model(entt::registry& registry) {
 	);
 
 	Node blochfeld(registry);
-	blochfeld.add_component<Game::Component::System>(Game::Component::System{
-		.id = 1,
-		.name = "Blochfeld",
-		.galaxy_position = glm::vec2(-1.54f, 0.926f),
-		.light_minute_scale = 532.0
-		});
+	blochfeld.add_component<Game::Component::System>(
+		Game::Component::System{
+			.id = 1,
+			.name = "Blochfeld",
+			.galaxy_position = glm::vec2(-1.54f, 0.926f),
+			.light_minute_scale = 532.0
+		}
+	);
 
 	Node eden(registry);
-	eden.add_component<Game::Component::Celestial>(Game::Component::Celestial{
-		.id = 1,
-		.system_id = 1,
-		.name = "Eden",
-		.orbit_radius = 2.0
-		});
+	eden.add_component<Game::Component::Celestial>(
+		Game::Component::Celestial{
+			.id = 1,
+			.system_id = 1,
+			.name = "Eden",
+			.orbit_radius = 2.0
+		}
+	);
 }
 
 }
