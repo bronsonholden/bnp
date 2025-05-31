@@ -152,6 +152,7 @@ void SceneManager::hide_galaxy_map(entt::registry& registry) {
 	}
 }
 
+// todo: for celestials with moons, render orbit & dots and a smaller version of the celestial at the center
 void SceneManager::show_celestial_map(entt::registry& registry, Game::Component::Celestial::ID celestial_id) {
 	Node celestial = Game::Prefab::Celestials::eden(registry, *ResourceManager::singleton);
 
