@@ -17,6 +17,8 @@ public:
 	void hide_galaxy_map(entt::registry& registry);
 	void show_system_map(entt::registry& registry, Game::Component::System::ID system_id);
 	void hide_system_map(entt::registry& registry);
+	void show_celestial_map(entt::registry& registry, Game::Component::Celestial::ID celestial_id);
+	void hide_celestial_map(entt::registry& registry);
 };
 
 }

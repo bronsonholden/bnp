@@ -123,4 +123,15 @@ void SceneManager::hide_galaxy_map(entt::registry& registry) {
 	}
 }
 
+void SceneManager::show_celestial_map(entt::registry& registry, Game::Component::Celestial::ID celestial_id) {
+
+}
+
+void SceneManager::hide_celestial_map(entt::registry& registry) {
+	{
+		auto view = registry.view<Game::Component::Celestial>();
+
+	}
+}
+
 }

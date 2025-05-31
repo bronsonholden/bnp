@@ -26,6 +26,9 @@ struct Celestial {
 	// worldspace positioning within system, since celestials will orbit within
 	// system as game progresses
 	double orbit_radius;
+	double orbit_progression;
+	// time to complete orbit in seconds
+	double orbit_speed;
 };
 
 struct Galaxy {
