@@ -26,6 +26,23 @@ void SceneManager::update(entt::registry& registry, float dt) {
 			}
 		}
 	}
+
+	// clicking on a celestial dot in system map transfers to that celestial
+	{
+		auto view = registry.view<Game::Component::SystemMapCelestial, Button, Renderable>();
+
+		for (auto entity : view) {
+			auto& button = view.get<Button>(entity);
+			auto& celestial = view.get<Game::Component::SystemMapCelestial>(entity);
+
+			if (button.clicked) {
+				Log::info("Clicked system map dot (system_id=%d, celestial_id=%d)", celestial.system_id, celestial.celestial_id);
+
+				hide_system_map(registry);
+				show_celestial_map(registry, celestial.celestial_id);
+			}
+		}
+	}
 }
 
 void SceneManager::show_system_map(entt::registry& registry, Game::Component::System::ID system_id) {
@@ -64,7 +81,12 @@ void SceneManager::show_system_map(entt::registry& registry, Game::Component::Sy
 
 			{
 				Node dot = Game::Prefab::Celestials::galaxy_map_dot(registry, *ResourceManager::singleton);
-				dot.add_component<Game::Component::SystemMap>(system_id);
+				dot.add_component<Game::Component::SystemMapCelestial>(
+					Game::Component::SystemMapCelestial{
+						.system_id = celestial.system_id,
+						.celestial_id = celestial.id
+					}
+				);
 				auto& transform = dot.get_component<Transform>();
 				transform.position = glm::vec3(celestial.orbit_radius / 2.0f, 0.0f, 0.0f);
 				transform.dirty = true;
@@ -77,6 +99,13 @@ void SceneManager::show_system_map(entt::registry& registry, Game::Component::Sy
 void SceneManager::hide_system_map(entt::registry& registry) {
 	{
 		auto view = registry.view<Game::Component::SystemMap>();
+
+		for (auto entity : view) {
+			registry.destroy(entity);
+		}
+	}
+	{
+		auto view = registry.view<Game::Component::SystemMapCelestial>();
 
 		for (auto entity : view) {
 			registry.destroy(entity);
@@ -124,13 +153,18 @@ void SceneManager::hide_galaxy_map(entt::registry& registry) {
 }
 
 void SceneManager::show_celestial_map(entt::registry& registry, Game::Component::Celestial::ID celestial_id) {
+	Node celestial = Game::Prefab::Celestials::eden(registry, *ResourceManager::singleton);
 
+	celestial.add_component<Game::Component::CelestialMap>(celestial_id);
 }
 
 void SceneManager::hide_celestial_map(entt::registry& registry) {
 	{
-		auto view = registry.view<Game::Component::Celestial>();
+		auto view = registry.view<Game::Component::CelestialMap>();
 
+		for (auto entity : view) {
+			registry.destroy(entity);
+		}
 	}
 }
 

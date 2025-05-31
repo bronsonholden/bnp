@@ -24,7 +24,11 @@ struct GalaxyMapSystem {
 // component for celestials displayed on the system map
 struct SystemMapCelestial {
 	System::ID system_id;
-	int celestial_id;
+	Celestial::ID celestial_id;
+};
+
+struct CelestialMap {
+	Celestial::ID celestial_id;
 };
 
 }
