@@ -7,6 +7,7 @@ namespace Game {
 namespace Prefab {
 
 // todo: maybe convert model into a single entity with vectors/maps for systems and celestials
+// todo: add way to save/load from file(s)
 void Galaxy::model(entt::registry& registry) {
 	Node galaxy(registry);
 	galaxy.add_component<Game::Component::Galaxy>(
