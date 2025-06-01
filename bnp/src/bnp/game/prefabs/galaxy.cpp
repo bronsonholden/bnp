@@ -48,6 +48,10 @@ void Galaxy::model(entt::registry& registry) {
 			.coast_color = glm::vec3(0.15f, 0.2f, 0.5f),
 			.mainland_color = glm::vec3(0.1f, 0.35f, 0.1f),
 			.mountain_color = glm::vec3(0.3f, 0.36f, 0.2f),
+			.cloud_color = glm::vec3(0.9f),
+			.ice_cap_color = glm::vec3(1.0f),
+			.crater_color = glm::vec3(0.15f, 0.4f, 0.15f),
+			.crater_rim_color = glm::vec3(0.085f, 0.31f, 0.09f),
 			.cloud_depth = -0.125f
 		}
 	);
@@ -76,12 +80,18 @@ void Galaxy::model(entt::registry& registry) {
 			.coast_color = glm::vec3(0.25f, 0.16f, 0.23f),
 			.mainland_color = glm::vec3(0.3f, 0.25f, 0.18f),
 			.mountain_color = glm::vec3(0.42f, 0.29f, 0.22f),
+			.cloud_color = glm::vec3(0.9f),
+			.ice_cap_color = glm::vec3(1.0f),
+			.crater_color = glm::vec3(0.38f, 0.27f, 0.19f),
+			.crater_rim_color = glm::vec3(0.27f, 0.21f, 0.19f),
 			.cloud_depth = -100.0f,
 			.cloud_radius = 5.0f,
 			.cloud_radius_equator_exp = 0.4f,
 			.cloud_banding_equator_exp = 1.7f,
 			.crater_step = 1000.0f,
-			.num_craters = 12
+			.num_craters = 12,
+			.ice_cap_min = 2.0f,
+			.ice_cap_max = 2.0f
 		}
 	);
 }

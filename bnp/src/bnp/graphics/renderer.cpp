@@ -144,12 +144,18 @@ void Renderer::render_planet_2d(const Camera& camera, const Planet2D& planet_2d,
 	GLuint coast_color_loc = glGetUniformLocation(material.shader_id, "coast_color");
 	GLuint mainland_color_loc = glGetUniformLocation(material.shader_id, "mainland_color");
 	GLuint mountain_color_loc = glGetUniformLocation(material.shader_id, "mountain_color");
+	GLuint cloud_color_loc = glGetUniformLocation(material.shader_id, "cloud_color");
+	GLuint ice_cap_color_loc = glGetUniformLocation(material.shader_id, "ice_cap_color");
+	GLuint crater_color_loc = glGetUniformLocation(material.shader_id, "crater_color");
+	GLuint crater_rim_color_loc = glGetUniformLocation(material.shader_id, "crater_rim_color");
 	GLuint cloud_depth_loc = glGetUniformLocation(material.shader_id, "cloud_depth");
 	GLuint cloud_radius_loc = glGetUniformLocation(material.shader_id, "cloud_radius");
 	GLuint cloud_radius_equator_exp_loc = glGetUniformLocation(material.shader_id, "cloud_radius_equator_exp");
 	GLuint cloud_banding_equator_exp_loc = glGetUniformLocation(material.shader_id, "cloud_banding_equator_exp");
 	GLuint crater_step_loc = glGetUniformLocation(material.shader_id, "crater_step");
 	GLuint num_craters_loc = glGetUniformLocation(material.shader_id, "num_craters");
+	GLuint ice_cap_min_loc = glGetUniformLocation(material.shader_id, "ice_cap_min");
+	GLuint ice_cap_max_loc = glGetUniformLocation(material.shader_id, "ice_cap_max");
 
 	glUniformMatrix4fv(model_loc, 1, GL_FALSE, &transform[0][0]);
 	glUniformMatrix4fv(view_loc, 1, GL_FALSE, &view[0][0]);
@@ -167,12 +173,18 @@ void Renderer::render_planet_2d(const Camera& camera, const Planet2D& planet_2d,
 	glUniform3f(coast_color_loc, planet_2d.coast_color.x, planet_2d.coast_color.y, planet_2d.coast_color.z);
 	glUniform3f(mainland_color_loc, planet_2d.mainland_color.x, planet_2d.mainland_color.y, planet_2d.mainland_color.z);
 	glUniform3f(mountain_color_loc, planet_2d.mountain_color.x, planet_2d.mountain_color.y, planet_2d.mountain_color.z);
+	glUniform3f(cloud_color_loc, planet_2d.cloud_color.x, planet_2d.cloud_color.y, planet_2d.cloud_color.z);
+	glUniform3f(ice_cap_color_loc, planet_2d.ice_cap_color.x, planet_2d.ice_cap_color.y, planet_2d.ice_cap_color.z);
+	glUniform3f(crater_color_loc, planet_2d.crater_color.x, planet_2d.crater_color.y, planet_2d.crater_color.z);
+	glUniform3f(crater_rim_color_loc, planet_2d.crater_rim_color.x, planet_2d.crater_rim_color.y, planet_2d.crater_rim_color.z);
 	glUniform1f(cloud_depth_loc, planet_2d.cloud_depth);
 	glUniform1f(cloud_radius_loc, planet_2d.cloud_radius);
 	glUniform1f(cloud_radius_equator_exp_loc, planet_2d.cloud_radius_equator_exp);
 	glUniform1f(cloud_banding_equator_exp_loc, planet_2d.cloud_banding_equator_exp);
 	glUniform1f(crater_step_loc, planet_2d.crater_step);
 	glUniform1i(num_craters_loc, planet_2d.num_craters);
+	glUniform1f(ice_cap_min_loc, planet_2d.ice_cap_min);
+	glUniform1f(ice_cap_max_loc, planet_2d.ice_cap_max);
 
 	glBindVertexArray(mesh.va_id);
 

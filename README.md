@@ -53,6 +53,20 @@ Discovering new worlds is part of the adventure, and can open up many new opport
 
 ## Brainstorming
 
+### Celestial traits
+
+These traits affect types of resource acquisition (e.g. robots or spacesuits required for extraction on planets
+with no atmosphere). Others affect the efficiency, e.g. low gravity reduces fuel costs for transport but requires
+workers exercise and undergo physical therapy to maintain health.
+
+* Atmosphere
+* Magnetosphere
+* Flora
+* Fauna
+* Gravity
+* Weather
+* Toxicity
+
 ### Interstellar Freight
 
 * Various payment strategies to help with currency management: on-acquisition, on-delivery, in-transit

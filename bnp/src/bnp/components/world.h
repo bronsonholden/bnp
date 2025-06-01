@@ -28,6 +28,10 @@ struct Planet2D {
 	glm::vec3 coast_color;
 	glm::vec3 mainland_color;
 	glm::vec3 mountain_color;
+	glm::vec3 cloud_color;
+	glm::vec3 ice_cap_color;
+	glm::vec3 crater_color;
+	glm::vec3 crater_rim_color;
 
 	// affects thickness of clouds
 	float cloud_depth = -0.125f;
@@ -44,6 +48,10 @@ struct Planet2D {
 	// how far to step when sampling for crater axis values
 	float crater_step = 1000.0f;
 	int num_craters = 0;
+
+	// dot product min/max of spherical coord and axis to show ice cap
+	float ice_cap_min = 0.8f;
+	float ice_cap_max = 1.0f;
 };
 
 // Attach to an entity with a Transform to be tracked with a

@@ -17,6 +17,10 @@ uniform vec3 water_color;
 uniform vec3 coast_color;
 uniform vec3 mainland_color;
 uniform vec3 mountain_color;
+uniform vec3 cloud_color;
+uniform vec3 ice_cap_color;
+uniform vec3 crater_color;
+uniform vec3 crater_rim_color;
 
 uniform float cloud_depth;
 uniform float cloud_banding_equator_exp;
@@ -25,6 +29,9 @@ uniform float cloud_radius_equator_exp;
 
 uniform float crater_step;
 uniform int num_craters;
+
+uniform float ice_cap_min;
+uniform float ice_cap_max;
 
 // Classic Perlin 3D Noise
 // by Stefan Gustavson (https://github.com/stegu/webgl-noise)
@@ -281,9 +288,9 @@ vec3 surface_color(vec3 sphere_coord) {
     }
 
     if (surface_noise_value <= -200) {
-        color = vec3(0.28, 0.22, 0.223);
+        color = crater_rim_color;
     } else if (surface_noise_value <= -100) {
-        color = mountain_color;
+        color = crater_color;
     } else if (surface_noise_value < water_depth) {
         color = water_color;
     } else if (surface_noise_value - water_depth < coast_depth) {
@@ -295,11 +302,13 @@ vec3 surface_color(vec3 sphere_coord) {
     }
 
     // ice caps
-    float cap_shimmer = abs(surface_noise_value * 0.15f);
+    float cap_shimmer = surface_noise_value * 0.15;
     float equator_dist = abs(dot(normalize(rotated_coord), normalize(axis)));
-    if (equator_dist > clamp(0.9f - sin(cap_shimmer), 0.75, 1.0f))
+    // shimmer away from equator only
+    equator_dist += cap_shimmer * equator_dist;
+    if (equator_dist >= ice_cap_min && equator_dist <= ice_cap_max)
     {
-        color = vec3(0.9f, 0.9f, 1.0f) + vec3(0, 0, cap_shimmer);
+        color = ice_cap_color + vec3(0, 0, cap_shimmer);
     }
 
     return color;
@@ -334,7 +343,7 @@ vec3 atmosphere_color(vec3 sphere_coord) {
 
     // check below value so clouds (mostly) form over water
     if (atmosphere_noise_value < cloud_depth) {
-        return vec3(1.0f);
+        return cloud_color;
     }
 
     return vec3(0.0f);
