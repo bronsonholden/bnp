@@ -279,15 +279,20 @@ vec3 surface_color(vec3 sphere_coord) {
         float crater_max = 0.99999;
         float dot_min = pow((radius_scale * (crater_max - crater_min)) + crater_min, 8.0);
 
-        float crater_location = pow(dot(normalize(crater_coord), normalize(rotated_coord)), 5.0);
-        if (crater_location > dot_min) {
+        float dot_prod = dot(normalize(crater_coord), normalize(rotated_coord));
+        float crater_location = pow(dot_prod, 5.0);
+        if (dot_prod > 0.9995) {
+            surface_noise_value = -300;
+        } else if (crater_location > dot_min) {
             surface_noise_value = -100;
         } else if (crater_location > dot_min - 0.006) {
             surface_noise_value = -200;
         }
     }
 
-    if (surface_noise_value <= -200) {
+    if (surface_noise_value <= -300) {
+        color = mix(crater_rim_color, crater_color, 0.88);
+    } else if (surface_noise_value <= -200) {
         color = crater_rim_color;
     } else if (surface_noise_value <= -100) {
         color = crater_color;
