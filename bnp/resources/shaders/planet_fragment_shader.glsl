@@ -364,5 +364,5 @@ void main() {
 
     vec3 color = surface_color + atmosphere_color;
 
-    FragColor = vec4(brightness * color, 1.0f);
+    FragColor = vec4(brightness * clamp(color, 0.0, 1.0), 1.0f);
 }
