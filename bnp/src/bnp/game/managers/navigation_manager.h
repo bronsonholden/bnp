@@ -5,11 +5,13 @@
 #include <entt/entt.hpp>
 
 namespace bnp {
+namespace Game {
+namespace Manager {
 
-// manages which entities are visible via the `Renderable` tag
-class SceneManager {
+// manages entities related to navigation (galaxy map, system map, etc.)
+class NavigationManager {
 public:
-	SceneManager() = default;
+	NavigationManager() = default;
 
 	void update(entt::registry& registry, float dt);
 
@@ -19,6 +21,11 @@ public:
 	void hide_system_map(entt::registry& registry);
 	void show_celestial_map(entt::registry& registry, Game::Component::Celestial::ID celestial_id);
 	void hide_celestial_map(entt::registry& registry);
+
+	// update the sprite layer of galaxy/system map dots (visited, unvisited, present)
+	void update_map_dot_layers(entt::registry& registry);
 };
 
+}
+}
 }

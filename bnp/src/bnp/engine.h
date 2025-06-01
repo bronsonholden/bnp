@@ -23,7 +23,7 @@
 #include <bnp/managers/planet_2d_manager.h>
 #include <bnp/managers/ui_manager.h>
 
-#include <bnp/game/managers/scene_manager.h>
+#include <bnp/game/managers/navigation_manager.h>
 
 #include <entt/entt.hpp>
 
@@ -62,7 +62,7 @@ protected:
 	Planet2DManager planet_2d_manager;
 	UIManager ui_manager;
 
-	SceneManager scene_manager;
+	Game::Manager::NavigationManager navigation_manager;
 
 	Camera camera;
 

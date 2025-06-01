@@ -1,40 +1,19 @@
 #include <bnp/core/logger.hpp>
 #include <bnp/components/graphics.h>
+#include <bnp/components/world.h>
 #include <bnp/components/ui.h>
-#include <bnp/game/managers/scene_manager.h>
+#include <bnp/game/managers/navigation_manager.h>
 #include <bnp/game/components/universe.h>
 #include <bnp/game/components/navigation.h>
 #include <bnp/game/components/fleet.h>
 #include <bnp/game/prefabs/celestials.h>
 
 namespace bnp {
+namespace Game {
+namespace Manager {
 
-void SceneManager::update(entt::registry& registry, float dt) {
-	{
-		auto capital_ship_view = registry.view<Game::Component::CapitalShip>();
-		entt::entity capital_ship_entity = capital_ship_view.front();
-		if (capital_ship_entity != entt::null) {
-			auto& capital_ship = capital_ship_view.get<Game::Component::CapitalShip>(capital_ship_entity);
-			auto view = registry.view<Game::Component::GalaxyMapSystem, Sprite>();
-
-			for (auto entity : view) {
-				auto& system = view.get<Game::Component::GalaxyMapSystem>(entity);
-				auto& sprite = view.get<Sprite>(entity);
-
-				if (system.system_id == capital_ship.system_id) {
-					for (auto& layer : sprite.layers) {
-						if (layer.name == "Present") {
-							layer.visible = true;
-						}
-						else {
-							layer.visible = false;
-						}
-					}
-				}
-			}
-		}
-	}
-
+void NavigationManager::update(entt::registry& registry, float dt) {
+	update_map_dot_layers(registry);
 
 	// clicking on system dot in galaxy map transfers to that system
 	{
@@ -72,7 +51,55 @@ void SceneManager::update(entt::registry& registry, float dt) {
 	}
 }
 
-void SceneManager::show_system_map(entt::registry& registry, Game::Component::System::ID system_id) {
+void NavigationManager::update_map_dot_layers(entt::registry& registry) {
+	auto capital_ship_view = registry.view<Game::Component::CapitalShip>();
+	entt::entity capital_ship_entity = capital_ship_view.front();
+
+	if (capital_ship_entity == entt::null) return;
+	auto& capital_ship = capital_ship_view.get<Game::Component::CapitalShip>(capital_ship_entity);
+
+	{
+		auto view = registry.view<Game::Component::GalaxyMapSystem, Sprite>();
+
+		for (auto entity : view) {
+			auto& system = view.get<Game::Component::GalaxyMapSystem>(entity);
+			auto& sprite = view.get<Sprite>(entity);
+
+			if (system.system_id == capital_ship.system_id) {
+				for (auto& layer : sprite.layers) {
+					if (layer.name == "Present") {
+						layer.visible = true;
+					}
+					else {
+						layer.visible = false;
+					}
+				}
+			}
+		}
+	}
+
+	{
+		auto view = registry.view<Game::Component::SystemMapCelestial, Sprite>();
+
+		for (auto entity : view) {
+			auto& system = view.get<Game::Component::SystemMapCelestial>(entity);
+			auto& sprite = view.get<Sprite>(entity);
+
+			if (system.celestial_id == capital_ship.celestial_id) {
+				for (auto& layer : sprite.layers) {
+					if (layer.name == "Present") {
+						layer.visible = true;
+					}
+					else {
+						layer.visible = false;
+					}
+				}
+			}
+		}
+	}
+}
+
+void NavigationManager::show_system_map(entt::registry& registry, Game::Component::System::ID system_id) {
 	auto view = registry.view<Game::Component::System>();
 	entt::entity system_entity = entt::null;
 
@@ -123,7 +150,7 @@ void SceneManager::show_system_map(entt::registry& registry, Game::Component::Sy
 	}
 }
 
-void SceneManager::hide_system_map(entt::registry& registry) {
+void NavigationManager::hide_system_map(entt::registry& registry) {
 	{
 		auto view = registry.view<Game::Component::SystemMap>();
 
@@ -140,7 +167,7 @@ void SceneManager::hide_system_map(entt::registry& registry) {
 	}
 }
 
-void SceneManager::show_galaxy_map(entt::registry& registry) {
+void NavigationManager::show_galaxy_map(entt::registry& registry) {
 	Game::Prefab::Celestials::galaxy(registry, *ResourceManager::singleton);
 
 	{
@@ -161,7 +188,7 @@ void SceneManager::show_galaxy_map(entt::registry& registry) {
 	}
 }
 
-void SceneManager::hide_galaxy_map(entt::registry& registry) {
+void NavigationManager::hide_galaxy_map(entt::registry& registry) {
 	{
 		auto view = registry.view<Game::Component::GalaxyMap>();
 
@@ -180,13 +207,35 @@ void SceneManager::hide_galaxy_map(entt::registry& registry) {
 }
 
 // todo: for celestials with moons, render orbit & dots and a smaller version of the celestial at the center
-void SceneManager::show_celestial_map(entt::registry& registry, Game::Component::Celestial::ID celestial_id) {
-	Node celestial = Game::Prefab::Celestials::eden(registry, *ResourceManager::singleton);
+void NavigationManager::show_celestial_map(entt::registry& registry, Game::Component::Celestial::ID celestial_id) {
+	entt::entity celestial_entity = entt::null;
 
+	{
+		auto view = registry.view<Game::Component::Celestial, Planet2D>();
+
+		for (auto entity : view) {
+			auto& celestial = view.get<Game::Component::Celestial>(entity);
+
+			if (celestial.id == celestial_id) {
+				celestial_entity = entity;
+				break;
+			}
+		}
+	}
+
+	auto& planet_2d = registry.get<Planet2D>(celestial_entity);
+
+	if (celestial_entity == entt::null) {
+		Log::error("No celestial found (clestial_id=%d)", celestial_id);
+		return;
+	}
+
+	Node celestial = Game::Prefab::Celestials::celestial(registry, *ResourceManager::singleton);
 	celestial.add_component<Game::Component::CelestialMap>(celestial_id);
+	celestial.add_component<Planet2D>(planet_2d);
 }
 
-void SceneManager::hide_celestial_map(entt::registry& registry) {
+void NavigationManager::hide_celestial_map(entt::registry& registry) {
 	{
 		auto view = registry.view<Game::Component::CelestialMap>();
 
@@ -196,4 +245,6 @@ void SceneManager::hide_celestial_map(entt::registry& registry) {
 	}
 }
 
+}
+}
 }

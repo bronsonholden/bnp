@@ -138,7 +138,7 @@ void Engine::run() {
 	Game::Prefab::Galaxy::model(registry);
 	//Node orbit = Game::Prefab::Celestials::celestial_orbit(registry, resource_manager);
 
-	scene_manager.show_galaxy_map(registry);
+	navigation_manager.show_galaxy_map(registry);
 
 	Node capital_ship(registry);
 
@@ -273,7 +273,7 @@ void Engine::update(float dt) {
 	//cout << "fps: " << std::to_string(1.0f / dt) << endl;
 
 	// game managers
-	scene_manager.update(registry, dt);
+	navigation_manager.update(registry, dt);
 
 	// manager updates
 	planet_2d_manager.update(registry, dt);
