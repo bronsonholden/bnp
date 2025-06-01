@@ -214,21 +214,32 @@ void Engine::render() {
 
 	window.clear();
 
-	renderer.obstacle_fb.bind();
-	renderer.obstacle_fb.clear();
-	render_manager.render_physics_body_2ds(registry, renderer, camera);
-	renderer.obstacle_fb.unbind();
+	renderer.front_fb.bind();
+	renderer.front_fb.clear();
 
 	renderer.upscale_fb.bind();
 	renderer.upscale_fb.clear();
 	render_manager.render_planet_2ds(registry, renderer, camera);
+	renderer.upscale_fb.unbind();
+	renderer.front_fb.bind();
+	render_manager.render_fullscreen_quad(renderer, renderer.upscale_fb);
+
+	renderer.upscale_fb.bind();
+	renderer.upscale_fb.clear();
 	render_manager.render_galaxy_2ds(registry, renderer, camera);
+	renderer.upscale_fb.unbind();
+	renderer.front_fb.bind();
+	render_manager.render_fullscreen_quad(renderer, renderer.upscale_fb);
+
+	renderer.upscale_fb.bind();
+	renderer.upscale_fb.clear();
 	render_manager.render_primitives(registry, renderer, camera);
 	renderer.upscale_fb.unbind();
+	renderer.front_fb.bind();
+	render_manager.render_fullscreen_quad(renderer, renderer.upscale_fb);
+	renderer.front_fb.unbind();
 
 	renderer.front_fb.bind();
-	renderer.front_fb.clear();
-	render_manager.render_fullscreen_quad(renderer, renderer.upscale_fb);
 	render_manager.render_sprites(registry, renderer, camera);
 	renderer.front_fb.unbind();
 
