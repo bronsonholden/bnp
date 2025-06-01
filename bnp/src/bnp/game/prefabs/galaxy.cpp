@@ -50,6 +50,39 @@ void Galaxy::model(entt::registry& registry) {
 			.cloud_depth = -0.125f
 		}
 	);
+
+	Node maltonna(registry);
+	maltonna.add_component<Game::Component::Celestial>(
+		Game::Component::Celestial{
+			.id = 2,
+			.system_id = 1,
+			.name = "Maltonna",
+			.orbit_radius = 3.0
+		}
+	);
+	maltonna.add_component<Planet2D>(
+		Planet2D{
+			.time = 0.0f,
+			.rotation_speed = 0.035f,
+			.noise_radius = 6.345f,
+			.noise_seed = 23.77f,
+			.axis = glm::vec3(0.4f, 1.0f, 0.3f),
+			.sun_direction = glm::vec3(0.4f, 0.6f, 2.1f),
+			.water_depth = -0.3f,
+			.coast_depth = 0.07f,
+			.mainland_depth = 0.63f,
+			.water_color = glm::vec3(0.34f, 0.19f, 0.16f),
+			.coast_color = glm::vec3(0.25f, 0.16f, 0.23f),
+			.mainland_color = glm::vec3(0.3f, 0.25f, 0.18f),
+			.mountain_color = glm::vec3(0.42f, 0.29f, 0.22f),
+			.cloud_depth = -100.0f,
+			.cloud_radius = 5.0f,
+			.cloud_radius_equator_exp = 0.4f,
+			.cloud_banding_equator_exp = 1.7f,
+			.crater_step = 1000.0f,
+			.num_craters = 12
+		}
+	);
 }
 
 }

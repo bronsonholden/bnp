@@ -283,7 +283,7 @@ vec3 surface_color(vec3 sphere_coord) {
     if (surface_noise_value <= -200) {
         color = vec3(0.28, 0.22, 0.223);
     } else if (surface_noise_value <= -100) {
-        color = vec3(0.319, 0.244, 0.241);
+        color = mountain_color;
     } else if (surface_noise_value < water_depth) {
         color = water_color;
     } else if (surface_noise_value - water_depth < coast_depth) {
