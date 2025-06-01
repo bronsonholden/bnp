@@ -1,11 +1,15 @@
 #pragma once
 
+#include <glm/glm.hpp>
 #include <bitsery/bitsery.h>
 #include <string>
 
 namespace bnp {
 namespace Game {
 namespace Component {
+
+// 1 second in game == 1 hour simulation time
+constexpr double UNIVERSAL_TIME_SCALE = 3600.0;
 
 struct System {
 	typedef int ID;
@@ -28,8 +32,8 @@ struct Celestial {
 	// system as game progresses
 	double orbit_radius;
 	double orbit_progression;
-	// time to complete orbit in seconds
-	double orbit_speed;
+	// universal-time to complete orbit
+	double orbit_duration;
 };
 
 struct Galaxy {

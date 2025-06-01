@@ -2,6 +2,8 @@
 #include <bnp/game/prefabs/galaxy.h>
 #include <bnp/game/components/universe.h>
 
+#include <numbers>
+
 namespace bnp {
 namespace Game {
 namespace Prefab {
@@ -30,7 +32,10 @@ void Galaxy::model(entt::registry& registry) {
 			.id = 1,
 			.system_id = 1,
 			.name = "Eden",
-			.orbit_radius = 2.0
+			.orbit_radius = 1.7,
+			.orbit_progression = 0.21 * std::numbers::pi,
+			// 288 day orbit
+			.orbit_duration = (288.0 * 24.0 * 3600.0)
 		}
 	);
 	eden.add_component<Planet2D>(
@@ -62,7 +67,9 @@ void Galaxy::model(entt::registry& registry) {
 			.id = 2,
 			.system_id = 1,
 			.name = "Maltonna",
-			.orbit_radius = 3.0
+			.orbit_radius = 1.2,
+			.orbit_progression = 1.8 * 3.1415,
+			.orbit_duration = 112.0 * 24.0 * 3600.0
 		}
 	);
 	maltonna.add_component<Planet2D>(

@@ -15,6 +15,34 @@ namespace Manager {
 void NavigationManager::update(entt::registry& registry, float dt) {
 	update_map_dot_layers(registry);
 
+	// update celestial dots along their orbit
+	{
+		auto view = registry.view<Game::Component::SystemMapCelestial, Transform>();
+		auto celestials = registry.view<Game::Component::Celestial>();
+
+		for (auto entity : view) {
+			auto& map_celestial = view.get<Game::Component::SystemMapCelestial>(entity);
+			Game::Component::Celestial::ID celestial_id = map_celestial.celestial_id;
+
+			// check model component, update transform of dot
+			for (auto celestial_entity : celestials) {
+				auto& celestial = celestials.get<Game::Component::Celestial>(celestial_entity);
+
+				if (celestial.id == celestial_id) {
+					registry.patch<Transform>(entity, [&](Transform& t) {
+						t.position = glm::vec3(
+							std::cos(celestial.orbit_progression) * celestial.orbit_radius,
+							std::sin(celestial.orbit_progression) * celestial.orbit_radius,
+							0.0f
+						);
+						t.dirty = true;
+						});
+					break;
+				}
+			}
+		}
+	}
+
 	// clicking on system dot in galaxy map transfers to that system
 	{
 		auto view = registry.view<Game::Component::GalaxyMapSystem, Button, Renderable>();
@@ -129,7 +157,7 @@ void NavigationManager::show_system_map(entt::registry& registry, Game::Componen
 				orbit.add_component<Game::Component::SystemMap>(system_id);
 				auto& transform = orbit.get_component<Transform>();
 				transform.position = glm::vec3(0.0f);
-				transform.scale = glm::vec3(celestial.orbit_radius, celestial.orbit_radius, 1.0f);
+				transform.scale = glm::vec3(celestial.orbit_radius * 2.0f, celestial.orbit_radius * 2.0f, 1.0f);
 				transform.dirty = true;
 			}
 
@@ -141,9 +169,6 @@ void NavigationManager::show_system_map(entt::registry& registry, Game::Componen
 						.celestial_id = celestial.id
 					}
 				);
-				auto& transform = dot.get_component<Transform>();
-				transform.position = glm::vec3(celestial.orbit_radius / 2.0f, 0.0f, 0.0f);
-				transform.dirty = true;
 			}
 
 		}

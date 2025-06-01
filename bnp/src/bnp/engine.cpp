@@ -174,6 +174,7 @@ void Engine::run() {
 void Engine::update(float dt) {
 	// game-specific managers
 	navigation_manager.update(registry, dt);
+	universe_manager.update(registry, dt);
 
 	// manager updates
 	planet_2d_manager.update(registry, dt);

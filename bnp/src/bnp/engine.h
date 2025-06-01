@@ -30,6 +30,7 @@
 #include <bnp/ui/render_manager_inspector.h>
 
 #include <bnp/game/managers/navigation_manager.h>
+#include <bnp/game/managers/universe_manager.h>
 
 #include <entt/entt.hpp>
 
@@ -69,6 +70,7 @@ protected:
 	UIManager ui_manager;
 
 	Game::Manager::NavigationManager navigation_manager;
+	Game::Manager::UniverseManager universe_manager;
 
 	// editor stuff
 	FileBrowser file_browser;
