@@ -45,20 +45,6 @@
 #include <iostream>
 using namespace std;
 
-void GLAPIENTRY
-MessageCallback(GLenum source,
-	GLenum type,
-	GLuint id,
-	GLenum severity,
-	GLsizei length,
-	const GLchar* message,
-	const void* userParam)
-{
-	fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-		(type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
-		type, severity, message);
-}
-
 namespace bnp {
 
 Engine::Engine()
@@ -75,9 +61,6 @@ Engine::Engine()
 	renderer.initialize(window.get_width(), window.get_height());
 
 	archive_manager.load();
-
-	//glEnable(GL_DEBUG_OUTPUT);
-	glDebugMessageCallback(MessageCallback, 0);
 
 	//const glm::vec4 clear_color = ColorHelper::hex_to_rgba("a3d9ff");
 	const glm::vec4 clear_color = glm::vec4(0, 0, 0, 1);
@@ -135,22 +118,9 @@ void Engine::run() {
 	FileBrowser file_browser;
 	SceneInspector scene_inspector(registry);
 
+	// game-specific code, need to move
 	Game::Prefab::Galaxy::model(registry);
-	//Node orbit = Game::Prefab::Celestials::celestial_orbit(registry, resource_manager);
-
 	navigation_manager.show_galaxy_map(registry);
-
-	Node capital_ship(registry);
-
-	capital_ship.add_component<Game::Component::CapitalShip>(1, 1);
-
-	//Node play_button = Prefab::UI::play_button(registry, resource_manager);
-
-	//squirrel.get_component<PhysicsBody2D>().body->SetTransform(b2Vec2(2.0f, 1.5f), 0);
-
-	std::filesystem::path root = PROJECT_ROOT;
-	root = root / "bnp";
-	//script_factory.load_from_file(squirrel, root / "resources/scripts/log_test.lua");
 
 	while (window.open) {
 		SDL_Event event;
@@ -270,9 +240,7 @@ void Engine::run() {
 }
 
 void Engine::update(float dt) {
-	//cout << "fps: " << std::to_string(1.0f / dt) << endl;
-
-	// game managers
+	// game-specific managers
 	navigation_manager.update(registry, dt);
 
 	// manager updates
@@ -331,8 +299,6 @@ void Engine::handle_mouse_button_event(SDL_Event& event) {
 		);
 
 		ui_manager.process_click(registry, click_world_pos);
-
-		Log::info("Clicked %.2f, %.2f", click_world_pos.x, click_world_pos.y);
 	}
 }
 }
