@@ -1,5 +1,6 @@
 #pragma once
 
+#include <bitsery/bitsery.h>
 #include <string>
 
 namespace bnp {
