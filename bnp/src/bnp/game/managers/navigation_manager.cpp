@@ -12,6 +12,9 @@ namespace bnp {
 namespace Game {
 namespace Manager {
 
+// todo: maybe when showing maps, just add the components necessary for rendering them the way we want to
+// instead of creating new entities? it is kind of nice to just destroy them when the map is removed
+
 void NavigationManager::update(entt::registry& registry, float dt) {
 	update_map_dot_layers(registry);
 
