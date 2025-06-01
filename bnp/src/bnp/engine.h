@@ -23,6 +23,12 @@
 #include <bnp/managers/planet_2d_manager.h>
 #include <bnp/managers/ui_manager.h>
 
+// editor UI stuff
+#include <bnp/ui/file_browser.h>
+#include <bnp/ui/scene_inspector.h>
+#include <bnp/ui/node_inspector.h>
+#include <bnp/ui/render_manager_inspector.h>
+
 #include <bnp/game/managers/navigation_manager.h>
 
 #include <entt/entt.hpp>
@@ -64,10 +70,15 @@ protected:
 
 	Game::Manager::NavigationManager navigation_manager;
 
+	// editor stuff
+	FileBrowser file_browser;
+	SceneInspector scene_inspector;
+
 	Camera camera;
 
 	void update(float dt);
 	void fixed_update();
+	void render();
 
 	void handle_window_event(SDL_Event& event);
 	void handle_mouse_button_event(SDL_Event& event);

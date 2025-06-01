@@ -16,10 +16,6 @@
 #include <bnp/serializers/scene.hpp>
 #include <bnp/serializers/graphics.hpp>
 #include <bnp/managers/archive_manager.h>
-#include <bnp/ui/file_browser.h>
-#include <bnp/ui/scene_inspector.h>
-#include <bnp/ui/node_inspector.h>
-#include <bnp/ui/render_manager_inspector.h>
 
 #include <bnp/behaviors/bee_behavior_planner.h>
 
@@ -52,7 +48,9 @@ Engine::Engine()
 	physics_manager(registry),
 	script_factory(resource_manager, physics_manager),
 	behavior_manager(),
-	world_2d_manager()
+	world_2d_manager(),
+	file_browser(),
+	scene_inspector(registry)
 {
 	registry.emplace<Global>(registry.create(), Global{
 		&physics_manager.get_world()
@@ -115,9 +113,6 @@ void Engine::run() {
 	ImGui_ImplSDL2_InitForOpenGL(window.get_sdl_window(), window.get_gl_context());
 	ImGui_ImplOpenGL3_Init();
 
-	FileBrowser file_browser;
-	SceneInspector scene_inspector(registry);
-
 	// game-specific code, need to move
 	Game::Prefab::Galaxy::model(registry);
 	navigation_manager.show_galaxy_map(registry);
@@ -172,70 +167,7 @@ void Engine::run() {
 			mouse_worldspace_pos
 		);
 
-		/*auto& rig = galaxy.get_component<Camera2DRig>();
-		glm::vec2 camera_position = rig.camera_worldspace_position;*/
-		glm::vec2 camera_position(0);
-		glm::vec2 pixel_space = glm::floor(camera_position * 64.0f);
-		glm::vec2 snap_position = pixel_space / 64.0f;
-
-		camera = Camera{
-			glm::vec3(snap_position, 0.0f),
-			glm::vec3(snap_position, 0.0f),
-			glm::vec3(0.0f, 1.0f, 0.0f),
-			glm::mat4(1.0)
-		};
-
-		configure_pixel_perfect_camera(camera, window.get_width(), window.get_height());
-
-		window.clear();
-
-		// rendering
-
-		renderer.obstacle_fb.bind();
-		renderer.obstacle_fb.clear();
-		render_manager.render_physics_body_2ds(registry, renderer, camera);
-		renderer.obstacle_fb.unbind();
-
-		renderer.upscale_fb.bind();
-		renderer.upscale_fb.clear();
-		render_manager.render_planet_2ds(registry, renderer, camera);
-		render_manager.render_galaxy_2ds(registry, renderer, camera);
-		render_manager.render_primitives(registry, renderer, camera);
-		renderer.upscale_fb.unbind();
-
-		renderer.front_fb.bind();
-		renderer.front_fb.clear();
-		render_manager.render_fullscreen_quad(renderer, renderer.upscale_fb);
-		render_manager.render_sprites(registry, renderer, camera);
-		renderer.front_fb.unbind();
-
-		render_manager.render_fullscreen_quad(renderer, renderer.front_fb);
-
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplSDL2_NewFrame(window.get_sdl_window());
-		ImGui::NewFrame();
-
-		//file_browser.render();
-		scene_inspector.render();
-
-		if (file_browser.has_selection()) {
-			std::string path = file_browser.get_selected_path();
-			ImGui::Text("Selected path: %s", path.c_str());
-		}
-
-		if (scene_inspector.get_inspected_entity()) {
-			Node node(registry, *scene_inspector.get_inspected_entity());
-			NodeInspector node_inspector(node);
-			node_inspector.render();
-		}
-
-		RenderManagerInspector render_manager_inspector(render_manager);
-		render_manager_inspector.render();
-
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-		window.swap();
+		render();
 	}
 }
 
@@ -262,6 +194,71 @@ void Engine::update(float dt) {
 		BeeBehaviorPlanner bbp;
 		bbp.update(registry, dt);
 	}
+}
+
+void Engine::render() {
+	/*auto& rig = galaxy.get_component<Camera2DRig>();
+	glm::vec2 camera_position = rig.camera_worldspace_position;*/
+	glm::vec2 camera_position(0);
+	glm::vec2 pixel_space = glm::floor(camera_position * 64.0f);
+	glm::vec2 snap_position = pixel_space / 64.0f;
+
+	camera = Camera{
+		glm::vec3(snap_position, 0.0f),
+		glm::vec3(snap_position, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f),
+		glm::mat4(1.0)
+	};
+
+	configure_pixel_perfect_camera(camera, window.get_width(), window.get_height());
+
+	window.clear();
+
+	renderer.obstacle_fb.bind();
+	renderer.obstacle_fb.clear();
+	render_manager.render_physics_body_2ds(registry, renderer, camera);
+	renderer.obstacle_fb.unbind();
+
+	renderer.upscale_fb.bind();
+	renderer.upscale_fb.clear();
+	render_manager.render_planet_2ds(registry, renderer, camera);
+	render_manager.render_galaxy_2ds(registry, renderer, camera);
+	render_manager.render_primitives(registry, renderer, camera);
+	renderer.upscale_fb.unbind();
+
+	renderer.front_fb.bind();
+	renderer.front_fb.clear();
+	render_manager.render_fullscreen_quad(renderer, renderer.upscale_fb);
+	render_manager.render_sprites(registry, renderer, camera);
+	renderer.front_fb.unbind();
+
+	render_manager.render_fullscreen_quad(renderer, renderer.front_fb);
+
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplSDL2_NewFrame(window.get_sdl_window());
+	ImGui::NewFrame();
+
+	//file_browser.render();
+	scene_inspector.render();
+
+	if (file_browser.has_selection()) {
+		std::string path = file_browser.get_selected_path();
+		ImGui::Text("Selected path: %s", path.c_str());
+	}
+
+	if (scene_inspector.get_inspected_entity()) {
+		Node node(registry, *scene_inspector.get_inspected_entity());
+		NodeInspector node_inspector(node);
+		node_inspector.render();
+	}
+
+	RenderManagerInspector render_manager_inspector(render_manager);
+	render_manager_inspector.render();
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	window.swap();
 }
 
 void Engine::fixed_update() {
