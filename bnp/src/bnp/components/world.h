@@ -12,8 +12,7 @@ struct Galaxy2D {
 
 // Properties for rendering a pixel-style 2D planet using a quad
 struct Planet2D {
-	float time;
-	float rotation_speed;
+	float rotation;
 	float noise_radius;
 	float noise_seed;
 	glm::vec3 axis;

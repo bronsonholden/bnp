@@ -19,6 +19,12 @@ void UniverseManager::update(entt::registry& registry, float dt) {
 				c.orbit_progression + static_cast<double>(dt) * progression_step * Game::Component::UNIVERSAL_TIME_SCALE,
 				std::numbers::pi * 2.0
 			);
+
+			double rotate_step = (2.0 * std::numbers::pi) / c.rotate_duration;
+			c.rotate_progression = std::fmod(
+				c.rotate_progression + static_cast<double>(dt) * rotate_step * Game::Component::UNIVERSAL_TIME_SCALE,
+				std::numbers::pi * 2.0
+			);
 			});
 	}
 }

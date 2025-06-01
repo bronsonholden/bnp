@@ -43,6 +43,33 @@ void NavigationManager::update(entt::registry& registry, float dt) {
 		}
 	}
 
+	// update rotate progress from model to renderables
+	{
+		// rendered entities
+		auto rendered = registry.view<Planet2D, Game::Component::CelestialMap, Renderable>();
+
+		// model entities
+		auto view = registry.view<Game::Component::Celestial, Planet2D>();
+
+		for (auto entity : view) {
+			auto& celestial = view.get<Game::Component::Celestial>(entity);
+			auto& planet = view.get<Planet2D>(entity);
+
+			for (auto rendered_entity : rendered) {
+				auto& map = rendered.get<Game::Component::CelestialMap>(rendered_entity);
+
+				if (map.celestial_id == celestial.id) {
+					auto& updated_planet = registry.emplace_or_replace<Planet2D>(rendered_entity, planet);
+
+					registry.patch<Planet2D>(rendered_entity, [&](Planet2D& p) {
+						p.rotation = celestial.rotate_progression;
+						});
+				}
+
+			}
+		}
+	}
+
 	// clicking on system dot in galaxy map transfers to that system
 	{
 		auto view = registry.view<Game::Component::GalaxyMapSystem, Button, Renderable>();

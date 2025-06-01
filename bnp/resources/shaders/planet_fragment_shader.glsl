@@ -3,8 +3,7 @@ out vec4 FragColor;
 
 in vec2 TexCoord;
 
-uniform float time;
-uniform float rotation_speed;
+uniform float rotation;
 uniform float noise_radius;
 uniform float noise_seed;
 uniform vec3 axis;
@@ -222,7 +221,7 @@ mat3 rotateAroundAxis(vec3 axis, float angle) {
     return cosAngle * mat3(1.0) + (1.0 - cosAngle) * axisOuterProduct + sinAngle * crossProd;
 }
 
-vec3 spherical_coord(vec2 texCoord, float time) {
+vec3 spherical_coord(vec2 texCoord, float rotation) {
     // Normalize texcoord to [-0.5, 0.5]
     vec2 centerTexCoord = texCoord - vec2(0.5f);
 
@@ -248,7 +247,7 @@ vec3 random_spherical_coord(vec3 sample_coord) {
 }
 
 vec3 surface_color(vec3 sphere_coord) {
-    float rotationAngle = time * rotation_speed; // todo: rotation speed
+    float rotationAngle = rotation;
     mat3 rotationMatrix = rotateAroundAxis(axis, rotationAngle);
 
     // Apply rotation
@@ -309,8 +308,8 @@ vec3 surface_color(vec3 sphere_coord) {
     // ice caps
     float cap_shimmer = surface_noise_value * 0.15;
     float equator_dist = abs(dot(normalize(rotated_coord), normalize(axis)));
-    // shimmer away from equator only
-    equator_dist += cap_shimmer * equator_dist;
+    // shimmer affects depth away from equator and poles
+    equator_dist += cap_shimmer * (1 - pow(2.0 * equator_dist - 1, 2.0));
     if (equator_dist >= ice_cap_min && equator_dist <= ice_cap_max)
     {
         color = ice_cap_color + vec3(0, 0, cap_shimmer);
@@ -320,7 +319,7 @@ vec3 surface_color(vec3 sphere_coord) {
 }
 
 vec3 atmosphere_color(vec3 sphere_coord) {
-    float rotationAngle = time * 0.9 * rotation_speed;
+    float rotationAngle = rotation; // todo: separate rotate progression for atmosphere?
     mat3 rotationMatrix = rotateAroundAxis(axis, rotationAngle);
 
     // Apply rotation
@@ -342,9 +341,9 @@ vec3 atmosphere_color(vec3 sphere_coord) {
     }
 
     float atmosphere_radius_factor = cloud_radius * radius_factor;
-    float atmosphere_noise_value = cnoise(vec4(atmosphere_coord * atmosphere_radius_factor, noise_seed + sin(time * 0.03)));
+    float atmosphere_noise_value = cnoise(vec4(atmosphere_coord * atmosphere_radius_factor, noise_seed + sin(rotation) + 3.0));
 
-    atmosphere_noise_value += cnoise(vec4(atmosphere_coord * atmosphere_radius_factor * 3.0, noise_seed + sin(time * 0.03)));
+    atmosphere_noise_value += cnoise(vec4(atmosphere_coord * atmosphere_radius_factor * 3.0, noise_seed + sin(rotation) + 8.5));
 
     // check below value so clouds (mostly) form over water
     if (atmosphere_noise_value < cloud_depth) {
@@ -356,10 +355,10 @@ vec3 atmosphere_color(vec3 sphere_coord) {
 
 void main() {
     float snap_interval = 0.02f;
-    vec3 coord = spherical_coord(TexCoord, time);
+    vec3 coord = spherical_coord(TexCoord, rotation);
     
-    // Rotation angle based on time (adjust rotation speed as needed)
-    float rotationAngle = time * rotation_speed;  // Adjust speed of rotation
+    // Rotation angle based on rotation (adjust rotation speed as needed)
+    float rotationAngle = rotation;  // Adjust speed of rotation
 
     // The circle is always centered at (0.5, 0.5) with a fixed radius of 0.5
     float dist = distance(TexCoord, vec2(0.5f, 0.5f));  // Distance from center of quad

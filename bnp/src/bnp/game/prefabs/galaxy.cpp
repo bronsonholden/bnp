@@ -34,14 +34,14 @@ void Galaxy::model(entt::registry& registry) {
 			.name = "Eden",
 			.orbit_radius = 1.7,
 			.orbit_progression = 0.21 * std::numbers::pi,
-			// 288 day orbit
-			.orbit_duration = (288.0 * 24.0 * 3600.0)
+			.orbit_duration = (288.0 * 24.0 * 3600.0), // 288 day orbit
+			.rotate_progression = 1.67 * std::numbers::pi,
+			.rotate_duration = 27.0 * 3600.0
 		}
 	);
 	eden.add_component<Planet2D>(
 		Planet2D{
-			.time = 0.0f,
-			.rotation_speed = 0.07f,
+			.rotation = 0.0f,
 			.noise_radius = 6.345f,
 			.noise_seed = 1.14f,
 			.axis = glm::vec3(0.4f, 1.0f, 0.3f),
@@ -57,7 +57,14 @@ void Galaxy::model(entt::registry& registry) {
 			.ice_cap_color = glm::vec3(1.0f),
 			.crater_color = glm::vec3(0.15f, 0.4f, 0.15f),
 			.crater_rim_color = glm::vec3(0.085f, 0.31f, 0.09f),
-			.cloud_depth = -0.125f
+			.cloud_depth = -0.125f,
+			.cloud_radius = 5.0f,
+			.cloud_radius_equator_exp = 0.4f,
+			.cloud_banding_equator_exp = 1.7f,
+			.crater_step = 1000.0f,
+			.num_craters = 0,
+			.ice_cap_min = 0.8f,
+			.ice_cap_max = 1.0f
 		}
 	);
 
@@ -68,14 +75,15 @@ void Galaxy::model(entt::registry& registry) {
 			.system_id = 1,
 			.name = "Maltonna",
 			.orbit_radius = 1.2,
-			.orbit_progression = 1.8 * 3.1415,
-			.orbit_duration = 112.0 * 24.0 * 3600.0
+			.orbit_progression = 1.8 * std::numbers::pi,
+			.orbit_duration = 112.0 * 24.0 * 3600.0,
+			.rotate_progression = 0.1 * std::numbers::pi,
+			.rotate_duration = 18.0 * 3600.0
 		}
 	);
 	maltonna.add_component<Planet2D>(
 		Planet2D{
-			.time = 0.0f,
-			.rotation_speed = 0.035f,
+			.rotation = 0.0f,
 			.noise_radius = 6.345f,
 			.noise_seed = 23.77f,
 			.axis = glm::vec3(-0.4f, 1.0f, 0.8f),

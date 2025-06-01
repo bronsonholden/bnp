@@ -32,8 +32,11 @@ struct Celestial {
 	// system as game progresses
 	double orbit_radius;
 	double orbit_progression;
-	// universal-time to complete orbit
+	// real-time to complete orbit
 	double orbit_duration;
+	double rotate_progression;
+	// real-time to complete rotation on axis
+	double rotate_duration;
 };
 
 struct Galaxy {
