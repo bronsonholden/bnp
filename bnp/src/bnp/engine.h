@@ -20,7 +20,6 @@
 #include <bnp/managers/world_2d_manager.h>
 #include <bnp/managers/camera_manager.h>
 #include <bnp/managers/controller_manager.h>
-#include <bnp/managers/planet_2d_manager.h>
 #include <bnp/managers/ui_manager.h>
 
 // editor UI stuff
@@ -66,7 +65,6 @@ protected:
 	World2DManager world_2d_manager;
 	CameraManager camera_manager;
 	ControllerManager controller_manager;
-	Planet2DManager planet_2d_manager;
 	UIManager ui_manager;
 
 	Game::Manager::NavigationManager navigation_manager;

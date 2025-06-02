@@ -177,7 +177,6 @@ void Engine::update(float dt) {
 	universe_manager.update(registry, dt);
 
 	// manager updates
-	planet_2d_manager.update(registry, dt);
 	controller_manager.update(registry, dt);
 	sprite_animation_manager.update(registry, dt);
 	motility_manager.update(registry, dt);
