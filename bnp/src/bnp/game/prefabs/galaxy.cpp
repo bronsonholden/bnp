@@ -1,4 +1,5 @@
 #include <bnp/components/world.h>
+#include <bnp/components/state.h>
 #include <bnp/game/prefabs/galaxy.h>
 #include <bnp/game/components/universe.h>
 
@@ -15,8 +16,10 @@ void Galaxy::model(entt::registry& registry) {
 	galaxy.add_component<Game::Component::Galaxy>(
 		100000.0
 	);
+	galaxy.add_component<CoreState>("universe/galaxy.bin");
 
 	Node blochfeld(registry);
+	blochfeld.add_component<CoreState>("universe/systems/blochfeld.bin");
 	blochfeld.add_component<Game::Component::System>(
 		Game::Component::System{
 			.id = 1,
@@ -27,6 +30,7 @@ void Galaxy::model(entt::registry& registry) {
 	);
 
 	Node eden(registry);
+	eden.add_component<CoreState>("universe/celestials/eden.bin");
 	eden.add_component<Game::Component::Celestial>(
 		Game::Component::Celestial{
 			.id = 1,
@@ -69,6 +73,7 @@ void Galaxy::model(entt::registry& registry) {
 	);
 
 	Node maltonna(registry);
+	maltonna.add_component<CoreState>("universe/celestials/maltonna.bin");
 	maltonna.add_component<Game::Component::Celestial>(
 		Game::Component::Celestial{
 			.id = 2,

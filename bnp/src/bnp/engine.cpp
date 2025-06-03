@@ -16,6 +16,8 @@
 #include <bnp/serializers/scene.hpp>
 #include <bnp/serializers/graphics.hpp>
 #include <bnp/managers/archive_manager.h>
+#include <bnp/helpers/filesystem_helper.h>
+#include <bnp/game/ui/core_state_inspector.h>
 
 #include <bnp/behaviors/bee_behavior_planner.h>
 
@@ -24,6 +26,7 @@
 #include <bnp/game/prefabs/ui.h>
 #include <bnp/game/prefabs/galaxy.h>
 #include <bnp/game/components/fleet.h>
+#include <bnp/game/ui/navigation_control.h>
 
 #include <vector>
 #include <string>
@@ -105,6 +108,9 @@ Engine::~Engine() {
 
 void Engine::run() {
 	const float fixed_dt = 1.0f / 60.0f;
+
+	Log::info_wide(L"Data directory: %s", data_dir().c_str());
+	Log::info_wide(L"Save directory: %s", save_dir().c_str());
 
 	time.start();
 
@@ -251,6 +257,9 @@ void Engine::render() {
 
 	//file_browser.render();
 	scene_inspector.render();
+
+	CoreStateInspector().render(registry);
+	Game::NavigationControl().render(registry);
 
 	if (file_browser.has_selection()) {
 		std::string path = file_browser.get_selected_path();
