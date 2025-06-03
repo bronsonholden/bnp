@@ -31,9 +31,11 @@ struct Celestial {
 	// worldspace positioning within system, since celestials will orbit within
 	// system as game progresses
 	double orbit_radius;
+	double initial_orbit_progression;
 	double orbit_progression;
 	// real-time to complete orbit
 	double orbit_duration;
+	double initial_rotate_progression;
 	double rotate_progression;
 	// real-time to complete rotation on axis
 	double rotate_duration;
