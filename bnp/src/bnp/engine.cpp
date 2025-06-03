@@ -17,7 +17,7 @@
 #include <bnp/serializers/graphics.hpp>
 #include <bnp/managers/archive_manager.h>
 #include <bnp/helpers/filesystem_helper.h>
-#include <bnp/game/ui/core_state_inspector.h>
+#include <bnp/game/ui/universe_editor.h>
 
 #include <bnp/behaviors/bee_behavior_planner.h>
 
@@ -258,8 +258,8 @@ void Engine::render() {
 	//file_browser.render();
 	scene_inspector.render();
 
-	CoreStateInspector().render(registry);
-	Game::NavigationControl().render(registry);
+	Game::UI::UniverseEditor().render(registry);
+	Game::UI::NavigationControl().render(registry);
 
 	if (file_browser.has_selection()) {
 		std::string path = file_browser.get_selected_path();

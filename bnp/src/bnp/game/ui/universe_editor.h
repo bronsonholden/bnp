@@ -3,11 +3,15 @@
 #include <entt/entt.hpp>
 
 namespace bnp {
+namespace Game {
+namespace UI {
 
-class CoreStateInspector {
+class UniverseEditor {
 public:
-	CoreStateInspector() = default;
+	UniverseEditor() = default;
 	void render(entt::registry& registry);
 };
 
+}
+}
 }

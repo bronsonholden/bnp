@@ -4,6 +4,7 @@
 
 namespace bnp {
 namespace Game {
+namespace UI {
 
 class NavigationControl {
 public:
@@ -11,5 +12,6 @@ public:
 	void render(entt::registry& registry);
 };
 
+}
 }
 }

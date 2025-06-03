@@ -6,6 +6,7 @@
 
 namespace bnp {
 namespace Game {
+namespace UI {
 
 void NavigationControl::render(entt::registry& registry) {
 	ImGui::Begin("Navigation Control");
@@ -20,5 +21,6 @@ void NavigationControl::render(entt::registry& registry) {
 	ImGui::End();
 }
 
+}
 }
 }
