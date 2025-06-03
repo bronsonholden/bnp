@@ -85,8 +85,6 @@ void deserialize_systems(entt::registry& registry) {
 void UniverseEditor::render(entt::registry& registry) {
 	ImGui::Begin("Universe Editor");
 
-	auto view = registry.view<Game::Component::CelestialMap>();
-
 	if (!registry.view<Game::Component::Galaxy>().size()) {
 		if (ImGui::Button("Load")) {
 			load_from_file(registry, data_dir() / "universe.bin");
@@ -100,6 +98,7 @@ void UniverseEditor::render(entt::registry& registry) {
 
 	ImGui::Separator();
 
+	auto view = registry.view<Game::Component::CelestialMap>();
 	if (view.size()) {
 		auto& celestial = view.get<Game::Component::CelestialMap>(view.front());
 		render_celestial_editor(registry, celestial.celestial_id);
