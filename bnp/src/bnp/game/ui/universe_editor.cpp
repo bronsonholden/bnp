@@ -98,6 +98,8 @@ void UniverseEditor::render(entt::registry& registry) {
 		}
 	}
 
+	ImGui::Separator();
+
 	if (view.size()) {
 		auto& celestial = view.get<Game::Component::CelestialMap>(view.front());
 		render_celestial_editor(registry, celestial.celestial_id);
