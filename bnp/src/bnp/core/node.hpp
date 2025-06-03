@@ -26,6 +26,11 @@ public:
 	}
 
 	template<typename T>
+	void add_component() {
+		registry.emplace<T>(entity);
+	}
+
+	template<typename T>
 	bool has_component() const {
 		return registry.all_of<T>(entity);
 	}
