@@ -50,7 +50,7 @@ Node Celestials::galaxy(entt::registry& registry, ResourceManager& resource_mana
 	node.add_component<Game::Component::GalaxyMap>(Game::Component::GalaxyMap{});
 
 	// for rendering
-	node.add_component<Galaxy2D>(Galaxy2D{});
+	node.add_component<Galaxy2D>();
 
 	node.add_component<Transform>(Transform{
 		glm::vec3(0, 0, 0),

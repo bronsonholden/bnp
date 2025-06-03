@@ -193,7 +193,7 @@ void Renderer::render_planet_2d(const Camera& camera, const Planet2D& planet_2d,
 	glDrawElements(GL_TRIANGLES, mesh.index_count, GL_UNSIGNED_INT, 0);
 }
 
-void Renderer::render_galaxy_2d(const Camera& camera, const Galaxy2D& planet_2d, const Mesh& mesh, const Material& material, const glm::mat4& transform) const {
+void Renderer::render_galaxy_2d(const Camera& camera, const Mesh& mesh, const Material& material, const glm::mat4& transform) const {
 	if (!material.shader_id) return;
 
 	glUseProgram(material.shader_id);

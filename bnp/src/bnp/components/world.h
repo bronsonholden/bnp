@@ -6,9 +6,7 @@
 
 namespace bnp {
 
-struct Galaxy2D {
-	float rotation_speed;
-};
+struct Galaxy2D {};
 
 // Properties for rendering a pixel-style 2D planet using a quad
 struct Planet2D {

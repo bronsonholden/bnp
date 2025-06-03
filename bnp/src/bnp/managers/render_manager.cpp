@@ -338,14 +338,13 @@ void RenderManager::render_galaxy_2ds(const entt::registry& registry, const Rend
 	auto view = registry.view<Material, Transform, Renderable, Galaxy2D>();
 
 	for (auto entity : view) {
-		auto& galaxy_2d = view.get<Galaxy2D>(entity);
 		auto& material = view.get<Material>(entity);
 		auto& transform = view.get<Transform>(entity);
 		auto& renderable = view.get<Renderable>(entity);
 
 		if (!renderable.value) continue;
 
-		renderer.render_galaxy_2d(camera, galaxy_2d, sprite_mesh, material, transform.world_transform);
+		renderer.render_galaxy_2d(camera, sprite_mesh, material, transform.world_transform);
 	}
 }
 
