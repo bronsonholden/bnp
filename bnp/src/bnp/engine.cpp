@@ -120,8 +120,8 @@ void Engine::run() {
 	ImGui_ImplOpenGL3_Init();
 
 	// game-specific code, need to move
-	Game::Prefab::Galaxy::model(registry);
-	navigation_manager.show_galaxy_map(registry);
+	//Game::Prefab::Galaxy::model(registry);
+	//navigation_manager.show_galaxy_map(registry);
 
 	while (window.open) {
 		SDL_Event event;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <entt/entt.hpp>
+#include <filesystem>
 
 namespace bnp {
 namespace Game {

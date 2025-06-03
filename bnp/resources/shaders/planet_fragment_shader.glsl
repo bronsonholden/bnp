@@ -375,7 +375,7 @@ void main() {
     // calculate brightness of fragment based on sun position
     float brightness = clamp(sqrt(10 * dot(coord, normalize(sun_direction))), 0.25f, 1.0f);
 
-    vec3 color = surface_color + atmosphere_color;
+    vec3 color = mix(surface_color, atmosphere_color, clamp(length(atmosphere_color) * 2.0, 0.0, 1.0));
 
     FragColor = vec4(brightness * clamp(color, 0.0, 1.0), 1.0f);
 }

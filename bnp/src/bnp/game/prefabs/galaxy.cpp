@@ -14,7 +14,9 @@ namespace Prefab {
 void Galaxy::model(entt::registry& registry) {
 	Node galaxy(registry);
 	galaxy.add_component<Game::Component::Galaxy>(
-		100000.0
+		Game::Component::Galaxy{
+			.light_year_scale = 100000.0
+		}
 	);
 	galaxy.add_component<CoreState>("universe/galaxy.bin");
 

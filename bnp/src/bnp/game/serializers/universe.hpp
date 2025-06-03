@@ -10,7 +10,14 @@ namespace Game {
 namespace Component {
 
 template <typename S>
+void serialize(S& s, Game::Component::Galaxy& galaxy) {
+	s.value4b(galaxy.version);
+	s.value8b(galaxy.light_year_scale);
+}
+
+template <typename S>
 void serialize(S& s, Game::Component::System& system) {
+	s.value4b(system.version);
 	s.value4b(system.id);
 	s.text1b(system.name, 256);
 	s.value4b(system.galaxy_position.x);
@@ -20,7 +27,9 @@ void serialize(S& s, Game::Component::System& system) {
 
 template <typename S>
 void serialize(S& s, Game::Component::Celestial& celestial) {
+	s.value4b(celestial.version);
 	s.value4b(celestial.id);
+	s.value4b(celestial.system_id);
 	s.text1b(celestial.name, 256);
 	s.value8b(celestial.orbit_radius);
 	s.value8b(celestial.initial_orbit_progression);
