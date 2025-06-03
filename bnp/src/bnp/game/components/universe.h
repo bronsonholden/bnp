@@ -41,7 +41,7 @@ struct Celestial {
 
 struct Galaxy {
 	// per worldspace unit, used to calculate distances between systems
-	double light_year_scale;
+	double light_year_scale = 1000.0;
 };
 
 }
