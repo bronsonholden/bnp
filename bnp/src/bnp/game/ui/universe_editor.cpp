@@ -193,7 +193,6 @@ void UniverseEditor::load_from_file(entt::registry& registry, std::filesystem::p
 }
 
 void UniverseEditor::render_celestial_editor(entt::registry& registry, Game::Component::Celestial::ID celestial_id) {
-	std::set<Game::Component::Celestial::ID> ids;
 	auto celestials = registry.view<Game::Component::Celestial>();
 	entt::entity celestial_entity = entt::null;
 
@@ -203,8 +202,6 @@ void UniverseEditor::render_celestial_editor(entt::registry& registry, Game::Com
 		if (celestial.id == celestial_id) {
 			celestial_entity = entity;
 		}
-
-		ids.insert(celestial.id);
 	}
 
 	if (celestial_entity == entt::null) return;
