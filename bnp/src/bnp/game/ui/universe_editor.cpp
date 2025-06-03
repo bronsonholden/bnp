@@ -1,6 +1,8 @@
 #include <bnp/core/logger.hpp>
 #include <bnp/components/state.h>
+#include <bnp/components/world.h>
 #include <bnp/helpers/filesystem_helper.h>
+#include <bnp/serializers/world.hpp>
 #include <bnp/game/ui/universe_editor.h>
 #include <bnp/game/serializers/universe.hpp>
 #include <bnp/game/components/navigation.h>
@@ -47,11 +49,12 @@ void serialize_systems(entt::registry& registry) {
 }
 
 void serialize_celestials(entt::registry& registry) {
-	auto view = registry.view<Game::Component::Celestial, CoreState>();
+	auto view = registry.view<Game::Component::Celestial, Planet2D, CoreState>();
 
 	for (auto entity : view) {
 		auto& state = view.get<CoreState>(entity);
 		auto& celestial = view.get<Game::Component::Celestial>(entity);
+		auto& planet = view.get<Planet2D>(entity);
 
 		std::filesystem::path file_path = data_dir() / state.file_path;
 		std::filesystem::path dir_path = file_path.parent_path();
@@ -70,6 +73,7 @@ void serialize_celestials(entt::registry& registry) {
 		bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
 
 		ser.object(celestial);
+		ser.object(planet);
 		ser.adapter().flush();
 	}
 }
