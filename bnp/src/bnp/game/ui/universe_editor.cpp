@@ -86,9 +86,11 @@ void UniverseEditor::render(entt::registry& registry) {
 	ImGui::Begin("Universe Editor");
 
 	if (!registry.view<Game::Component::Galaxy>().size()) {
-		if (ImGui::Button("Load")) {
+		load_from_file(registry, data_dir() / "universe.bin");
+		Game::Manager::NavigationManager().show_galaxy_map(registry);
+		/*if (ImGui::Button("Load")) {
 			load_from_file(registry, data_dir() / "universe.bin");
-		}
+		}*/
 	}
 	else {
 		if (ImGui::Button("Save")) {
