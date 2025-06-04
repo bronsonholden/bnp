@@ -39,10 +39,8 @@ void serialize(S& s, Game::Component::Celestial& celestial) {
 	s.value8b(celestial.initial_rotate_progression);
 	s.value8b(celestial.rotate_progression);
 	s.value8b(celestial.rotate_duration);
-	if (celestial.version > 1) {
-		s.value8b(celestial.mass);
-		s.value8b(celestial.radius);
-	}
+	s.value8b(celestial.mass);
+	s.value8b(celestial.radius);
 }
 
 }
