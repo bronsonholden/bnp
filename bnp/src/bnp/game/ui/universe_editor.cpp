@@ -275,6 +275,8 @@ void UniverseEditor::render_celestial_editor(entt::registry& registry, Game::Com
 		celestial.name = name;
 	}
 
+	ImGui::Spacing();
+
 	ImGui::Text("Celestial");
 	ImGui::Indent();
 	ImGui::InputDouble("Orbit Radius", &celestial.orbit_radius);
@@ -290,6 +292,8 @@ void UniverseEditor::render_celestial_editor(entt::registry& registry, Game::Com
 	ImGui::InputDouble("Radius", &celestial.radius);
 	ImGui::Text("g: %2.6f m/s^2", celestial.g());
 	ImGui::Unindent();
+
+	ImGui::Spacing();
 
 	ImGui::Text("Planet2D");
 	ImGui::Indent();
