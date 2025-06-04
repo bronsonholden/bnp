@@ -28,9 +28,6 @@ void UniverseEditor::render(entt::registry& registry) {
 	if (!registry.view<Game::Component::Galaxy>().size()) {
 		load_from_file(registry, data_dir() / "universe.bin");
 		Game::Manager::NavigationManager().show_galaxy_map(registry);
-		/*if (ImGui::Button("Load")) {
-			load_from_file(registry, data_dir() / "universe.bin");
-		}*/
 	}
 	else {
 		if (ImGui::Button("Save")) {
@@ -60,7 +57,7 @@ void UniverseEditor::render(entt::registry& registry) {
 }
 
 void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::path file_path) {
-	std::ofstream os(file_path);
+	std::ofstream os(file_path, std::ios::binary);
 	bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
 
 	// galaxies
@@ -142,7 +139,7 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 }
 
 void UniverseEditor::load_from_file(entt::registry& registry, std::filesystem::path file_path) {
-	std::ifstream is(file_path);
+	std::ifstream is(file_path, std::ios::binary);
 	bitsery::Deserializer<bitsery::InputStreamAdapter> des{ is };
 
 	// Galaxy
