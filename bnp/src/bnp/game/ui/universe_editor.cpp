@@ -20,68 +20,6 @@ namespace bnp {
 namespace Game {
 namespace UI {
 
-void serialize_systems(entt::registry& registry) {
-	auto view = registry.view<Game::Component::System, CoreState>();
-
-	for (auto entity : view) {
-		auto& state = view.get<CoreState>(entity);
-		auto& system = view.get<Game::Component::System>(entity);
-
-		std::filesystem::path file_path = data_dir() / state.file_path;
-		std::filesystem::path dir_path = file_path.parent_path();
-
-		if (!std::filesystem::exists(dir_path)) {
-			std::filesystem::create_directories(dir_path);
-		}
-
-		std::ofstream os(file_path, std::ios::binary);
-
-		if (!os.is_open()) {
-			Log::error_wide(L"Unable to open stream: %s", file_path.c_str());
-			continue;
-		}
-
-		bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
-
-		ser.object(system);
-		ser.adapter().flush();
-	}
-}
-
-void serialize_celestials(entt::registry& registry) {
-	auto view = registry.view<Game::Component::Celestial, Planet2D, CoreState>();
-
-	for (auto entity : view) {
-		auto& state = view.get<CoreState>(entity);
-		auto& celestial = view.get<Game::Component::Celestial>(entity);
-		auto& planet = view.get<Planet2D>(entity);
-
-		std::filesystem::path file_path = data_dir() / state.file_path;
-		std::filesystem::path dir_path = file_path.parent_path();
-
-		if (!std::filesystem::exists(dir_path)) {
-			std::filesystem::create_directories(dir_path);
-		}
-
-		std::ofstream os(file_path, std::ios::binary);
-
-		if (!os.is_open()) {
-			Log::error_wide(L"Unable to open stream: %s", file_path.c_str());
-			continue;
-		}
-
-		bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
-
-		ser.object(celestial);
-		ser.object(planet);
-		ser.adapter().flush();
-	}
-}
-
-void deserialize_systems(entt::registry& registry) {
-
-}
-
 void UniverseEditor::render(entt::registry& registry) {
 	ImGui::Begin("Universe Editor");
 
@@ -235,6 +173,8 @@ void UniverseEditor::render_system_editor(entt::registry& registry, Game::Compon
 
 	ImGui::Separator();
 
+	bool changed = false;
+
 	for (auto entity : celestials) {
 		auto& celestial = celestials.get<Game::Component::Celestial>(entity);
 
@@ -242,7 +182,6 @@ void UniverseEditor::render_system_editor(entt::registry& registry, Game::Compon
 
 		if (ImGui::TreeNode(celestial.name.c_str())) {
 			ImGui::Indent();
-			bool changed = false;
 			changed = ImGui::InputDouble("Orbit Radius", &celestial.orbit_radius) || changed;
 			changed = ImGui::InputDouble("Initial Orbit Progression", &celestial.initial_orbit_progression) || changed;
 			ImGui::Text("Orbit progression: %3.10f", celestial.orbit_progression);
@@ -252,12 +191,12 @@ void UniverseEditor::render_system_editor(entt::registry& registry, Game::Compon
 			changed = ImGui::InputDouble("Rotate Duration", &celestial.rotate_duration) || changed;
 			ImGui::Unindent();
 			ImGui::TreePop();
-
-			if (changed) {
-				Game::Manager::NavigationManager().hide_system_map(registry);
-				Game::Manager::NavigationManager().show_system_map(registry, system_id);
-			}
 		}
+	}
+
+	if (changed) {
+		Game::Manager::NavigationManager().hide_system_map(registry);
+		Game::Manager::NavigationManager().show_system_map(registry, system_id);
 	}
 }
 
@@ -301,6 +240,9 @@ void UniverseEditor::render_celestial_editor(entt::registry& registry, Game::Com
 	ImGui::InputDouble("Initial Rotate Progression", &celestial.initial_rotate_progression);
 	ImGui::Text("Rotate progression: %3.10f", celestial.rotate_progression);
 	ImGui::InputDouble("Rotate Duration", &celestial.rotate_duration);
+	ImGui::InputDouble("Mass", &celestial.mass);
+	ImGui::InputDouble("Radius", &celestial.radius);
+	ImGui::Text("g: %2.6f m/s^2", celestial.g());
 	ImGui::Unindent();
 
 	ImGui::Text("Planet2D");

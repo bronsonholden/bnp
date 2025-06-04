@@ -11,16 +11,22 @@ namespace Component {
 // 1 second in game == 1 hour simulation time
 constexpr double UNIVERSAL_TIME_SCALE = 3600.0;
 
+// we store masses in trillions kg so scale G (6.6743e-11) by 10e12
+constexpr double G = 6.6743e1;
+
 struct Galaxy {
-	uint32_t version = 1;
+	const static uint32_t latest_version = 1;
+
+	uint32_t version = latest_version;
 	// per worldspace unit, used to calculate distances between systems
 	double light_year_scale;
 };
 
 struct System {
+	const static uint32_t latest_version = 1;
 	typedef int ID;
 
-	uint32_t version = 1;
+	uint32_t version = latest_version;
 	ID id;
 	std::string name;
 	// worldspace position, since systems are static within galaxy
@@ -30,23 +36,32 @@ struct System {
 };
 
 struct Celestial {
+	const static uint32_t latest_version = 2;
 	typedef int ID;
 
-	uint32_t version = 1;
+	uint32_t version = latest_version;
 	ID id;
 	System::ID system_id;
 	std::string name;
 	// worldspace positioning within system, since celestials will orbit within
 	// system as game progresses
-	double orbit_radius;
-	double initial_orbit_progression;
-	double orbit_progression;
+	double orbit_radius; // worldspace
+	double initial_orbit_progression; // radians
+	double orbit_progression; // radians
 	// real-time to complete orbit
-	double orbit_duration;
-	double initial_rotate_progression;
-	double rotate_progression;
+	double orbit_duration; // seconds
+	double initial_rotate_progression; // radians
+	double rotate_progression; // radians
 	// real-time to complete rotation on axis
-	double rotate_duration;
+	double rotate_duration; // seconds
+
+	// default values are Earth-like
+	double mass = 5.23366837e12; // trillions kg
+	double radius = 6.12773e6; // meters
+
+	double g() {
+		return (G * mass) / (radius * radius);
+	}
 };
 
 }
