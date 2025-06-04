@@ -67,6 +67,10 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 		uint64_t count = galaxies.size();
 		ser.value8b(galaxies.size());
 		for (auto entity : galaxies) {
+			if (!registry.valid(entity)) {
+				Log::warning("Skipping invalid entity %d", static_cast<int>(entity));
+				continue;
+			}
 			auto& galaxy = galaxies.get<Game::Component::Galaxy>(entity);
 			galaxy.version = galaxy.latest_version;
 			ser.object(galaxy);
@@ -79,6 +83,10 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 		uint64_t count = systems.size();
 		ser.value8b(systems.size());
 		for (auto entity : systems) {
+			if (!registry.valid(entity)) {
+				Log::warning("Skipping invalid entity %d", static_cast<int>(entity));
+				continue;
+			}
 			auto& system = systems.get<Game::Component::System>(entity);
 			system.version = system.latest_version;
 			ser.object(system);
@@ -92,6 +100,10 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 		for (auto _ : celestials) count++;
 		ser.value8b(count);
 		for (auto entity : celestials) {
+			if (!registry.valid(entity)) {
+				Log::warning("Skipping invalid entity %d", static_cast<int>(entity));
+				continue;
+			}
 			auto& celestial = celestials.get<Game::Component::Celestial>(entity);
 			celestial.version = celestial.latest_version;
 			auto& planet = celestials.get<Planet2D>(entity);
