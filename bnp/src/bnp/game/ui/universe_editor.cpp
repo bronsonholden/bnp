@@ -130,6 +130,7 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 			Game::Component::Celestial celestial = registry.get<Game::Component::Celestial>(entity);
 			Planet2D planet = registry.get<Planet2D>(entity);
 			celestial.version = celestial.latest_version;
+			Log::info("Seralizing as version=%d,id=%d", celestial.version, celestial.id);
 			ser.object(celestial);
 			ser.object(planet);
 		}
@@ -174,6 +175,7 @@ void UniverseEditor::load_from_file(entt::registry& registry, std::filesystem::p
 			entt::entity entity = registry.create();
 			Game::Component::Celestial celestial;
 			des.object(celestial);
+			Log::info("Deseralizing as version=%d,id=%d", celestial.version, celestial.id);
 			registry.emplace<Game::Component::Celestial>(entity, celestial);
 			Planet2D planet;
 			des.object(planet);
@@ -222,13 +224,15 @@ void UniverseEditor::render_system_editor(entt::registry& registry, Game::Compon
 
 		if (ImGui::TreeNode(celestial.name.c_str())) {
 			ImGui::Indent();
-			changed = ImGui::InputDouble("Orbit Radius", &celestial.orbit_radius) || changed;
-			changed = ImGui::InputDouble("Initial Orbit Progression", &celestial.initial_orbit_progression) || changed;
+			changed = ImGui::InputDouble("Orbit Radius", &celestial.orbit_radius, 0.1) || changed;
+			changed = ImGui::InputDouble("Initial Orbit Progression", &celestial.initial_orbit_progression, 0.1) || changed;
 			ImGui::Text("Orbit progression: %3.10f", celestial.orbit_progression);
-			changed = ImGui::InputDouble("Orbit Duration", &celestial.orbit_duration) || changed;
+			changed = ImGui::InputDouble("Orbit Duration", &celestial.orbit_duration, 24.0 * 3600.0) || changed;
+			ImGui::Text("Orbit duration (days): %2.3f", celestial.orbit_duration / (24.0 * 3600.0));
 			changed = ImGui::InputDouble("Initial Rotate Progression", &celestial.initial_rotate_progression) || changed;
 			ImGui::Text("Rotate progression: %3.10f", celestial.rotate_progression);
 			changed = ImGui::InputDouble("Rotate Duration", &celestial.rotate_duration) || changed;
+			ImGui::Text("Rotate duration (hours): %2.3f", celestial.rotate_duration / 3600.0);
 			ImGui::Unindent();
 			ImGui::TreePop();
 		}
@@ -277,9 +281,11 @@ void UniverseEditor::render_celestial_editor(entt::registry& registry, Game::Com
 	ImGui::InputDouble("Initial Orbit Progression", &celestial.initial_orbit_progression);
 	ImGui::Text("Orbit progression: %3.10f", celestial.orbit_progression);
 	ImGui::InputDouble("Orbit Duration", &celestial.orbit_duration);
+	ImGui::Text("Orbit duration (days): %2.3f", celestial.orbit_duration / (24.0 * 3600.0));
 	ImGui::InputDouble("Initial Rotate Progression", &celestial.initial_rotate_progression);
 	ImGui::Text("Rotate progression: %3.10f", celestial.rotate_progression);
 	ImGui::InputDouble("Rotate Duration", &celestial.rotate_duration);
+	ImGui::Text("Rotate duration (hours): %2.3f", celestial.rotate_duration / 3600.0);
 	ImGui::InputDouble("Mass", &celestial.mass);
 	ImGui::InputDouble("Radius", &celestial.radius);
 	ImGui::Text("g: %2.6f m/s^2", celestial.g());
