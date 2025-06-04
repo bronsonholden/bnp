@@ -68,6 +68,7 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 		ser.value8b(galaxies.size());
 		for (auto entity : galaxies) {
 			auto& galaxy = galaxies.get<Game::Component::Galaxy>(entity);
+			galaxy.version = galaxy.latest_version;
 			ser.object(galaxy);
 		}
 	}
@@ -79,6 +80,7 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 		ser.value8b(systems.size());
 		for (auto entity : systems) {
 			auto& system = systems.get<Game::Component::System>(entity);
+			system.version = system.latest_version;
 			ser.object(system);
 		}
 	}
@@ -91,6 +93,7 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 		ser.value8b(count);
 		for (auto entity : celestials) {
 			auto& celestial = celestials.get<Game::Component::Celestial>(entity);
+			celestial.version = celestial.latest_version;
 			auto& planet = celestials.get<Planet2D>(entity);
 			ser.object(celestial);
 			ser.object(planet);

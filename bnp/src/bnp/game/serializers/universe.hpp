@@ -14,7 +14,6 @@ template <typename S>
 void serialize(S& s, Game::Component::Galaxy& galaxy) {
 	s.value4b(galaxy.version);
 	s.value8b(galaxy.light_year_scale);
-	galaxy.version = galaxy.latest_version;
 }
 
 template <typename S>
@@ -25,7 +24,6 @@ void serialize(S& s, Game::Component::System& system) {
 	s.value4b(system.galaxy_position.x);
 	s.value4b(system.galaxy_position.y);
 	s.value8b(system.light_minute_scale);
-	system.version = system.latest_version;
 }
 
 template <typename S>
@@ -45,7 +43,6 @@ void serialize(S& s, Game::Component::Celestial& celestial) {
 		s.value8b(celestial.mass);
 		s.value8b(celestial.radius);
 	}
-	celestial.version = celestial.latest_version;
 }
 
 }
