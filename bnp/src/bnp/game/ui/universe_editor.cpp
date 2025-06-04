@@ -69,11 +69,11 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 		uint64_t count = galaxies.size();
 		ser.value8b(count);
 		for (auto entity : galaxies) {
+			auto& galaxy = galaxies.get<Game::Component::Galaxy>(entity);
 			if (!registry.valid(entity)) {
 				Log::warning("Skipping invalid entity %d", static_cast<int>(entity));
 				continue;
 			}
-			auto& galaxy = galaxies.get<Game::Component::Galaxy>(entity);
 			galaxy.version = galaxy.latest_version;
 			ser.object(galaxy);
 		}
@@ -88,10 +88,6 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 		std::vector<Game::Component::System::ID> system_ids;
 		std::unordered_map<Game::Component::System::ID, entt::entity> entities;
 		for (auto entity : systems) {
-			if (!registry.valid(entity)) {
-				Log::warning("Skipping invalid entity %d", static_cast<int>(entity));
-				continue;
-			}
 			auto& system = systems.get<Game::Component::System>(entity);
 			entities.emplace(system.id, entity);
 			system_ids.push_back(system.id);
@@ -101,6 +97,10 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 
 		for (auto id : system_ids) {
 			auto entity = entities.at(id);
+			if (!registry.valid(entity)) {
+				Log::warning("Skipping invalid entity %d", static_cast<int>(entity));
+				continue;
+			}
 			Game::Component::System system = registry.get<Game::Component::System>(entity);
 			system.version = system.latest_version;
 			ser.object(system);
@@ -137,6 +137,8 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 			ser.object(planet);
 		}
 	}
+
+	ser.adapter().flush();
 }
 
 void UniverseEditor::load_from_file(entt::registry& registry, std::filesystem::path file_path) {
