@@ -301,6 +301,10 @@ void UniverseEditor::render_celestial_editor(entt::registry& registry, Game::Com
 	ImGui::InputDouble("Initial Rotate Progression", &celestial.initial_rotate_progression);
 	ImGui::Text("Rotate progression: %3.10f", celestial.rotate_progression);
 	ImGui::InputDouble("Rotate Duration", &celestial.rotate_duration);
+	ImGui::Unindent();
+
+	ImGui::Text("Planet2D");
+	ImGui::Indent();
 	ImGui::InputFloat("Noise radius", &planet.noise_radius);
 	ImGui::InputFloat("Noise seed", &planet.noise_seed);
 	ImGui::InputFloat3("Axis", &planet.axis.x);
@@ -308,10 +312,7 @@ void UniverseEditor::render_celestial_editor(entt::registry& registry, Game::Com
 	ImGui::InputFloat("Water depth", &planet.water_depth);
 	ImGui::InputFloat("Coast depth", &planet.coast_depth);
 	ImGui::InputFloat("Mainland depth", &planet.mainland_depth);
-	ImGui::Unindent();
 
-	ImGui::Text("Planet2D");
-	ImGui::Indent();
 	if (ImGui::TreeNode("Water color")) {
 		ImGui::ColorPicker3("Water color", &planet.water_color.x);
 		ImGui::TreePop();
