@@ -12,9 +12,11 @@
 #include <bitsery/bitsery.h>
 #include <bitsery/adapter/stream.h>
 
+#include <algorithm>
+#include <unordered_map>
+#include <vector>
 #include <filesystem>
 #include <fstream>
-#include <set>
 
 namespace bnp {
 namespace Game {
@@ -99,14 +101,26 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 		uint64_t count = 0;
 		for (auto _ : celestials) count++;
 		ser.value8b(count);
+
+		std::vector<Game::Component::Celestial::ID> celestial_ids;
+		std::unordered_map<Game::Component::Celestial::ID, entt::entity> entities;
 		for (auto entity : celestials) {
+			auto& celestial = celestials.get<Game::Component::Celestial>(entity);
 			if (!registry.valid(entity)) {
 				Log::warning("Skipping invalid entity %d", static_cast<int>(entity));
 				continue;
 			}
-			auto& celestial = celestials.get<Game::Component::Celestial>(entity);
+			entities.emplace(celestial.id, entity);
+			celestial_ids.push_back(celestial.id);
+		}
+
+		std::sort(celestial_ids.begin(), celestial_ids.end());
+
+		for (auto id : celestial_ids) {
+			auto entity = entities.at(id);
+			Game::Component::Celestial celestial = registry.get<Game::Component::Celestial>(entity);
+			Planet2D planet = registry.get<Planet2D>(entity);
 			celestial.version = celestial.latest_version;
-			auto& planet = celestials.get<Planet2D>(entity);
 			ser.object(celestial);
 			ser.object(planet);
 		}
