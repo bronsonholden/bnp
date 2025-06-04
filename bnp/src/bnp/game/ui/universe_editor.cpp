@@ -67,7 +67,7 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 	{
 		auto galaxies = registry.view<Game::Component::Galaxy>();
 		uint64_t count = galaxies.size();
-		ser.value8b(galaxies.size());
+		ser.value8b(count);
 		for (auto entity : galaxies) {
 			if (!registry.valid(entity)) {
 				Log::warning("Skipping invalid entity %d", static_cast<int>(entity));
@@ -83,13 +83,25 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 	{
 		auto systems = registry.view<Game::Component::System>();
 		uint64_t count = systems.size();
-		ser.value8b(systems.size());
+		ser.value8b(count);
+
+		std::vector<Game::Component::System::ID> system_ids;
+		std::unordered_map<Game::Component::System::ID, entt::entity> entities;
 		for (auto entity : systems) {
 			if (!registry.valid(entity)) {
 				Log::warning("Skipping invalid entity %d", static_cast<int>(entity));
 				continue;
 			}
 			auto& system = systems.get<Game::Component::System>(entity);
+			entities.emplace(system.id, entity);
+			system_ids.push_back(system.id);
+		}
+
+		std::sort(system_ids.begin(), system_ids.end());
+
+		for (auto id : system_ids) {
+			auto entity = entities.at(id);
+			Game::Component::System system = registry.get<Game::Component::System>(entity);
 			system.version = system.latest_version;
 			ser.object(system);
 		}
