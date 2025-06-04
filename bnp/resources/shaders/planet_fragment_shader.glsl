@@ -257,8 +257,11 @@ vec3 surface_color(vec3 sphere_coord) {
     float surface_noise_value;
     vec3 color;
 
-    surface_noise_value = cnoise(vec4(rotated_coord * noise_radius, noise_seed));
-    surface_noise_value += cnoise(vec4(rotated_coord * noise_radius * 2.0, noise_seed));
+    surface_noise_value = max(0, cnoise(vec4(rotated_coord * noise_radius, noise_seed)) * 2.0);
+    surface_noise_value += max(cnoise(vec4(rotated_coord * noise_radius * 2.0, noise_seed + 1.0)), 0);
+    surface_noise_value += cnoise(vec4(rotated_coord * (noise_radius * 2.0 + 1.0), noise_seed + 2.0));
+    surface_noise_value += cnoise(vec4(rotated_coord * (noise_radius * 5.0 + 2.0), noise_seed + 3.0)) / 2.0;
+    surface_noise_value += -abs(cnoise(vec4(rotated_coord * (noise_radius * 8.0 + 2.0), noise_seed + 4.0))) / 2.0;
 
     // cratering
     vec3 sample_coord = vec3(115.0, 35.0, 25.0);
