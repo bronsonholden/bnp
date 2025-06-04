@@ -18,6 +18,7 @@ public:
 	void load_from_file(entt::registry& registry, std::filesystem::path file_path);
 
 private:
+	void render_system_editor(entt::registry& registry, Game::Component::System::ID system_id);
 	void render_celestial_editor(entt::registry& registry, Game::Component::Celestial::ID celestial_id);
 };
 

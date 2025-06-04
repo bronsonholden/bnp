@@ -98,10 +98,20 @@ void UniverseEditor::render(entt::registry& registry) {
 
 	ImGui::Separator();
 
-	auto view = registry.view<Game::Component::CelestialMap>();
-	if (view.size()) {
-		auto& celestial = view.get<Game::Component::CelestialMap>(view.front());
-		render_celestial_editor(registry, celestial.celestial_id);
+	{
+		auto view = registry.view<Game::Component::CelestialMap>();
+		if (view.size()) {
+			auto& celestial = view.get<Game::Component::CelestialMap>(view.front());
+			render_celestial_editor(registry, celestial.celestial_id);
+		}
+	}
+
+	{
+		auto view = registry.view<Game::Component::SystemMap>();
+		if (view.size()) {
+			auto& system = view.get<Game::Component::SystemMap>(view.front());
+			render_system_editor(registry, system.system_id);
+		}
 	}
 
 	ImGui::End();
@@ -188,6 +198,63 @@ void UniverseEditor::load_from_file(entt::registry& registry, std::filesystem::p
 			Planet2D planet;
 			des.object(planet);
 			registry.emplace<Planet2D>(entity, planet);
+		}
+	}
+}
+
+void UniverseEditor::render_system_editor(entt::registry& registry, Game::Component::System::ID system_id) {
+	auto celestials = registry.view<Game::Component::Celestial>();
+
+	Game::Component::Celestial::ID next_id = 0;
+	for (auto entity : celestials) {
+		auto& celestial = celestials.get<Game::Component::Celestial>(entity);
+		if (celestial.id >= next_id) next_id = celestial.id + 1;
+	}
+
+	if (ImGui::Button("New celestial")) {
+		entt::entity celestial_entity = registry.create();
+
+		Game::Component::Celestial celestial{
+			.id = next_id,
+			.system_id = system_id,
+			.name = "<Celestial>",
+			.orbit_radius = 1.0,
+			.initial_orbit_progression = 0.0,
+			.orbit_progression = 0.0,
+			.orbit_duration = 24.0 * 3600.0 * 365.0,
+			.initial_rotate_progression = 0.0,
+			.rotate_progression = 0.0,
+			.rotate_duration = 24.0 * 3600.0
+		};
+
+		registry.emplace<Game::Component::Celestial>(celestial_entity, celestial);
+		registry.emplace<Planet2D>(celestial_entity);
+	}
+
+	ImGui::Separator();
+
+	for (auto entity : celestials) {
+		auto& celestial = celestials.get<Game::Component::Celestial>(entity);
+
+		if (celestial.system_id != system_id) continue;
+
+		if (ImGui::TreeNode(celestial.name.c_str())) {
+			ImGui::Indent();
+			bool changed = false;
+			changed = ImGui::InputDouble("Orbit Radius", &celestial.orbit_radius) || changed;
+			changed = ImGui::InputDouble("Initial Orbit Progression", &celestial.initial_orbit_progression) || changed;
+			ImGui::Text("Orbit progression: %3.10f", celestial.orbit_progression);
+			changed = ImGui::InputDouble("Orbit Duration", &celestial.orbit_duration) || changed;
+			changed = ImGui::InputDouble("Initial Rotate Progression", &celestial.initial_rotate_progression) || changed;
+			ImGui::Text("Rotate progression: %3.10f", celestial.rotate_progression);
+			changed = ImGui::InputDouble("Rotate Duration", &celestial.rotate_duration) || changed;
+			ImGui::Unindent();
+			ImGui::TreePop();
+
+			if (changed) {
+				Game::Manager::NavigationManager().hide_system_map(registry);
+				Game::Manager::NavigationManager().show_system_map(registry, system_id);
+			}
 		}
 	}
 }
