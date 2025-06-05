@@ -13,6 +13,7 @@ void NavigationControl::render(entt::registry& registry) {
 
 	if (ImGui::Button("Galaxy Map")) {
 		Game::Manager::NavigationManager navigation_manager;
+		navigation_manager.hide_galaxy_map(registry);
 		navigation_manager.hide_celestial_map(registry);
 		navigation_manager.hide_system_map(registry);
 		navigation_manager.show_galaxy_map(registry);
