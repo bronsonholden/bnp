@@ -11,6 +11,11 @@ namespace Game {
 namespace Component {
 
 template <typename S>
+void serialize(S& s, Game::Component::Universe& universe) {
+	s.value8b(universe.time_elapsed);
+}
+
+template <typename S>
 void serialize(S& s, Game::Component::Galaxy& galaxy) {
 	s.value4b(galaxy.version);
 	s.value8b(galaxy.light_year_scale);
