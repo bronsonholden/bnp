@@ -187,7 +187,7 @@ void UniverseEditor::load_from_file(entt::registry& registry, std::filesystem::p
 void UniverseEditor::render_system_editor(entt::registry& registry, Game::Component::System::ID system_id) {
 	auto celestials = registry.view<Game::Component::Celestial>();
 
-	Game::Component::Celestial::ID next_id = 0;
+	Game::Component::Celestial::ID next_id = 1;
 	for (auto entity : celestials) {
 		auto& celestial = celestials.get<Game::Component::Celestial>(entity);
 		if (celestial.id >= next_id) next_id = celestial.id + 1;
