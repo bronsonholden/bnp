@@ -73,8 +73,7 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 			return;
 		}
 
-		auto& universe = registry.get<Game::Component::Universe>(universes.front());
-
+		Game::Component::Universe universe(registry.get<Game::Component::Universe>(universes.front()));
 		ser.object(universe);
 		Log::info("Serialized universe");
 	}
@@ -121,7 +120,7 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 			Game::Component::System system = registry.get<Game::Component::System>(entity);
 			system.version = system.latest_version;
 			ser.object(system);
-			Log::info("Serialized system (id=%d,name=%s)", system.id, system.name.c_str());
+			Log::info("Serialized system (id=%d,version=%d,name=%s)", system.id, system.version, system.name.c_str());
 		}
 	}
 
@@ -153,7 +152,7 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 			celestial.version = celestial.latest_version;
 			ser.object(celestial);
 			ser.object(planet);
-			Log::info("Serialized celestial (id=%d,name=%s)", celestial.id, celestial.name.c_str());
+			Log::info("Serialized celestial (id=%d,version=%d,name=%s)", celestial.id, celestial.version, celestial.name.c_str());
 		}
 	}
 
@@ -193,7 +192,7 @@ void UniverseEditor::load_from_file(entt::registry& registry, std::filesystem::p
 			entt::entity entity = registry.create();
 			Game::Component::System system;
 			des.object(system);
-			Log::info("Deserialized system (id=%d,name=%s)", system.id, system.name.c_str());
+			Log::info("Deserialized system (id=%d,version=%d,name=%s)", system.id, system.version, system.name.c_str());
 			registry.emplace<Game::Component::System>(entity, system);
 		}
 	}
@@ -206,10 +205,11 @@ void UniverseEditor::load_from_file(entt::registry& registry, std::filesystem::p
 			entt::entity entity = registry.create();
 			Game::Component::Celestial celestial;
 			des.object(celestial);
+			celestial.version = celestial.latest_version;
 			registry.emplace<Game::Component::Celestial>(entity, celestial);
 			Planet2D planet;
 			des.object(planet);
-			Log::info("Deserialized celestial (id=%d,name=%s)", celestial.id, celestial.name.c_str());
+			Log::info("Deserialized celestial (id=%d,version=%d,name=%s)", celestial.id, celestial.version, celestial.name.c_str());
 			registry.emplace<Planet2D>(entity, planet);
 		}
 	}

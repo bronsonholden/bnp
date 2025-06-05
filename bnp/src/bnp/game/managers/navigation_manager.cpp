@@ -8,12 +8,11 @@
 #include <bnp/game/components/fleet.h>
 #include <bnp/game/prefabs/celestials.h>
 
+#include <numbers>
+
 namespace bnp {
 namespace Game {
 namespace Manager {
-
-// todo: maybe when showing maps, just add the components necessary for rendering them the way we want to
-// instead of creating new entities? it is kind of nice to just destroy them when the map is removed
 
 void NavigationManager::update(entt::registry& registry, float) {
 	update_map_dot_layers(registry);
@@ -24,6 +23,7 @@ void NavigationManager::update(entt::registry& registry, float) {
 		auto celestials = registry.view<Game::Component::Celestial>();
 
 		for (auto entity : view) {
+			auto& universe = registry.get<Game::Component::Universe>(registry.view<Game::Component::Universe>().front());
 			auto& map_celestial = view.get<Game::Component::SystemMapCelestial>(entity);
 			Game::Component::Celestial::ID celestial_id = map_celestial.celestial_id;
 
@@ -32,10 +32,12 @@ void NavigationManager::update(entt::registry& registry, float) {
 				auto& celestial = celestials.get<Game::Component::Celestial>(celestial_entity);
 
 				if (celestial.id == celestial_id) {
+					double rem = std::fmod(universe.time_elapsed, celestial.orbit_duration) / celestial.orbit_duration;
+					double progression = (2.0 * std::numbers::pi) * rem + celestial.initial_orbit_progression;
 					registry.patch<Transform>(entity, [&](Transform& t) {
 						t.position = glm::vec3(
-							std::cos(celestial.orbit_progression) * celestial.orbit_radius,
-							std::sin(celestial.orbit_progression) * celestial.orbit_radius,
+							std::cos(progression) * celestial.orbit_radius,
+							std::sin(progression) * celestial.orbit_radius,
 							0.0f
 						);
 						t.dirty = true;
@@ -55,6 +57,7 @@ void NavigationManager::update(entt::registry& registry, float) {
 		auto view = registry.view<Game::Component::Celestial, Planet2D>();
 
 		for (auto entity : view) {
+			auto& universe = registry.get<Game::Component::Universe>(registry.view<Game::Component::Universe>().front());
 			auto& celestial = view.get<Game::Component::Celestial>(entity);
 			auto& planet = view.get<Planet2D>(entity);
 
@@ -62,10 +65,12 @@ void NavigationManager::update(entt::registry& registry, float) {
 				auto& map = rendered.get<Game::Component::CelestialMap>(rendered_entity);
 
 				if (map.celestial_id == celestial.id) {
+					double rem = std::fmod(universe.time_elapsed, celestial.rotate_duration) / celestial.rotate_duration;
+					double progression = (2.0 * std::numbers::pi) * rem + celestial.initial_rotate_progression;
 					auto& updated_planet = registry.emplace_or_replace<Planet2D>(rendered_entity, planet);
 
 					registry.patch<Planet2D>(rendered_entity, [&](Planet2D& p) {
-						p.rotation = celestial.rotate_progression;
+						p.rotation = static_cast<float>(progression);
 						});
 				}
 
