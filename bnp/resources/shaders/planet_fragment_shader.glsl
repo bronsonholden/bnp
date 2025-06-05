@@ -257,10 +257,17 @@ vec3 surface_color(vec3 sphere_coord) {
     float surface_noise_value;
     vec3 color;
 
+    // base terrain/water layer
     surface_noise_value = max(0, cnoise(vec4(rotated_coord * noise_radius, noise_seed)) * 2.0);
+    // adds some more detailed terrain
     surface_noise_value += max(cnoise(vec4(rotated_coord * noise_radius * 2.0, noise_seed + 1.0)), 0);
+    // adds slightly noisier terrain and water
     surface_noise_value += cnoise(vec4(rotated_coord * (noise_radius * 2.0 + 1.0), noise_seed + 2.0));
+    // more noise, but less impact on result to create islands, keys, rough coastlines
+    // and other small terrain details
     surface_noise_value += cnoise(vec4(rotated_coord * (noise_radius * 5.0 + 2.0), noise_seed + 3.0)) / 2.0;
+    // high noise, low impact water-only layer to flesh out more minor details
+    // such as small inland lakes and rough out coastlines
     surface_noise_value += -abs(cnoise(vec4(rotated_coord * (noise_radius * 8.0 + 2.0), noise_seed + 4.0))) / 2.0;
 
     // cratering
