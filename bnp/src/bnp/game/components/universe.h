@@ -14,6 +14,11 @@ constexpr double UNIVERSAL_TIME_SCALE = 3600.0;
 // we store masses in trillions kg so scale G (6.6743e-11) by 10e12
 constexpr double G = 6.6743e1;
 
+struct Universe {
+	// real-time elapsed
+	double time_elapsed;
+};
+
 struct Galaxy {
 	const static uint32_t latest_version = 1;
 
