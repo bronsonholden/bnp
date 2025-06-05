@@ -227,7 +227,7 @@ void UniverseEditor::render_system_editor(entt::registry& registry, Game::Compon
 			changed = ImGui::InputDouble("Orbit Radius", &celestial.orbit_radius, 0.1) || changed;
 			changed = ImGui::InputDouble("Initial Orbit Progression", &celestial.initial_orbit_progression, 0.1) || changed;
 			ImGui::Text("Orbit progression: %3.10f", celestial.orbit_progression);
-			changed = ImGui::InputDouble("Orbit Duration", &celestial.orbit_duration, 24.0 * 3600.0) || changed;
+			changed = ImGui::InputDouble("Orbit Duration", &celestial.orbit_duration) || changed;
 			ImGui::Text("Orbit duration (days): %2.3f", celestial.orbit_duration / (24.0 * 3600.0));
 			changed = ImGui::InputDouble("Initial Rotate Progression", &celestial.initial_rotate_progression) || changed;
 			ImGui::Text("Rotate progression: %3.10f", celestial.rotate_progression);
