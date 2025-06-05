@@ -60,6 +60,25 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 	std::ofstream os(file_path, std::ios::binary);
 	bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
 
+	// universe
+	{
+		auto universes = registry.view<Game::Component::Universe>();
+		auto count = universes.size();
+
+		if (count > 1) {
+			Log::warning("Multiple Universe components found");
+		}
+		else if (!count) {
+			Log::warning("No Universe component found");
+			return;
+		}
+
+		auto& universe = registry.get<Game::Component::Universe>(universes.front());
+
+		ser.object(universe);
+		Log::info("Serialized universe");
+	}
+
 	// galaxies
 	{
 		auto galaxies = registry.view<Game::Component::Galaxy>();
@@ -73,6 +92,7 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 			}
 			galaxy.version = galaxy.latest_version;
 			ser.object(galaxy);
+			Log::info("Serialized galaxy");
 		}
 	}
 
@@ -101,6 +121,7 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 			Game::Component::System system = registry.get<Game::Component::System>(entity);
 			system.version = system.latest_version;
 			ser.object(system);
+			Log::info("Serialized system (id=%d,name=%s)", system.id, system.name.c_str());
 		}
 	}
 
@@ -130,9 +151,9 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 			Game::Component::Celestial celestial = registry.get<Game::Component::Celestial>(entity);
 			Planet2D planet = registry.get<Planet2D>(entity);
 			celestial.version = celestial.latest_version;
-			Log::info("Seralizing as version=%d,id=%d", celestial.version, celestial.id);
 			ser.object(celestial);
 			ser.object(planet);
+			Log::info("Serialized celestial (id=%d,name=%s)", celestial.id, celestial.name.c_str());
 		}
 	}
 
@@ -143,6 +164,14 @@ void UniverseEditor::load_from_file(entt::registry& registry, std::filesystem::p
 	std::ifstream is(file_path, std::ios::binary);
 	bitsery::Deserializer<bitsery::InputStreamAdapter> des{ is };
 
+	// universe
+	{
+		Game::Component::Universe universe;
+		des.object(universe);
+		Log::info("Deserialized universe");
+		registry.emplace<Game::Component::Universe>(registry.create(), universe);
+	}
+
 	// Galaxy
 	{
 		uint64_t count;
@@ -151,6 +180,7 @@ void UniverseEditor::load_from_file(entt::registry& registry, std::filesystem::p
 			entt::entity entity = registry.create();
 			Game::Component::Galaxy galaxy;
 			des.object(galaxy);
+			Log::info("Deserialized galaxy");
 			registry.emplace<Game::Component::Galaxy>(entity, galaxy);
 		}
 	}
@@ -163,6 +193,7 @@ void UniverseEditor::load_from_file(entt::registry& registry, std::filesystem::p
 			entt::entity entity = registry.create();
 			Game::Component::System system;
 			des.object(system);
+			Log::info("Deserialized system (id=%d,name=%s)", system.id, system.name.c_str());
 			registry.emplace<Game::Component::System>(entity, system);
 		}
 	}
@@ -175,10 +206,10 @@ void UniverseEditor::load_from_file(entt::registry& registry, std::filesystem::p
 			entt::entity entity = registry.create();
 			Game::Component::Celestial celestial;
 			des.object(celestial);
-			Log::info("Deseralizing as version=%d,id=%d", celestial.version, celestial.id);
 			registry.emplace<Game::Component::Celestial>(entity, celestial);
 			Planet2D planet;
 			des.object(planet);
+			Log::info("Deserialized celestial (id=%d,name=%s)", celestial.id, celestial.name.c_str());
 			registry.emplace<Planet2D>(entity, planet);
 		}
 	}
