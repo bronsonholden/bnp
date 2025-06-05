@@ -28,6 +28,11 @@
 #include <bnp/ui/node_inspector.h>
 #include <bnp/ui/render_manager_inspector.h>
 
+// game editors/debug
+#include <bnp/game/ui/universe_editor.h>
+#include <bnp/game/ui/navigation_control.h>
+#include <bnp/game/ui/items_editor.h>
+
 #include <bnp/game/managers/navigation_manager.h>
 #include <bnp/game/managers/universe_manager.h>
 
@@ -73,6 +78,11 @@ protected:
 	// editor stuff
 	FileBrowser file_browser;
 	SceneInspector scene_inspector;
+
+	// game editor/debug
+	Game::UI::NavigationControl g_navigation_control;
+	Game::UI::UniverseEditor g_universe_editor;
+	Game::UI::ItemsEditor g_items_editor;
 
 	Camera camera;
 

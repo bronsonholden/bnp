@@ -17,7 +17,6 @@
 #include <bnp/serializers/graphics.hpp>
 #include <bnp/managers/archive_manager.h>
 #include <bnp/helpers/filesystem_helper.h>
-#include <bnp/game/ui/universe_editor.h>
 
 #include <bnp/behaviors/bee_behavior_planner.h>
 
@@ -26,7 +25,6 @@
 #include <bnp/game/prefabs/ui.h>
 #include <bnp/game/prefabs/galaxy.h>
 #include <bnp/game/components/fleet.h>
-#include <bnp/game/ui/navigation_control.h>
 
 #include <vector>
 #include <string>
@@ -258,8 +256,9 @@ void Engine::render() {
 	//file_browser.render();
 	scene_inspector.render();
 
-	Game::UI::UniverseEditor().render(registry);
-	Game::UI::NavigationControl().render(registry);
+	g_universe_editor.render(registry);
+	g_navigation_control.render(registry);
+	g_items_editor.render(registry);
 
 	if (file_browser.has_selection()) {
 		std::string path = file_browser.get_selected_path();
