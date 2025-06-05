@@ -41,7 +41,6 @@ void serialize(S& s, Game::Component::Celestial& celestial) {
 	s.value8b(celestial.rotate_duration);
 	s.value8b(celestial.mass);
 	s.value8b(celestial.radius);
-	Log::info("Saving/Loading celestial: %s, (id=%d, version=%d)", celestial.name.c_str(), celestial.id, celestial.version);
 }
 
 }
