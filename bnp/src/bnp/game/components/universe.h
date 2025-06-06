@@ -2,7 +2,9 @@
 
 #include <glm/glm.hpp>
 #include <bitsery/bitsery.h>
+#include <unordered_map>
 #include <string>
+#include <numbers>
 
 namespace bnp {
 namespace Game {
@@ -13,6 +15,9 @@ constexpr double UNIVERSAL_TIME_SCALE = 3600.0;
 
 // we store masses in trillions kg so scale G (6.6743e-11) by 10e12
 constexpr double G = 6.6743e1;
+// Pascals (Pa) to pounds per square inch (PSI)
+constexpr double PA_PER_PSI = 6894.76;
+constexpr double R = 8.314;
 
 struct Universe {
 	// real-time elapsed
@@ -67,6 +72,16 @@ struct Celestial {
 	double g() {
 		return (G * mass) / (radius * radius);
 	}
+};
+
+struct Atmosphere {
+	//double column_mass() {
+	//	return atmospheric_mass / (4.0 * std::numbers::pi * radius * radius);
+	//}
+
+	//double atmospheric_pressure() {
+	//	return (g() * column_mass()) / PA_PER_PSI;
+	//}
 };
 
 }
