@@ -48,7 +48,7 @@ struct System {
 };
 
 struct Celestial {
-	const static uint32_t latest_version = 3;
+	const static uint32_t latest_version = 1;
 	typedef int ID;
 
 	uint32_t version = latest_version;
