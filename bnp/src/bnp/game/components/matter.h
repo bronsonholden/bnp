@@ -14,9 +14,6 @@ struct Chemical {
 	// at melting point
 	double solid_density = 917.0; // kg/m^3
 	double liquid_density = 1000.0; // kg/m^3
-
-	// gamified values here
-	double toxicity = 0;
 };
 
 // complex objects e.g. steel bars, heat shields

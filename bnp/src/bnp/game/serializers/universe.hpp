@@ -2,9 +2,11 @@
 
 #include <bnp/core/logger.hpp>
 #include <bnp/game/components/universe.h>
+#include <bnp/game/serializers/matter.hpp>
 
 #include <bitsery/bitsery.h>
 #include <bitsery/traits/string.h>
+#include <bitsery/traits/vector.h>
 
 namespace bnp {
 namespace Game {
@@ -31,6 +33,13 @@ void serialize(S& s, Game::Component::System& system) {
 	s.value8b(system.light_minute_scale);
 }
 
+// serializer for atmosphere composition entries
+template <typename S>
+void serialize(S& s, std::pair<double, Game::Component::Chemical> entry) {
+	s.value8b(entry.first);
+	s.object(entry.second);
+}
+
 template <typename S>
 void serialize(S& s, Game::Component::Celestial& celestial) {
 	s.value4b(celestial.version);
@@ -46,6 +55,9 @@ void serialize(S& s, Game::Component::Celestial& celestial) {
 	s.value8b(celestial.rotate_duration);
 	s.value8b(celestial.mass);
 	s.value8b(celestial.radius);
+	if (celestial.version > 1) {
+		s.container(celestial.atmosphere, 256);
+	}
 }
 
 }
