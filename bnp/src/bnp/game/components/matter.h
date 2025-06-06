@@ -6,6 +6,8 @@ namespace Component {
 
 // for raw resources
 struct Chemical {
+	typedef uint32_t ID;
+	ID id;
 	std::string formula = "H2O";
 	double molecular_mass = 18.01528; // g/mol
 	// at 1 atm (101.325 kPa)

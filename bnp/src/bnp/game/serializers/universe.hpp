@@ -55,7 +55,7 @@ void serialize(S& s, Game::Component::Celestial& celestial) {
 	s.value8b(celestial.rotate_duration);
 	s.value8b(celestial.mass);
 	s.value8b(celestial.radius);
-	if (celestial.version > 1) {
+	if (celestial.version > 2) {
 		s.container(celestial.atmosphere, 256);
 	}
 }
