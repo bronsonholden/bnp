@@ -72,7 +72,7 @@ struct Celestial {
 	double radius = 6.12773e6; // meters
 
 	// mass, chemical
-	std::vector<std::pair<double, Game::Component::Chemical>> atmosphere;
+	std::vector<std::pair<double, Game::Component::Chemical::ID>> atmosphere;
 
 	double g() {
 		return (G * mass) / (radius * radius);

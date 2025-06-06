@@ -35,9 +35,9 @@ void serialize(S& s, Game::Component::System& system) {
 
 // serializer for atmosphere composition entries
 template <typename S>
-void serialize(S& s, std::pair<double, Game::Component::Chemical> entry) {
+void serialize(S& s, std::pair<double, Game::Component::Chemical::ID> entry) {
 	s.value8b(entry.first);
-	s.object(entry.second);
+	s.value4b(entry.second);
 }
 
 template <typename S>
@@ -53,7 +53,6 @@ void serialize(S& s, Game::Component::Celestial& celestial) {
 	s.value8b(celestial.rotate_duration);
 	s.value8b(celestial.mass);
 	s.value8b(celestial.radius);
-	s.container(celestial.atmosphere, 256);
 }
 
 }
