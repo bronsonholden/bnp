@@ -12,6 +12,8 @@ namespace Component {
 
 template <typename S>
 void serialize(S& s, Game::Component::Chemical& chemical) {
+	s.value4b(chemical.id);
+	s.text1b(chemical.name, 256);
 	s.text1b(chemical.formula, 256);
 	s.value8b(chemical.molecular_mass);
 	s.value8b(chemical.melting_point);
