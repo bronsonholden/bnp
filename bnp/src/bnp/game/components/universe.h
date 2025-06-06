@@ -1,5 +1,7 @@
 #pragma once
 
+#include <bnp/game/components/matter.h>
+
 #include <glm/glm.hpp>
 #include <bitsery/bitsery.h>
 #include <unordered_map>
@@ -69,19 +71,12 @@ struct Celestial {
 	double mass = 5.23366837e12; // trillions kg
 	double radius = 6.12773e6; // meters
 
+	// mass, chemical
+	std::vector<std::pair<double, Game::Component::Chemical>> atmosphere;
+
 	double g() {
 		return (G * mass) / (radius * radius);
 	}
-};
-
-struct Atmosphere {
-	//double column_mass() {
-	//	return atmospheric_mass / (4.0 * std::numbers::pi * radius * radius);
-	//}
-
-	//double atmospheric_pressure() {
-	//	return (g() * column_mass()) / PA_PER_PSI;
-	//}
 };
 
 }
