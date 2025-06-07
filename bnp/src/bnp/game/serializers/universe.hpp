@@ -8,6 +8,16 @@
 #include <bitsery/traits/string.h>
 #include <bitsery/traits/vector.h>
 
+
+// serializer for atmosphere composition entries
+namespace std {
+template <typename S>
+void serialize(S& s, pair<double, bnp::Game::Component::Chemical::ID>& entry) {
+	s.value8b(entry.first);
+	s.value4b(entry.second);
+}
+}
+
 namespace bnp {
 namespace Game {
 namespace Component {
@@ -33,13 +43,6 @@ void serialize(S& s, Game::Component::System& system) {
 	s.value8b(system.light_minute_scale);
 }
 
-// serializer for atmosphere composition entries
-template <typename S>
-void serialize(S& s, std::pair<double, Game::Component::Chemical::ID> entry) {
-	s.value8b(entry.first);
-	s.value4b(entry.second);
-}
-
 template <typename S>
 void serialize(S& s, Game::Component::Celestial& celestial) {
 	s.value4b(celestial.version);
@@ -53,6 +56,7 @@ void serialize(S& s, Game::Component::Celestial& celestial) {
 	s.value8b(celestial.rotate_duration);
 	s.value8b(celestial.mass);
 	s.value8b(celestial.radius);
+	s.container(celestial.atmosphere, 256);
 }
 
 }

@@ -322,6 +322,122 @@ void UniverseEditor::render_celestial_editor(entt::registry& registry, Game::Com
 	ImGui::InputDouble("Mass", &celestial.mass);
 	ImGui::InputDouble("Radius", &celestial.radius);
 	ImGui::Text("g: %2.6f m/s^2", celestial.g());
+
+
+	if (ImGui::TreeNode("Atmosphere")) {
+		if (ImGui::Button("New chemical")) {
+			celestial.atmosphere.push_back({ 0, 0 });
+		}
+
+		ImGui::Text("Atmosphere components: %d", celestial.atmosphere.size());
+		ImGui::Text("Gravity (m/s^2): %.5f", celestial.g());
+
+		double column_mass = 0;
+		for (auto& entry : celestial.atmosphere) {
+			column_mass += entry.first;
+		}
+
+		ImGui::Text("Atmospheric column mass (trillions kg): %.2f", column_mass / 1e12);
+
+		double atmospheric_pressure_Pa = (column_mass * celestial.g()) / (4.0 * std::numbers::pi * celestial.radius * celestial.radius);
+		double atmospheric_pressure_atm = atmospheric_pressure_Pa / 101325.0; // Pa to atm
+
+		ImGui::Text("Surface atmosphere pressure (atm): %.5f", atmospheric_pressure_atm);
+
+		if (celestial.atmosphere.size() && ImGui::BeginTable("AtmosphereTable", 3, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
+			ImGui::TableSetupColumn("Formula");
+			ImGui::TableSetupColumn("%");
+			ImGui::TableSetupColumn("Mass (trillions kg)");
+
+			int remove_index = -1;
+
+			for (int i = 0; i < celestial.atmosphere.size(); ++i) {
+				auto& entry = celestial.atmosphere.at(i);
+
+				ImGui::TableNextRow();
+				ImGui::TableNextColumn();
+
+				{
+					auto chemicals = registry.view<Game::Component::Chemical>();
+					Game::Component::Chemical::ID selected_chemical_id = 0;
+					entt::entity selected_chemical_entity = entt::null;
+
+					for (auto entity : chemicals) {
+						auto& chemical = chemicals.get<Game::Component::Chemical>(entity);
+
+						if (entry.second == chemical.id) {
+							selected_chemical_entity = entity;
+							break;
+						}
+					}
+
+					std::string preview = "Select chemical";
+
+					if (selected_chemical_entity != entt::null) {
+						auto& chemical = registry.get<Game::Component::Chemical>(selected_chemical_entity);
+						preview = chemical.formula;
+						selected_chemical_id = chemical.id;
+					}
+
+					char label[256];
+					snprintf(label, 256, "##formula:%d", i);
+					if (ImGui::BeginCombo(label, preview.c_str())) {
+						for (auto entity : chemicals) {
+							auto& chemical = chemicals.get<Game::Component::Chemical>(entity);
+
+							bool selected = chemical.id == selected_chemical_id;
+
+							if (ImGui::Selectable(chemical.formula.c_str(), selected)) {
+								entry.second = chemical.id;
+							}
+
+							if (selected) {
+								ImGui::SetItemDefaultFocus();
+							}
+						}
+
+						if (ImGui::Selectable("<Remove>")) {
+							remove_index = i;
+						}
+
+						ImGui::EndCombo();
+					}
+
+					ImGui::TableNextColumn();
+					{
+						char label[256];
+						snprintf(label, 256, "##mass:%d", i);
+						double value = entry.first / 1e12;
+						if (ImGui::InputDouble(label, &value)) {
+							entry.first = value * 1e12;
+						}
+					}
+
+					ImGui::TableNextColumn();
+					if (selected_chemical_entity != entt::null) {
+						auto& chemical = registry.get<Game::Component::Chemical>(selected_chemical_entity);
+
+						if (column_mass > 0.0) {
+							ImGui::Text("%.7f%%", (entry.first / column_mass) * 100.0);
+						}
+						else {
+							ImGui::Text("-");
+						}
+					}
+				}
+
+			}
+
+			ImGui::EndTable();
+
+			if (remove_index > -1) {
+				celestial.atmosphere.erase(celestial.atmosphere.begin() + remove_index);
+			}
+		}
+
+		ImGui::TreePop();
+	}
+
 	ImGui::Unindent();
 
 	ImGui::Spacing();
