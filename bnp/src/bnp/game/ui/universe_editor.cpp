@@ -346,8 +346,16 @@ void UniverseEditor::render_celestial_editor(entt::registry& registry, Game::Com
 
 		if (celestial.atmosphere.size() && ImGui::BeginTable("AtmosphereTable", 3, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
 			ImGui::TableSetupColumn("Formula");
-			ImGui::TableSetupColumn("%");
 			ImGui::TableSetupColumn("Mass (trillions kg)");
+			ImGui::TableSetupColumn("%");
+
+			ImGui::TableNextRow();
+			ImGui::TableNextColumn();
+			ImGui::Text("Formula");
+			ImGui::TableNextColumn();
+			ImGui::Text("Mass (trillions kg)");
+			ImGui::TableNextColumn();
+			ImGui::Text("Percentage");
 
 			int remove_index = -1;
 
