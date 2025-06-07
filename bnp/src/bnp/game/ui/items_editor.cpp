@@ -23,7 +23,7 @@ void ItemsEditor::render(entt::registry& registry) {
 	}
 
 	if (ImGui::Button("New item")) {
-		// todo: get next ID from index?
+		// todo: get next ID from `ItemIndex`?
 		Game::Component::Item::ID next_id = 1;
 		auto items = registry.view<Game::Component::Item>();
 		for (auto entity : items) {
