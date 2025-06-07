@@ -109,7 +109,7 @@ Node Celestials::celestial(entt::registry& registry, ResourceManager& resource_m
 	node.add_component<Transform>(Transform{
 		glm::vec3(0, 0, 0),
 		glm::quat(),
-		glm::vec3(2.0f)
+		glm::vec3(2.5f)
 		});
 
 	node.add_component<Camera2DRig>(Camera2DRig{
