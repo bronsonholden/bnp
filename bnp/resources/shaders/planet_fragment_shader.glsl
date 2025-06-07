@@ -385,6 +385,9 @@ void main() {
     // The circle is always centered at (0.5, 0.5) with a fixed radius of 0.5
     float dist = distance(TexCoord, vec2(0.5f, 0.5f));  // Distance from center of quad
 
+    // todo: perhaps only discard if we want to render planet surface, but "lift" clouds by
+    // scaling the texcoord towards center when rendering surface so it has a smaller radius
+    // than atmosphere/clouds
     if (dist >= 0.5f)  // If the fragment is outside the circle, discard it
     {
         discard;
