@@ -375,6 +375,10 @@ vec3 atmosphere_color(vec3 sphere_coord) {
     return vec3(0.0f);
 }
 
+// todo: when figuring out colors for details (probably scale this technique by noise radius),
+// use a range above the target depth value, and blend the color based on where it falls in
+// this range with background so details flicker and pop in/out less noticeably during
+// rotation. Or perhaps blend based on angle between spherical coord and camera.
 void main() {
     float snap_interval = 0.02f;
     vec3 coord = spherical_coord(TexCoord, rotation);
