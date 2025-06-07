@@ -270,6 +270,8 @@ vec3 surface_color(vec3 sphere_coord) {
     // such as small inland lakes and rough out coastlines
     surface_noise_value += -abs(cnoise(vec4(rotated_coord * (noise_radius * 8.0 + 2.0), noise_seed + 4.0))) / 2.0;
 
+    float city_noise_value = cnoise(vec4(rotated_coord * 65.0, noise_seed));
+
     // cratering
     vec3 sample_coord = vec3(115.0, 35.0, 25.0);
     for (int i = 0; i < num_craters; ++i) {
@@ -315,6 +317,9 @@ vec3 surface_color(vec3 sphere_coord) {
         color = mountain_color;
     }
 
+    float light_blend = 1.0 - ((clamp(dot(sphere_coord, normalize(sun_direction)), -1.0, 0.1) + 1.0) / 1.1);
+    light_blend = pow(light_blend, 0.1);
+
     // ice caps
     float cap_shimmer = surface_noise_value * 0.15;
     float equator_dist = abs(dot(normalize(rotated_coord), normalize(axis)));
@@ -323,6 +328,13 @@ vec3 surface_color(vec3 sphere_coord) {
     if (equator_dist >= ice_cap_min && equator_dist <= ice_cap_max)
     {
         color = ice_cap_color + vec3(0, 0, cap_shimmer);
+    }
+
+    if (city_noise_value > 0.4 && surface_noise_value > water_depth + coast_depth) {
+        color = mix(vec3(0.66), vec3(0.8, 0.8, 0.37), light_blend) * city_noise_value;
+    } else {
+        float brightness = clamp(sqrt(10 * dot(sphere_coord, normalize(sun_direction))), 0.25f, 1.0f);
+        color *= brightness;
     }
 
     return color;
@@ -385,7 +397,7 @@ void main() {
     // calculate brightness of fragment based on sun position
     float brightness = clamp(sqrt(10 * dot(coord, normalize(sun_direction))), 0.25f, 1.0f);
 
-    vec3 color = mix(surface_color, atmosphere_color, clamp(length(atmosphere_color) * 2.0, 0.0, 1.0));
+    vec3 color = mix(surface_color, atmosphere_color * brightness, clamp(length(atmosphere_color) * 2.0, 0.0, 1.0));
 
-    FragColor = vec4(brightness * clamp(color, 0.0, 1.0), 1.0f);
+    FragColor = vec4(clamp(color, 0.0, 1.0), 1.0f);
 }
