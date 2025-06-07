@@ -14,6 +14,7 @@ public:
 	void render(entt::registry& registry);
 
 private:
+	entt::entity editing_item_entity = entt::null;
 	bool loaded = false;
 	void save_to_file(entt::registry& registry);
 	void load_from_file(entt::registry& registry);
