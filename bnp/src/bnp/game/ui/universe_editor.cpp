@@ -323,7 +323,6 @@ void UniverseEditor::render_celestial_editor(entt::registry& registry, Game::Com
 	ImGui::InputDouble("Radius", &celestial.radius);
 	ImGui::Text("g: %2.6f m/s^2", celestial.g());
 
-
 	if (ImGui::TreeNode("Atmosphere")) {
 		if (ImGui::Button("New chemical")) {
 			celestial.atmosphere.push_back({ 0, 0 });
