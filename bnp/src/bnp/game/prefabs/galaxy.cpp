@@ -40,10 +40,8 @@ void Galaxy::model(entt::registry& registry) {
 			.name = "Eden",
 			.orbit_radius = 1.7,
 			.initial_orbit_progression = 0.21 * std::numbers::pi,
-			.orbit_progression = 0.21 * std::numbers::pi,
 			.orbit_duration = (288.0 * 24.0 * 3600.0), // 288 day orbit
 			.initial_rotate_progression = 1.67 * std::numbers::pi,
-			.rotate_progression = 1.67 * std::numbers::pi,
 			.rotate_duration = 27.0 * 3600.0
 		}
 	);
@@ -84,9 +82,7 @@ void Galaxy::model(entt::registry& registry) {
 			.system_id = 1,
 			.name = "Maltonna",
 			.orbit_radius = 1.2,
-			.orbit_progression = 1.8 * std::numbers::pi,
 			.orbit_duration = 112.0 * 24.0 * 3600.0,
-			.rotate_progression = 0.1 * std::numbers::pi,
 			.rotate_duration = 18.0 * 3600.0
 		}
 	);

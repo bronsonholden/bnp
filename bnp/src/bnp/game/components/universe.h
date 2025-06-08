@@ -59,11 +59,9 @@ struct Celestial {
 	// system as game progresses
 	double orbit_radius; // worldspace
 	double initial_orbit_progression; // radians
-	double orbit_progression; // radians
 	// real-time to complete orbit
 	double orbit_duration; // seconds
 	double initial_rotate_progression; // radians
-	double rotate_progression; // radians
 	// real-time to complete rotation on axis
 	double rotate_duration; // seconds
 

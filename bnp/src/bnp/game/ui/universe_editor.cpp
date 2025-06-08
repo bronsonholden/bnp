@@ -233,10 +233,8 @@ void UniverseEditor::render_system_editor(entt::registry& registry, Game::Compon
 			.name = "<Celestial>",
 			.orbit_radius = 1.0,
 			.initial_orbit_progression = 0.0,
-			.orbit_progression = 0.0,
 			.orbit_duration = 24.0 * 3600.0 * 365.0,
 			.initial_rotate_progression = 0.0,
-			.rotate_progression = 0.0,
 			.rotate_duration = 24.0 * 3600.0
 		};
 
@@ -257,11 +255,9 @@ void UniverseEditor::render_system_editor(entt::registry& registry, Game::Compon
 			ImGui::Indent();
 			changed = ImGui::InputDouble("Orbit Radius", &celestial.orbit_radius, 0.1) || changed;
 			changed = ImGui::InputDouble("Initial Orbit Progression", &celestial.initial_orbit_progression, 0.1) || changed;
-			ImGui::Text("Orbit progression: %3.10f", celestial.orbit_progression);
 			changed = ImGui::InputDouble("Orbit Duration", &celestial.orbit_duration) || changed;
 			ImGui::Text("Orbit duration (days): %2.3f", celestial.orbit_duration / (24.0 * 3600.0));
 			changed = ImGui::InputDouble("Initial Rotate Progression", &celestial.initial_rotate_progression) || changed;
-			ImGui::Text("Rotate progression: %3.10f", celestial.rotate_progression);
 			changed = ImGui::InputDouble("Rotate Duration", &celestial.rotate_duration) || changed;
 			ImGui::Text("Rotate duration (hours): %2.3f", celestial.rotate_duration / 3600.0);
 			ImGui::Unindent();
@@ -312,11 +308,9 @@ void UniverseEditor::render_celestial_editor(entt::registry& registry, Game::Com
 	ImGui::Indent();
 	ImGui::InputDouble("Orbit Radius", &celestial.orbit_radius);
 	ImGui::InputDouble("Initial Orbit Progression", &celestial.initial_orbit_progression);
-	ImGui::Text("Orbit progression: %3.10f", celestial.orbit_progression);
 	ImGui::InputDouble("Orbit Duration", &celestial.orbit_duration);
 	ImGui::Text("Orbit duration (days): %2.3f", celestial.orbit_duration / (24.0 * 3600.0));
 	ImGui::InputDouble("Initial Rotate Progression", &celestial.initial_rotate_progression);
-	ImGui::Text("Rotate progression: %3.10f", celestial.rotate_progression);
 	ImGui::InputDouble("Rotate Duration", &celestial.rotate_duration);
 	ImGui::Text("Rotate duration (hours): %2.3f", celestial.rotate_duration / 3600.0);
 	ImGui::InputDouble("Mass", &celestial.mass);
