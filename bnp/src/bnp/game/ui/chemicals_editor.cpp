@@ -101,6 +101,7 @@ void ChemicalsEditor::render(entt::registry& registry) {
 		ImGui::Begin("Edit chemical");
 
 		entt::entity chemical_entity = entt::null;
+		bool close = ImGui::Button("Close");
 
 		auto view = registry.view<Game::Component::Chemical>();
 		for (auto entity : view) {
@@ -143,6 +144,10 @@ void ChemicalsEditor::render(entt::registry& registry) {
 		}
 
 		ImGui::End();
+
+		if (close) {
+			editing_chemical_id = 0;
+		}
 	}
 }
 
