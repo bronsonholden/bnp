@@ -13,18 +13,18 @@ namespace Component {
 // Blueprints are just designs for ships and modules
 //////////////////////////////////////////////////////////////////////////
 
+struct ShipSegment {
+	typedef uint32_t ID;
+	ID id;
+	std::string name;
+	uint32_t engine_slots;
+	uint32_t reactor_slots;
+	uint32_t solid_storage_slots;
+	uint32_t fluid_storage_slots;
+};
+
 struct ShipBlueprint {
 	typedef uint32_t ID;
-
-	typedef struct {
-		typedef uint32_t ID;
-		ID id;
-		std::string name;
-		uint32_t engine_slots;
-		uint32_t reactor_slots;
-		uint32_t solid_storage_slots;
-		uint32_t fluid_storage_slots;
-	} Segment;
 
 	ID id;
 	std::string name = "R-9 Courier";
@@ -33,7 +33,7 @@ struct ShipBlueprint {
 	// mass of just the ship with no modules
 	double mass;
 
-	std::vector<Segment> segments;
+	std::vector<ShipSegment> segments;
 };
 
 struct EngineBlueprint {
@@ -78,7 +78,7 @@ struct ShipModuleEmplacement {
 	// which instantiated ship this module is attached to
 	Ship::ID ship_id;
 	// which segment of ship the module occupies
-	ShipBlueprint::Segment::ID segment_id;
+	ShipSegment::ID segment_id;
 	// which slot the module occupies
 	uint32_t slot_index;
 	ID id;
