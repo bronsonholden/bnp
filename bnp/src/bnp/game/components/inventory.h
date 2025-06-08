@@ -10,7 +10,10 @@ namespace Game {
 namespace Component {
 
 struct Item {
+	const static uint32_t latest_version = 1;
 	typedef uint32_t ID;
+
+	uint32_t version;
 	ID id;
 	std::string name;
 };

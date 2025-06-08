@@ -1,0 +1,95 @@
+#pragma once
+
+#include <bnp/game/components/recipes.h>
+
+#include <string>
+#include <vector>
+
+namespace bnp {
+namespace Game {
+namespace Component {
+
+//////////////////////////////////////////////////////////////////////////
+// Blueprints are just designs for ships and modules
+//////////////////////////////////////////////////////////////////////////
+
+struct ShipBlueprint {
+	typedef uint32_t ID;
+
+	typedef struct {
+		typedef uint32_t ID;
+		ID id;
+		std::string name;
+		uint32_t engine_slots;
+		uint32_t reactor_slots;
+		uint32_t solid_storage_slots;
+		uint32_t fluid_storage_slots;
+	} Segment;
+
+	ID id;
+	std::string name = "R-9 Courier";
+	std::string manufacturer = "Tulman-Droupe Stellarworks";
+
+	std::vector<Segment> segments;
+};
+
+struct EngineBlueprint {
+	typedef uint32_t ID;
+
+	ID id;
+	std::vector<ChemicalRecipe::ID> propulsion_recipes;
+	double effiency_factor;
+};
+
+struct FluidStorageBlueprint {
+	typedef uint32_t ID;
+
+	ID id;
+	double max_volume;
+	double max_pressure;
+};
+
+//////////////////////////////////////////////////////////////////////////
+// Components for actual ships existing in game world. Emplacements
+// refer to actual built/purchased modules attached to actual ships in the
+// game world.
+//////////////////////////////////////////////////////////////////////////
+
+struct Ship {
+	typedef uint32_t ID;
+
+	ID id;
+	ShipBlueprint::ID ship_blueprint_id;
+	// organization ID, 1 = player
+	uint32_t owner;
+};
+
+// Base emplacement data. Specific modules will also have the
+// corresponding component struct (e.g. fluid storage modules
+// will have `FluidStorageEmplacement`.
+struct ShipModuleEmplacement {
+	typedef uint32_t ID;
+
+	// which instantiated ship this module is attached to
+	Ship::ID ship_id;
+	// which segment of ship the module occupies
+	ShipBlueprint::Segment::ID segment_id;
+	// which slot the module occupies
+	uint32_t slot_index;
+	ID id;
+};
+
+struct FluidStorageEmplacement {
+	FluidStorageBlueprint::ID fluid_storage_blueprint_id;
+	Chemical::ID assigned_chemical_id;
+	double mass;
+};
+
+struct EngineEmplacement {
+	EngineBlueprint::ID engine_blueprint_id;
+	ChemicalRecipe::ID assigned_propulsion_recipe;
+};
+
+}
+}
+}
