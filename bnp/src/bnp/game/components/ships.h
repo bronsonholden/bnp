@@ -66,7 +66,7 @@ struct Ship {
 
 // Base emplacement data. Specific modules will also have the
 // corresponding component struct (e.g. fluid storage modules
-// will have `FluidStorageEmplacement`.
+// will have `FluidStorageEmplacement`.)
 struct ShipModuleEmplacement {
 	typedef uint32_t ID;
 
