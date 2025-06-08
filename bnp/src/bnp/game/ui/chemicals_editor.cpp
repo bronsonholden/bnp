@@ -138,6 +138,7 @@ void ChemicalsEditor::render(entt::registry& registry) {
 			ImGui::InputDouble("Boiling point (K at 1 atm)", &chemical.boiling_point);
 			ImGui::InputDouble("Solid density (kg/m^3)", &chemical.solid_density);
 			ImGui::InputDouble("Liquid density (kg/m^3)", &chemical.liquid_density);
+			ImGui::InputDouble("Specific heat (gas, J/(kg K))", &chemical.specific_heat_gas);
 		}
 		else {
 			ImGui::TextColored(ImVec4(1, 0, 0, 1), "No chemical found by ID %d", editing_chemical_id);

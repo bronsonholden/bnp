@@ -7,6 +7,9 @@ namespace Component {
 // for raw resources
 struct Chemical {
 	typedef uint32_t ID;
+
+	const static uint32_t latest_version = 1;
+	uint32_t version;
 	ID id;
 	std::string name = "Water";
 	std::string formula = "H2O";
@@ -17,6 +20,7 @@ struct Chemical {
 	// at melting point
 	double solid_density = 917.0; // kg/m^3
 	double liquid_density = 1000.0; // kg/m^3
+	double specific_heat_gas = 1996.0; // J/(kg K)
 };
 
 // complex objects e.g. steel bars, heat shields
