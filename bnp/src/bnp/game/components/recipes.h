@@ -17,7 +17,7 @@ struct ChemicalRecipe {
 	typedef uint32_t ID;
 
 	ID id;
-	std::_Invoker_strategy name;
+	std::string name;
 	std::vector<std::pair<double, Chemical::ID>> inputs;
 	std::vector<std::pair<double, Chemical::ID>> outputs;
 	double energy; // MJ/kg
