@@ -30,6 +30,9 @@ struct ShipBlueprint {
 	std::string name = "R-9 Courier";
 	std::string manufacturer = "Tulman-Droupe Stellarworks";
 
+	// mass of just the ship with no modules
+	double mass;
+
 	std::vector<Segment> segments;
 };
 
@@ -38,6 +41,7 @@ struct EngineBlueprint {
 
 	ID id;
 	std::vector<ChemicalRecipe::ID> propulsion_recipes;
+	double mass;
 	double effiency_factor;
 };
 
@@ -45,6 +49,7 @@ struct FluidStorageBlueprint {
 	typedef uint32_t ID;
 
 	ID id;
+	double mass;
 	double max_volume;
 	double max_pressure;
 };
@@ -77,12 +82,13 @@ struct ShipModuleEmplacement {
 	// which slot the module occupies
 	uint32_t slot_index;
 	ID id;
+	// mass of the module, total ship mass is ship + all modules
+	double mass;
 };
 
 struct FluidStorageEmplacement {
 	FluidStorageBlueprint::ID fluid_storage_blueprint_id;
 	Chemical::ID assigned_chemical_id;
-	double mass;
 };
 
 struct EngineEmplacement {
