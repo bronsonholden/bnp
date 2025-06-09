@@ -256,10 +256,7 @@ void Engine::render() {
 	//file_browser.render();
 	scene_inspector.render();
 
-	g_universe_editor.render(registry);
-	g_navigation_control.render(registry);
-	g_items_editor.render(registry);
-	g_chemicals_editor.render(registry);
+	g_editor_tools.render(registry);
 
 	if (file_browser.has_selection()) {
 		std::string path = file_browser.get_selected_path();
