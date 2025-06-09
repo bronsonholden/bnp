@@ -15,8 +15,9 @@ class EditorTools {
 public:
 	EditorTools() = default;
 
-	void update(entt::registry& registry, float dt);
+	void initialize(entt::registry& registry);
 	void render(entt::registry& registry);
+	void update(entt::registry& registry, float dt);
 
 private:
 	NavigationControl navigation_control;

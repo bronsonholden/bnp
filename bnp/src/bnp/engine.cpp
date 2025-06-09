@@ -121,6 +121,8 @@ void Engine::run() {
 	//Game::Prefab::Galaxy::model(registry);
 	//navigation_manager.show_galaxy_map(registry);
 
+	g_editor_tools.initialize(registry);
+
 	while (window.open) {
 		SDL_Event event;
 

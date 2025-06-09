@@ -22,14 +22,15 @@ namespace bnp {
 namespace Game {
 namespace UI {
 
-void UniverseEditor::render(entt::registry& registry) {
-	ImGui::Begin("Universe Editor");
-
+void UniverseEditor::initialize(entt::registry& registry) {
 	if (!registry.view<Game::Component::Galaxy>().size()) {
 		load_from_file(registry, data_dir() / "universe.bin");
 		Game::Manager::NavigationManager().show_galaxy_map(registry);
 	}
-	else {
+}
+
+void UniverseEditor::render(entt::registry& registry) {
+	if (!registry.view<Game::Component::Galaxy>().size()) {
 		if (ImGui::Button("Save")) {
 			save_to_file(registry, data_dir() / "universe.bin");
 		}
@@ -52,8 +53,6 @@ void UniverseEditor::render(entt::registry& registry) {
 			render_system_editor(registry, system.system_id);
 		}
 	}
-
-	ImGui::End();
 }
 
 void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::path file_path) {

@@ -14,8 +14,6 @@ namespace Game {
 namespace UI {
 
 void ChemicalsEditor::render(entt::registry& registry) {
-	ImGui::Begin("Chemicals editor");
-
 	if (!loaded) {
 		load_from_file(registry);
 		loaded = true;
@@ -45,61 +43,7 @@ void ChemicalsEditor::render(entt::registry& registry) {
 
 	ImGui::Separator();
 
-	std::vector<entt::entity> entities = std::move(get_chemical_entities_sorted_by_id(registry));
-
-	if (entities.size() && ImGui::BeginTable("ChemicalTable", 4, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
-		ImGui::TableSetupColumn("ID");
-		ImGui::TableSetupColumn("Name");
-		ImGui::TableSetupColumn("Formula");
-		ImGui::TableSetupColumn("Actions");
-
-		for (auto entity : entities) {
-			auto& chemical = registry.get<Game::Component::Chemical>(entity);
-			ImGui::TableNextRow();
-			ImGui::TableNextColumn();
-
-			ImGui::Text("%d", chemical.id);
-			ImGui::TableNextColumn();
-
-			{
-				char name[256];
-				snprintf(name, 256, "%s", chemical.name.c_str());
-				char label[256];
-				snprintf(label, 256, "##name:%d", chemical.id);
-				if (ImGui::InputText(label, name, 256)) {
-					chemical.name = name;
-				}
-				ImGui::TableNextColumn();
-			}
-
-			{
-				char formula[256];
-				char label[256];
-				snprintf(label, 256, "##formula:%d", chemical.id);
-				snprintf(formula, 256, "%s", chemical.formula.c_str());
-				if (ImGui::InputText(label, formula, 256)) {
-					chemical.formula = formula;
-				}
-				ImGui::TableNextColumn();
-			}
-
-			{
-				char label[256];
-				snprintf(label, 256, "Edit##id:%d", chemical.id);
-				if (ImGui::Button(label)) {
-					editing_chemical_id = chemical.id;
-				}
-			}
-		}
-
-		ImGui::EndTable();
-	}
-
-	ImGui::End();
-
 	if (editing_chemical_id) {
-		ImGui::Begin("Edit chemical");
-
 		entt::entity chemical_entity = entt::null;
 		bool close = ImGui::Button("Close");
 
@@ -144,10 +88,59 @@ void ChemicalsEditor::render(entt::registry& registry) {
 			ImGui::TextColored(ImVec4(1, 0, 0, 1), "No chemical found by ID %d", editing_chemical_id);
 		}
 
-		ImGui::End();
-
 		if (close) {
 			editing_chemical_id = 0;
+		}
+	}
+	else {
+		std::vector<entt::entity> entities = std::move(get_chemical_entities_sorted_by_id(registry));
+
+		if (entities.size() && ImGui::BeginTable("ChemicalTable", 4, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
+			ImGui::TableSetupColumn("ID");
+			ImGui::TableSetupColumn("Name");
+			ImGui::TableSetupColumn("Formula");
+			ImGui::TableSetupColumn("Actions");
+
+			for (auto entity : entities) {
+				auto& chemical = registry.get<Game::Component::Chemical>(entity);
+				ImGui::TableNextRow();
+				ImGui::TableNextColumn();
+
+				ImGui::Text("%d", chemical.id);
+				ImGui::TableNextColumn();
+
+				{
+					char name[256];
+					snprintf(name, 256, "%s", chemical.name.c_str());
+					char label[256];
+					snprintf(label, 256, "##name:%d", chemical.id);
+					if (ImGui::InputText(label, name, 256)) {
+						chemical.name = name;
+					}
+					ImGui::TableNextColumn();
+				}
+
+				{
+					char formula[256];
+					char label[256];
+					snprintf(label, 256, "##formula:%d", chemical.id);
+					snprintf(formula, 256, "%s", chemical.formula.c_str());
+					if (ImGui::InputText(label, formula, 256)) {
+						chemical.formula = formula;
+					}
+					ImGui::TableNextColumn();
+				}
+
+				{
+					char label[256];
+					snprintf(label, 256, "Edit##id:%d", chemical.id);
+					if (ImGui::Button(label)) {
+						editing_chemical_id = chemical.id;
+					}
+				}
+			}
+
+			ImGui::EndTable();
 		}
 	}
 }

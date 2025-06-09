@@ -1,18 +1,46 @@
 #include <bnp/game/ui/editor_tools.h>
 
+#include <imgui.h>
+
 namespace bnp {
 namespace Game {
 namespace UI {
 
-void EditorTools::update(entt::registry& registry, float dt) {
-
+void EditorTools::initialize(entt::registry& registry) {
+	universe_editor.initialize(registry);
 }
 
 void EditorTools::render(entt::registry& registry) {
-	universe_editor.render(registry);
-	navigation_control.render(registry);
-	items_editor.render(registry);
-	chemicals_editor.render(registry);
+	ImGui::Begin("Editor tools");
+
+	if (ImGui::BeginTabBar("Tools")) {
+		if (ImGui::BeginTabItem("Navigation Control")) {
+			navigation_control.render(registry);
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Universe editor")) {
+			universe_editor.render(registry);
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Items editor")) {
+			items_editor.render(registry);
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Chemicals editor")) {
+			chemicals_editor.render(registry);
+			ImGui::EndTabItem();
+		}
+		ImGui::EndTabBar();
+	}
+
+	ImGui::End();
+}
+
+void EditorTools::update(entt::registry& registry, float dt) {
+
 }
 
 }

@@ -15,8 +15,6 @@ namespace Game {
 namespace UI {
 
 void ItemsEditor::render(entt::registry& registry) {
-	ImGui::Begin("Items editor");
-
 	if (!loaded) {
 		load_from_file(registry);
 		loaded = true;
@@ -139,8 +137,6 @@ void ItemsEditor::render(entt::registry& registry) {
 			ImGui::EndTable();
 		}
 	}
-
-	ImGui::End();
 }
 
 

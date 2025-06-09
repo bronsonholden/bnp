@@ -9,8 +9,6 @@ namespace Game {
 namespace UI {
 
 void NavigationControl::render(entt::registry& registry) {
-	ImGui::Begin("Navigation Control");
-
 	if (ImGui::Button("Galaxy Map")) {
 		Game::Manager::NavigationManager navigation_manager;
 		navigation_manager.hide_galaxy_map(registry);
@@ -18,8 +16,6 @@ void NavigationControl::render(entt::registry& registry) {
 		navigation_manager.hide_system_map(registry);
 		navigation_manager.show_galaxy_map(registry);
 	}
-
-	ImGui::End();
 }
 
 }

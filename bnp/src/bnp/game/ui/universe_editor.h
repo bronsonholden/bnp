@@ -12,6 +12,8 @@ namespace UI {
 class UniverseEditor {
 public:
 	UniverseEditor() = default;
+
+	void initialize(entt::registry& registry);
 	void render(entt::registry& registry);
 
 	void save_to_file(entt::registry& registry, std::filesystem::path file_path);
