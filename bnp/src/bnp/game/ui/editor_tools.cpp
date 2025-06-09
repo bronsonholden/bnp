@@ -8,6 +8,7 @@ namespace UI {
 
 void EditorTools::initialize(entt::registry& registry) {
 	universe_editor.initialize(registry);
+	chemicals_editor.initialize(registry);
 }
 
 void EditorTools::render(entt::registry& registry) {

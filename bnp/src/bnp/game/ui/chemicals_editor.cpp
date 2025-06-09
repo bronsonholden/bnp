@@ -13,11 +13,11 @@ namespace bnp {
 namespace Game {
 namespace UI {
 
+void ChemicalsEditor::initialize(entt::registry& registry) {
+	load_from_file(registry);
+}
+
 void ChemicalsEditor::render(entt::registry& registry) {
-	if (!loaded) {
-		load_from_file(registry);
-		loaded = true;
-	}
 
 	if (ImGui::Button("New chemical")) {
 		// todo: get next ID from index?
