@@ -145,7 +145,6 @@ void ChemicalsEditor::render(entt::registry& registry) {
 	}
 }
 
-
 void ChemicalsEditor::save_to_file(entt::registry& registry) {
 	std::filesystem::path file_path = data_dir() / "chemicals.bin";
 	std::ofstream os(file_path, std::ios::binary);
