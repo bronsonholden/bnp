@@ -170,6 +170,7 @@ void BlueprintsEditor::render_ship_blueprints_section(entt::registry& registry) 
 						edit_ship_blueprint_entity = entity;
 					}
 				}
+				ImGui::SameLine();
 				{
 					char label[256];
 					snprintf(label, 256, "Delete##%d", blueprint.id);
