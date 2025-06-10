@@ -30,7 +30,7 @@ void UniverseEditor::initialize(entt::registry& registry) {
 }
 
 void UniverseEditor::render(entt::registry& registry) {
-	if (!registry.view<Game::Component::Galaxy>().size()) {
+	if (registry.view<Game::Component::Galaxy>().size()) {
 		if (ImGui::Button("Save")) {
 			save_to_file(registry, data_dir() / "universe.bin");
 		}
