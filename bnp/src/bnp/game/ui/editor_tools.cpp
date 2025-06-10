@@ -9,6 +9,7 @@ namespace UI {
 void EditorTools::initialize(entt::registry& registry) {
 	universe_editor.initialize(registry);
 	chemicals_editor.initialize(registry);
+	blueprints_editor.initialize(registry);
 }
 
 void EditorTools::render(entt::registry& registry) {
@@ -17,6 +18,11 @@ void EditorTools::render(entt::registry& registry) {
 	if (ImGui::BeginTabBar("Tools")) {
 		if (ImGui::BeginTabItem("Navigation Control")) {
 			navigation_control.render(registry);
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Blueprints editor")) {
+			blueprints_editor.render(registry);
 			ImGui::EndTabItem();
 		}
 
@@ -34,6 +40,7 @@ void EditorTools::render(entt::registry& registry) {
 			chemicals_editor.render(registry);
 			ImGui::EndTabItem();
 		}
+
 		ImGui::EndTabBar();
 	}
 

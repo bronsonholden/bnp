@@ -4,6 +4,7 @@
 #include <bnp/game/ui/navigation_control.h>
 #include <bnp/game/ui/items_editor.h>
 #include <bnp/game/ui/chemicals_editor.h>
+#include <bnp/game/ui/blueprints_editor.h>
 
 #include <entt/entt.hpp>
 
@@ -24,6 +25,7 @@ private:
 	UniverseEditor universe_editor;
 	ItemsEditor items_editor;
 	ChemicalsEditor chemicals_editor;
+	BlueprintsEditor blueprints_editor;
 };
 
 }

@@ -14,7 +14,10 @@ namespace Component {
 //////////////////////////////////////////////////////////////////////////
 
 struct ShipSegment {
+	static const uint32_t latest_version = 1;
 	typedef uint32_t ID;
+
+	uint32_t version = 1;
 	ID id;
 	std::string name;
 	uint32_t engine_slots;
@@ -24,8 +27,10 @@ struct ShipSegment {
 };
 
 struct ShipBlueprint {
+	static const uint32_t latest_version = 1;
 	typedef uint32_t ID;
 
+	uint32_t version = 1;
 	ID id;
 	std::string name = "R-9 Courier";
 	std::string manufacturer = "Tulman-Droupe Stellarworks";
