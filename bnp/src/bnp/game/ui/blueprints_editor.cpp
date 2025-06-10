@@ -98,22 +98,10 @@ void BlueprintsEditor::render_ship_blueprints_section(entt::registry& registry) 
 				ImGui::Text("%d", blueprint.id);
 
 				ImGui::TableNextColumn();
-				{
-					char name[256];
-					snprintf(name, 256, "%s", blueprint.name.c_str());
-					if (ImGui::InputText("##Name", name, 256)) {
-						blueprint.name = name;
-					}
-				}
+				ImGui::Text("%s", blueprint.name.c_str());
 
 				ImGui::TableNextColumn();
-				{
-					char manufacturer[256];
-					snprintf(manufacturer, 256, "%s", blueprint.manufacturer.c_str());
-					if (ImGui::InputText("##Manufacturer", manufacturer, 256)) {
-						blueprint.manufacturer = manufacturer;
-					}
-				}
+				ImGui::Text("%s", blueprint.manufacturer.c_str());
 
 				ImGui::TableNextColumn();
 				{
