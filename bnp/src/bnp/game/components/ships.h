@@ -13,32 +13,31 @@ namespace Component {
 // Blueprints are just designs for ships and modules
 //////////////////////////////////////////////////////////////////////////
 
-struct ShipSegment {
-	static const uint32_t latest_version = 1;
-	typedef uint32_t ID;
-
-	uint32_t version = 1;
-	ID id;
-	std::string name;
-	uint32_t engine_slots;
-	uint32_t reactor_slots;
-	uint32_t solid_storage_slots;
-	uint32_t fluid_storage_slots;
-};
-
 struct ShipBlueprint {
 	static const uint32_t latest_version = 1;
 	typedef uint32_t ID;
 
-	uint32_t version = 1;
+	uint32_t version;
 	ID id;
 	std::string name = "R-9 Courier";
 	std::string manufacturer = "Tulman-Droupe Stellarworks";
 
 	// mass of just the ship with no modules
 	double mass;
+};
 
-	std::vector<ShipSegment> segments;
+struct ShipSegment {
+	static const uint32_t latest_version = 1;
+	typedef uint32_t ID;
+
+	uint32_t version;
+	ShipBlueprint::ID ship_blueprint_id;
+	ID id;
+	std::string name;
+	uint32_t engine_slots;
+	uint32_t reactor_slots;
+	uint32_t solid_storage_slots;
+	uint32_t fluid_storage_slots;
 };
 
 struct EngineBlueprint {

@@ -12,6 +12,7 @@ namespace Component {
 template <typename S>
 void serialize(S& s, Game::Component::ShipSegment& segment) {
 	s.value4b(segment.version);
+	s.value4b(segment.ship_blueprint_id);
 	s.value4b(segment.id);
 	s.text1b(segment.name, 256);
 	s.value4b(segment.engine_slots);
@@ -27,7 +28,6 @@ void serialize(S& s, Game::Component::ShipBlueprint& blueprint) {
 	s.text1b(blueprint.name, 256);
 	s.text1b(blueprint.manufacturer, 256);
 	s.value8b(blueprint.mass);
-	s.container(blueprint.segments, 256);
 }
 
 }
