@@ -1,6 +1,7 @@
 #pragma once
 
 #include <bnp/game/components/recipes.h>
+#include <bnp/game/components/factions.h>
 
 #include <string>
 #include <vector>
@@ -69,8 +70,7 @@ struct Ship {
 
 	ID id;
 	ShipBlueprint::ID ship_blueprint_id;
-	// organization ID, 1 = player
-	uint32_t owner;
+	Faction::ID faction_id;
 };
 
 // Base emplacement data. Specific modules will also have the
