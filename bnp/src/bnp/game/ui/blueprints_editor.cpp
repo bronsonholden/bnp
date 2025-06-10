@@ -68,7 +68,8 @@ void BlueprintsEditor::render_ship_blueprints_section(entt::registry& registry) 
 				}
 				registry.emplace<Component::ShipSegment>(registry.create(), Component::ShipSegment{
 					.ship_blueprint_id = blueprint.id,
-					.id = next_id
+					.id = next_id,
+					.name = "<New segment>"
 					});
 			}
 
