@@ -47,11 +47,7 @@ void BlueprintsEditor::render_ship_blueprints_section(entt::registry& registry) 
 
 	if (ImGui::Button("New ship blueprint")) {
 		auto ship_blueprints = registry.view<Component::ShipBlueprint>();
-		Component::ShipBlueprint::ID next_id = 1;
-		for (auto entity : ship_blueprints) {
-			auto& blueprint = ship_blueprints.get<Component::ShipBlueprint>(entity);
-			if (blueprint.id >= next_id) next_id = blueprint.id + 1;
-		}
+		Component::ShipBlueprint::ID next_id = Queries::get_next_id<Component::ShipBlueprint>(registry);
 
 		registry.emplace<Component::ShipBlueprint>(registry.create(), Component::ShipBlueprint{
 			.id = next_id
@@ -198,12 +194,7 @@ void BlueprintsEditor::render_edit_ship_blueprint_section(entt::registry& regist
 	ImGui::Spacing();
 
 	if (ImGui::Button("New segment")) {
-		Component::ShipSegment::ID next_id = 1;
-		auto view = registry.view<Component::ShipSegment>();
-		for (auto entity : view) {
-			auto& segment = view.get<Component::ShipSegment>(entity);
-			if (segment.id >= next_id) next_id = segment.id + 1;
-		}
+		Component::ShipSegment::ID next_id = Queries::get_next_id<Component::ShipSegment>(registry);
 		registry.emplace<Component::ShipSegment>(registry.create(), Component::ShipSegment{
 			.ship_blueprint_id = blueprint.id,
 			.id = next_id,
@@ -223,6 +214,8 @@ void BlueprintsEditor::render_edit_ship_blueprint_section(entt::registry& regist
 		auto& segment = registry.get<Component::ShipSegment>(entity);
 		ImGui::Separator();
 		ImGui::Spacing();
+
+		ImGui::Text("ID: %d", segment.id);
 
 		{
 			char name[256];
