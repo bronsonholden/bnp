@@ -3,6 +3,7 @@
 #include <bnp/game/components/ships.h>
 #include <bnp/game/ui/blueprints_editor.h>
 #include <bnp/game/serializers/ships.hpp>
+#include  <bnp/game/queries/recipes.h>
 #include  <bnp/game/queries/util.hpp>
 
 #include <imgui.h>
@@ -268,8 +269,58 @@ void BlueprintsEditor::render_edit_engine_blueprint_section(entt::registry& regi
 	ImGui::InputDouble("Mass", &blueprint.mass);
 	ImGui::InputDouble("Efficiency factor", &blueprint.effiency_factor);
 
-	//for (auto recipe_id : blueprint.propulsion_recipes) {
-	//}
+	int remove_index = -1;
+
+	if (ImGui::TreeNode("Propulsion Recipes")) {
+		if (ImGui::Button("Add recipe")) {
+			blueprint.propulsion_recipes.push_back(0);
+		}
+
+		for (int i = 0; i < blueprint.propulsion_recipes.size(); ++i) {
+			auto& recipe_id = blueprint.propulsion_recipes.at(i);
+
+			std::string name = "<Select chemical recipe>";
+			entt::entity chemical_entity = Queries::get_chemical_recipe_by_id(registry, recipe_id);
+
+			if (chemical_entity != entt::null) {
+				name = registry.get<Component::ChemicalRecipe>(chemical_entity).name;
+			}
+
+			{
+				char label[256];
+				snprintf(label, 256, "##recipe:%d", i);
+				if (ImGui::BeginCombo(label, name.c_str())) {
+					auto recipes = registry.view<Component::ChemicalRecipe>();
+					for (auto entity : recipes) {
+						auto& recipe = recipes.get<Game::Component::ChemicalRecipe>(entity);
+
+						bool selected = recipe.id == recipe_id;
+
+						if (ImGui::Selectable(recipe.name.c_str(), selected)) {
+							recipe_id = recipe.id;
+						}
+
+						if (selected) {
+							ImGui::SetItemDefaultFocus();
+						}
+					}
+
+					if (ImGui::Selectable("<Remove>")) {
+						remove_index = i;
+					}
+
+					ImGui::EndCombo();
+				}
+			}
+
+		}
+
+		if (remove_index > -1) {
+			blueprint.propulsion_recipes.erase(blueprint.propulsion_recipes.begin() + remove_index);
+		}
+
+		ImGui::TreePop();
+	}
 }
 
 void BlueprintsEditor::save_to_file(entt::registry& registry, std::filesystem::path file_path) {
