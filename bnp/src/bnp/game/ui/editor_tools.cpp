@@ -10,6 +10,7 @@ void EditorTools::initialize(entt::registry& registry) {
 	universe_editor.initialize(registry);
 	chemicals_editor.initialize(registry);
 	blueprints_editor.initialize(registry);
+	recipes_editor.initialize(registry);
 }
 
 void EditorTools::render(entt::registry& registry) {
@@ -38,6 +39,11 @@ void EditorTools::render(entt::registry& registry) {
 
 		if (ImGui::BeginTabItem("Chemicals editor")) {
 			chemicals_editor.render(registry);
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Recipes editor")) {
+			recipes_editor.render(registry);
 			ImGui::EndTabItem();
 		}
 

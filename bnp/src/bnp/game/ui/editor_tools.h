@@ -5,6 +5,7 @@
 #include <bnp/game/ui/items_editor.h>
 #include <bnp/game/ui/chemicals_editor.h>
 #include <bnp/game/ui/blueprints_editor.h>
+#include <bnp/game/ui/recipes_editor.h>
 
 #include <entt/entt.hpp>
 
@@ -26,6 +27,7 @@ private:
 	ItemsEditor items_editor;
 	ChemicalsEditor chemicals_editor;
 	BlueprintsEditor blueprints_editor;
+	RecipesEditor recipes_editor;
 };
 
 }
