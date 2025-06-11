@@ -31,9 +31,11 @@ double calc_fuel_requirement(entt::registry& registry, entt::entity ship_entity)
 
 	double mass = 20000; // todo: get from query
 	double g = 9.3; // todo: get from query
-	double energy = 55.0;
+	double energy = 55.0; // todo: get from query
 
-	return (mass * g) / (engine_bp.effiency_factor * energy);
+	double isp_factor = 100.0 * std::sqrt(2.0 * energy) / g;
+
+	return (mass * g) / (engine_bp.effiency_factor * isp_factor);
 }
 
 }
