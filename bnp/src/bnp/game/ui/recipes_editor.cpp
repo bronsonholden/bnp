@@ -176,6 +176,66 @@ void RecipesEditor::render_edit_chemical_recipe_section(entt::registry& registry
 		if (ImGui::Button("New output")) {
 			recipe.outputs.push_back({ 0, 0 });
 		}
+
+		int remove_index = -1;
+
+		for (int i = 0; i < recipe.outputs.size(); ++i) {
+			auto& [ratio, chemical_id] = recipe.outputs.at(i);
+
+			std::string name = "<Select chemical>";
+			entt::entity chemical_entity = Queries::get_chemical_by_id(registry, chemical_id);
+
+			if (chemical_entity != entt::null) {
+				name = registry.get<Component::Chemical>(chemical_entity).name;
+			}
+
+			{
+				char label[256];
+				snprintf(label, 256, "##formula:%d", i);
+				if (ImGui::BeginCombo(label, name.c_str())) {
+					auto chemicals = registry.view<Component::Chemical>();
+					for (auto entity : chemicals) {
+						auto& chemical = chemicals.get<Game::Component::Chemical>(entity);
+
+						bool selected = chemical.id == chemical_id;
+
+						if (ImGui::Selectable(chemical.formula.c_str(), selected)) {
+							chemical_id = chemical.id;
+						}
+
+						if (selected) {
+							ImGui::SetItemDefaultFocus();
+						}
+					}
+
+					if (ImGui::Selectable("<Remove>")) {
+						remove_index = i;
+					}
+
+					ImGui::EndCombo();
+				}
+			}
+
+			ImGui::SameLine();
+
+			{
+				char label[256];
+				snprintf(label, 256, "Ratio##%d", i);
+				ImGui::InputDouble(label, &ratio);
+			}
+		}
+
+		if (remove_index > -1) {
+			recipe.outputs.erase(recipe.outputs.begin() + remove_index);
+		}
+
+		double ratio_total = 0;
+		for (auto& [ratio, _] : recipe.outputs) ratio_total += ratio;
+
+		if (std::abs(ratio_total - 1.0) > 0.00001) {
+			ImGui::TextColored(ImVec4(1, 0, 0, 1), "WARNING: Recipe output ratios should be ~= 1.0, currently: %0.5f", ratio_total);
+		}
+
 		ImGui::TreePop();
 	}
 
