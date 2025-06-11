@@ -142,17 +142,17 @@ void BlueprintsEditor::render_engine_blueprints_section(entt::registry& registry
 		ImGui::Text("Name");
 		ImGui::TableNextColumn();
 		ImGui::Text("Actions");
-		ImGui::TableNextColumn();
 
 		for (auto entity : blueprints) {
 			auto& blueprint = blueprints.get<Component::EngineBlueprint>(entity);
 
+			ImGui::TableNextColumn();
 			ImGui::Text("%d", blueprint.id);
-			ImGui::TableNextColumn();
 
+			ImGui::TableNextColumn();
 			ImGui::Text("%s", blueprint.name.c_str());
-			ImGui::TableNextColumn();
 
+			ImGui::TableNextColumn();
 			{
 				char label[256];
 				snprintf(label, 256, "Edit##%d", blueprint.id);
