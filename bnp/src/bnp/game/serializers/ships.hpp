@@ -2,8 +2,9 @@
 
 #include <bnp/game/components/ships.h>
 
-#include <bitsery/bitsery.h>
+#include <bitsery/bitsery.h>>
 #include <bitsery/traits/string.h>
+#include <bitsery/traits/vector.h>
 
 namespace bnp {
 namespace Game {
@@ -28,6 +29,16 @@ void serialize(S& s, Game::Component::ShipBlueprint& blueprint) {
 	s.text1b(blueprint.name, 256);
 	s.text1b(blueprint.manufacturer, 256);
 	s.value8b(blueprint.mass);
+}
+
+template <typename S>
+void serialize(S& s, Game::Component::EngineBlueprint& blueprint) {
+	s.value4b(blueprint.version);
+	s.value4b(blueprint.id);
+	s.text1b(blueprint.name, 256);
+	s.value8b(blueprint.mass);
+	s.value8b(blueprint.effiency_factor);
+	s.container4b(blueprint.propulsion_recipes, 256);
 }
 
 }

@@ -42,9 +42,12 @@ struct ShipSegment {
 };
 
 struct EngineBlueprint {
+	static const uint32_t latest_version = 1;
 	typedef uint32_t ID;
 
+	uint32_t version;
 	ID id;
+	std::string name;
 	std::vector<ChemicalRecipe::ID> propulsion_recipes;
 	double mass;
 	double effiency_factor;

@@ -1,7 +1,9 @@
+#include <bnp/core/logger.hpp>
 #include <bnp/helpers/filesystem_helper.h>
 #include <bnp/game/components/ships.h>
 #include <bnp/game/ui/blueprints_editor.h>
 #include <bnp/game/serializers/ships.hpp>
+#include  <bnp/game/queries/util.hpp>
 
 #include <imgui.h>
 #include <bitsery/bitsery.h>
@@ -26,6 +28,11 @@ void BlueprintsEditor::render(entt::registry& registry) {
 
 	if (ImGui::BeginTabItem("Ships")) {
 		render_ship_blueprints_section(registry);
+		ImGui::EndTabItem();
+	}
+
+	if (ImGui::BeginTabItem("Engines")) {
+		render_engine_blueprints_section(registry);
 		ImGui::EndTabItem();
 	}
 
@@ -105,6 +112,60 @@ void BlueprintsEditor::render_ship_blueprints_section(entt::registry& registry) 
 
 	if (delete_entity != entt::null) {
 		registry.destroy(delete_entity);
+	}
+}
+
+void BlueprintsEditor::render_engine_blueprints_section(entt::registry& registry) {
+	if (edit_engine_blueprint_entity != entt::null) {
+		render_edit_engine_blueprint_section(registry);
+		return;
+	}
+
+	if (ImGui::Button("New engine blueprint")) {
+		Component::EngineBlueprint::ID next_id = Queries::get_next_id<Component::EngineBlueprint>(registry);
+
+		registry.emplace<Component::EngineBlueprint>(registry.create(), Component::EngineBlueprint{
+			.id = next_id,
+			.name = "<New engine>",
+			.mass = 1000,
+			.effiency_factor = 1.0
+			});
+	}
+
+	auto blueprints = registry.view<Component::EngineBlueprint>();
+
+	if (ImGui::BeginTable("EngineBlueprints", 3, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
+		ImGui::TableSetupColumn("ID");
+		ImGui::TableSetupColumn("Name");
+		ImGui::TableSetupColumn("Actions");
+
+		ImGui::TableNextColumn();
+		ImGui::Text("ID");
+		ImGui::TableNextColumn();
+		ImGui::Text("Name");
+		ImGui::TableNextColumn();
+		ImGui::Text("Actions");
+		ImGui::TableNextColumn();
+
+		for (auto entity : blueprints) {
+			auto& blueprint = blueprints.get<Component::EngineBlueprint>(entity);
+
+			ImGui::Text("%d", blueprint.id);
+			ImGui::TableNextColumn();
+
+			ImGui::Text("%s", blueprint.name.c_str());
+			ImGui::TableNextColumn();
+
+			{
+				char label[256];
+				snprintf(label, 256, "Edit##%d", blueprint.id);
+				if (ImGui::Button(label)) {
+					edit_engine_blueprint_entity = entity;
+				}
+			}
+		}
+
+		ImGui::EndTable();
 	}
 }
 
@@ -195,12 +256,36 @@ void BlueprintsEditor::render_edit_ship_blueprint_section(entt::registry& regist
 	}
 }
 
+void BlueprintsEditor::render_edit_engine_blueprint_section(entt::registry& registry) {
+	if (ImGui::Button("Back")) {
+		edit_engine_blueprint_entity = entt::null;
+		return;
+	}
+
+	auto& blueprint = registry.get<Component::EngineBlueprint>(edit_engine_blueprint_entity);
+
+	{
+		char name[256];
+		snprintf(name, 256, "%s", blueprint.name.c_str());
+		if (ImGui::InputText("Name", name, 256)) {
+			blueprint.name = name;
+		}
+	}
+
+	ImGui::InputDouble("Mass", &blueprint.mass);
+	ImGui::InputDouble("Efficiency factor", &blueprint.effiency_factor);
+
+	//for (auto recipe_id : blueprint.propulsion_recipes) {
+	//}
+}
+
 void BlueprintsEditor::save_to_file(entt::registry& registry, std::filesystem::path file_path) {
 	std::ofstream os(file_path, std::ios::binary);
 	bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
 
 	if (!os.is_open()) return;
 
+	// ships
 	{
 		auto ship_blueprints = registry.view<Component::ShipBlueprint>();
 		uint64_t count = ship_blueprints.size();
@@ -212,6 +297,7 @@ void BlueprintsEditor::save_to_file(entt::registry& registry, std::filesystem::p
 		}
 	}
 
+	// segments
 	{
 		auto ship_segment_blueprints = registry.view<Component::ShipSegment>();
 		uint64_t count = ship_segment_blueprints.size();
@@ -220,6 +306,18 @@ void BlueprintsEditor::save_to_file(entt::registry& registry, std::filesystem::p
 			Component::ShipSegment ship_segment = ship_segment_blueprints.get<Component::ShipSegment>(entity);
 			ship_segment.version = ship_segment.latest_version;
 			ser.object(ship_segment);
+		}
+	}
+
+	// engines
+	{
+		auto engine_blueprints = registry.view<Component::EngineBlueprint>();
+		uint64_t count = engine_blueprints.size();
+		ser.value8b(count);
+		for (auto entity : engine_blueprints) {
+			Component::EngineBlueprint engine = engine_blueprints.get<Component::EngineBlueprint>(entity);
+			engine.version = engine.latest_version;
+			ser.object(engine);
 		}
 	}
 }
@@ -232,7 +330,7 @@ void BlueprintsEditor::load_from_file(entt::registry& registry, std::filesystem:
 
 	// ship blueprints
 	{
-		uint64_t count;
+		uint64_t count = 0;
 		des.value8b(count);
 		for (uint64_t i = 0; i < count; ++i) {
 			Component::ShipBlueprint blueprint;
@@ -243,12 +341,23 @@ void BlueprintsEditor::load_from_file(entt::registry& registry, std::filesystem:
 
 	// ship segments
 	{
-		uint64_t count;
+		uint64_t count = 0;
 		des.value8b(count);
 		for (uint64_t i = 0; i < count; ++i) {
 			Component::ShipSegment segment;
 			des.object(segment);
 			registry.emplace<Component::ShipSegment>(registry.create(), segment);
+		}
+	}
+
+	// engines
+	{
+		uint64_t count = 0;
+		des.value8b(count);
+		for (uint64_t i = 0; i < count; ++i) {
+			Component::EngineBlueprint engine;
+			des.object(engine);
+			registry.emplace<Component::EngineBlueprint>(registry.create(), engine);
 		}
 	}
 }
