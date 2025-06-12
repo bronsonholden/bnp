@@ -240,6 +240,9 @@ void RecipesEditor::render_edit_chemical_recipe_section(entt::registry& registry
 	}
 
 	ImGui::InputDouble("Energy output (MJ/kg)", &recipe.energy);
+	ImGui::InputDouble("Efficiency", &recipe.efficiency);
+	ImGui::InputDouble("Protons emitted", &recipe.protons_emitted);
+	ImGui::InputDouble("Neutrons emitted", &recipe.neutrons_emitted);
 
 }
 
@@ -274,6 +277,7 @@ void RecipesEditor::load_from_file(entt::registry& registry, std::filesystem::pa
 		for (uint64_t i = 0; i < count; ++i) {
 			Component::ChemicalRecipe recipe;
 			des.object(recipe);
+			recipe.version = recipe.latest_version;
 			registry.emplace<Component::ChemicalRecipe>(registry.create(), recipe);
 		}
 	}
