@@ -54,12 +54,15 @@ struct EngineBlueprint {
 };
 
 struct FluidStorageBlueprint {
+	static const uint32_t latest_version = 1;
 	typedef uint32_t ID;
 
+	uint32_t version;
 	ID id;
+	std::string name;
 	double mass;
-	double max_volume;
-	double max_pressure;
+	double max_volume; // m^3
+	double max_pressure; // MPa
 };
 
 //////////////////////////////////////////////////////////////////////////

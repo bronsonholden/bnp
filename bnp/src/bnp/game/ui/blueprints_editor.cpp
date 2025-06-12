@@ -37,6 +37,11 @@ void BlueprintsEditor::render(entt::registry& registry) {
 		ImGui::EndTabItem();
 	}
 
+	if (ImGui::BeginTabItem("Fluid storage")) {
+		render_fluid_storage_blueprints_section(registry);
+		ImGui::EndTabItem();
+	}
+
 	ImGui::EndTabBar();
 }
 
@@ -158,6 +163,71 @@ void BlueprintsEditor::render_engine_blueprints_section(entt::registry& registry
 				snprintf(label, 256, "Edit##%d", blueprint.id);
 				if (ImGui::Button(label)) {
 					edit_engine_blueprint_entity = entity;
+				}
+			}
+		}
+
+		ImGui::EndTable();
+	}
+}
+
+void BlueprintsEditor::render_fluid_storage_blueprints_section(entt::registry& registry) {
+	if (edit_fluid_storage_blueprint_entity != entt::null) {
+		render_edit_fluid_storage_blueprint_section(registry);
+		return;
+	}
+
+	if (ImGui::Button("New fluid storage blueprint")) {
+		Component::FluidStorageBlueprint::ID next_id = Queries::get_next_id<Component::FluidStorageBlueprint>(registry);
+
+		registry.emplace<Component::FluidStorageBlueprint>(registry.create(), Component::FluidStorageBlueprint{
+			.id = next_id,
+			.name = "<New fluid storage>",
+			.mass = 1000
+			});
+	}
+
+	auto blueprints = registry.view<Component::FluidStorageBlueprint>();
+
+	if (ImGui::BeginTable("FluidStorageBlueprints", 5, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
+		ImGui::TableSetupColumn("ID");
+		ImGui::TableSetupColumn("Name");
+		ImGui::TableSetupColumn("MaxVolume");
+		ImGui::TableSetupColumn("MaxPressure");
+		ImGui::TableSetupColumn("Actions");
+
+		ImGui::TableNextColumn();
+		ImGui::Text("ID");
+		ImGui::TableNextColumn();
+		ImGui::Text("Name");
+		ImGui::TableNextColumn();
+		ImGui::Text("Max volume (m^3)");
+		ImGui::TableNextColumn();
+		ImGui::Text("Max pressure (MPa)");
+		ImGui::TableNextColumn();
+		ImGui::Text("Actions");
+
+		for (auto entity : blueprints) {
+			auto& blueprint = blueprints.get<Component::FluidStorageBlueprint>(entity);
+
+			ImGui::TableNextColumn();
+			ImGui::Text("%d", blueprint.id);
+
+			ImGui::TableNextColumn();
+			ImGui::Text("%s", blueprint.name.c_str());
+
+			ImGui::TableNextColumn();
+			ImGui::Text("%.3f", blueprint.max_volume);
+
+			ImGui::TableNextColumn();
+			ImGui::Text("%.3f", blueprint.max_pressure);
+
+			ImGui::TableNextColumn();
+			{
+				char label[256];
+				snprintf(label, 256, "Edit##%d", blueprint.id);
+				if (ImGui::Button(label)) {
+					edit_fluid_storage_blueprint_entity = entity;
 				}
 			}
 		}
@@ -323,6 +393,28 @@ void BlueprintsEditor::render_edit_engine_blueprint_section(entt::registry& regi
 	}
 }
 
+
+void BlueprintsEditor::render_edit_fluid_storage_blueprint_section(entt::registry& registry) {
+	if (ImGui::Button("Back")) {
+		edit_fluid_storage_blueprint_entity = entt::null;
+		return;
+	}
+
+	auto& blueprint = registry.get<Component::FluidStorageBlueprint>(edit_fluid_storage_blueprint_entity);
+
+	{
+		char name[256];
+		snprintf(name, 256, "%s", blueprint.name.c_str());
+		if (ImGui::InputText("Name", name, 256)) {
+			blueprint.name = name;
+		}
+	}
+
+	ImGui::InputDouble("Mass", &blueprint.mass);
+	ImGui::InputDouble("Max volume (m^3)", &blueprint.max_volume);
+	ImGui::InputDouble("Max pressure (MPa)", &blueprint.max_pressure);
+}
+
 void BlueprintsEditor::save_to_file(entt::registry& registry, std::filesystem::path file_path) {
 	std::ofstream os(file_path, std::ios::binary);
 	bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
@@ -364,6 +456,18 @@ void BlueprintsEditor::save_to_file(entt::registry& registry, std::filesystem::p
 			ser.object(engine);
 		}
 	}
+
+	// fluid storage
+	{
+		auto fluid_storage_blueprints = registry.view<Component::FluidStorageBlueprint>();
+		uint64_t count = fluid_storage_blueprints.size();
+		ser.value8b(count);
+		for (auto entity : fluid_storage_blueprints) {
+			Component::FluidStorageBlueprint storage = fluid_storage_blueprints.get<Component::FluidStorageBlueprint>(entity);
+			storage.version = storage.latest_version;
+			ser.object(storage);
+		}
+	}
 }
 
 void BlueprintsEditor::load_from_file(entt::registry& registry, std::filesystem::path file_path) {
@@ -402,6 +506,17 @@ void BlueprintsEditor::load_from_file(entt::registry& registry, std::filesystem:
 			Component::EngineBlueprint engine;
 			des.object(engine);
 			registry.emplace<Component::EngineBlueprint>(registry.create(), engine);
+		}
+	}
+
+	// fluid storage
+	{
+		uint64_t count = 0;
+		des.value8b(count);
+		for (uint64_t i = 0; i < count; ++i) {
+			Component::FluidStorageBlueprint storage;
+			des.object(storage);
+			registry.emplace<Component::FluidStorageBlueprint>(registry.create(), storage);
 		}
 	}
 }

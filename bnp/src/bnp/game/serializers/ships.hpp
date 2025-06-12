@@ -41,6 +41,16 @@ void serialize(S& s, Game::Component::EngineBlueprint& blueprint) {
 	s.container4b(blueprint.propulsion_recipes, 256);
 }
 
+template <typename S>
+void serialize(S& s, Game::Component::FluidStorageBlueprint& blueprint) {
+	s.value4b(blueprint.version);
+	s.value4b(blueprint.id);
+	s.text1b(blueprint.name, 256);
+	s.value8b(blueprint.mass);
+	s.value8b(blueprint.max_volume);
+	s.value8b(blueprint.max_pressure);
+}
+
 }
 }
 }

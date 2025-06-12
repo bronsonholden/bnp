@@ -105,6 +105,7 @@ void RecipesEditor::render_edit_chemical_recipe_section(entt::registry& registry
 		}
 	}
 
+	ImGui::SetNextItemOpen(true, ImGuiCond_Once);
 	if (ImGui::TreeNode("Inputs")) {
 		if (ImGui::Button("New input")) {
 			recipe.inputs.push_back({ 0, 0 });
@@ -172,6 +173,7 @@ void RecipesEditor::render_edit_chemical_recipe_section(entt::registry& registry
 		ImGui::TreePop();
 	}
 
+	ImGui::SetNextItemOpen(true, ImGuiCond_Once);
 	if (ImGui::TreeNode("Outputs")) {
 		if (ImGui::Button("New output")) {
 			recipe.outputs.push_back({ 0, 0 });
