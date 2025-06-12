@@ -305,15 +305,15 @@ void UniverseEditor::render_celestial_editor(entt::registry& registry, Game::Com
 
 	ImGui::Text("Celestial");
 	ImGui::Indent();
-	ImGui::InputDouble("Orbit Radius", &celestial.orbit_radius);
-	ImGui::InputDouble("Initial Orbit Progression", &celestial.initial_orbit_progression);
-	ImGui::InputDouble("Orbit Duration", &celestial.orbit_duration);
+	ImGui::InputDouble("Orbit Radius (system-space units)", &celestial.orbit_radius);
+	ImGui::InputDouble("Initial Orbit Progression (rads)", &celestial.initial_orbit_progression);
+	ImGui::InputDouble("Orbit Duration (sec)", &celestial.orbit_duration);
 	ImGui::Text("Orbit duration (days): %2.3f", celestial.orbit_duration / (24.0 * 3600.0));
-	ImGui::InputDouble("Initial Rotate Progression", &celestial.initial_rotate_progression);
-	ImGui::InputDouble("Rotate Duration", &celestial.rotate_duration);
+	ImGui::InputDouble("Initial Rotate Progression (rads)", &celestial.initial_rotate_progression);
+	ImGui::InputDouble("Rotate Duration (sec)", &celestial.rotate_duration);
 	ImGui::Text("Rotate duration (hours): %2.3f", celestial.rotate_duration / 3600.0);
-	ImGui::InputDouble("Mass", &celestial.mass);
-	ImGui::InputDouble("Radius", &celestial.radius);
+	ImGui::InputDouble("Mass (trillions kg)", &celestial.mass);
+	ImGui::InputDouble("Radius (meters)", &celestial.radius);
 	ImGui::Text("g: %2.6f m/s^2", celestial.g());
 
 	if (ImGui::TreeNode("Atmosphere")) {
