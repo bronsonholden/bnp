@@ -29,7 +29,7 @@ struct Universe {
 struct Galaxy {
 	const static uint32_t latest_version = 1;
 
-	uint32_t version = latest_version;
+	uint32_t version;
 	// per worldspace unit, used to calculate distances between systems
 	double light_year_scale;
 };
@@ -38,7 +38,7 @@ struct System {
 	const static uint32_t latest_version = 1;
 	typedef int ID;
 
-	uint32_t version = latest_version;
+	uint32_t version;
 	ID id;
 	std::string name;
 	// worldspace position, since systems are static within galaxy
@@ -51,7 +51,7 @@ struct Celestial {
 	const static uint32_t latest_version = 1;
 	typedef int ID;
 
-	uint32_t version = latest_version;
+	uint32_t version;
 	ID id;
 	System::ID system_id;
 	std::string name;
