@@ -33,12 +33,11 @@ void NavigationControl::render(entt::registry& registry) {
 		entt::entity test_entity2 = registry.create();
 		registry.emplace<Component::SaveData>(test_entity2);
 		registry.emplace<Component::FakeDataA>(test_entity2, 4);
-		registry.emplace<Component::FakeDataB>(test_entity2, 6.2830f);
 
 		{
 			std::ofstream os(data_dir() / "test_save.bin");
 			bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
-			bnp::serialize<decltype(ser), Component::SaveData, Component::FakeDataA, Component::FakeDataB>(ser, registry, 1);
+			bnp::serialize<decltype(ser), Component::SaveData, Component::FakeDataA, bnp::Optional<Component::FakeDataB>>(ser, registry, 1);
 
 			ser.adapter().flush();
 			registry.destroy(test_entity);
@@ -51,13 +50,15 @@ void NavigationControl::render(entt::registry& registry) {
 		{
 			std::ifstream is(data_dir() / "test_save.bin");
 			bitsery::Deserializer<bitsery::InputStreamAdapter> des{ is };
-			uint32_t version;
-			auto view = bnp::deserialize<decltype(des), Component::SaveData, Component::FakeDataA, Component::FakeDataB>(des, registry, &version);
+			uint32_t version = bnp::deserialize<decltype(des), Component::SaveData, Component::FakeDataA, bnp::Optional<Component::FakeDataB>>(des, registry);
 
 			Log::info("version %d", version);
+
+			auto view = registry.view<Component::SaveData, Component::FakeDataA>();
 			for (auto entity : view) {
 				Log::info("FakeDataA: %d", registry.get<Component::FakeDataA>(entity).value);
-				Log::info("FakeDataB: %.5f", registry.get<Component::FakeDataB>(entity).value);
+				if (registry.all_of<Component::FakeDataB>(entity))
+					Log::info("FakeDataB: %.5f", registry.get<Component::FakeDataB>(entity).value);
 			}
 		}
 	}
