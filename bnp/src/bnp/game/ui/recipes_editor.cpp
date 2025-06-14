@@ -1,5 +1,6 @@
 #include <bnp/core/logger.hpp>
 #include <bnp/helpers/filesystem_helper.h>
+#include <bnp/serializers/registry.hpp>
 #include <bnp/game/ui/recipes_editor.h>
 #include <bnp/game/components/recipes.h>
 #include <bnp/game/serializers/recipes.hpp>
@@ -256,13 +257,7 @@ void RecipesEditor::save_to_file(entt::registry& registry, std::filesystem::path
 
 	// chemical recipes
 	{
-		auto view = registry.view<Component::ChemicalRecipe>();
-		uint64_t count = view.size();
-		ser.value8b(count);
-		for (auto entity : view) {
-			auto& recipe = view.get<Component::ChemicalRecipe>(entity);
-			ser.object(recipe);
-		}
+		bnp::serialize<decltype(ser), Component::ChemicalRecipe>(ser, registry, 1);
 	}
 }
 
@@ -274,14 +269,8 @@ void RecipesEditor::load_from_file(entt::registry& registry, std::filesystem::pa
 
 	// chemical recipes
 	{
-		uint64_t count = 0;
-		des.value8b(count);
-		for (uint64_t i = 0; i < count; ++i) {
-			Component::ChemicalRecipe recipe;
-			des.object(recipe);
-			recipe.version = recipe.latest_version;
-			registry.emplace<Component::ChemicalRecipe>(registry.create(), recipe);
-		}
+		bnp::deserialize<decltype(des), Component::ChemicalRecipe>(des, registry);
+
 	}
 }
 
