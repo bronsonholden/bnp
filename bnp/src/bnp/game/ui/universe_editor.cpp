@@ -2,6 +2,7 @@
 #include <bnp/components/state.h>
 #include <bnp/components/world.h>
 #include <bnp/helpers/filesystem_helper.h>
+#include <bnp/serializers/registry.hpp>
 #include <bnp/serializers/world.hpp>
 #include <bnp/game/ui/universe_editor.h>
 #include <bnp/game/serializers/universe.hpp>
@@ -61,98 +62,22 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 
 	// universe
 	{
-		auto universes = registry.view<Game::Component::Universe>();
-		auto count = universes.size();
-
-		if (count > 1) {
-			Log::warning("Multiple Universe components found");
-		}
-		else if (!count) {
-			Log::warning("No Universe component found");
-			return;
-		}
-
-		Game::Component::Universe universe(registry.get<Game::Component::Universe>(universes.front()));
-		ser.object(universe);
-		Log::info("Serialized universe");
+		bnp::serialize<decltype(ser), Game::Component::Universe>(ser, registry, 1);
 	}
 
 	// galaxies
 	{
-		auto galaxies = registry.view<Game::Component::Galaxy>();
-		uint64_t count = galaxies.size();
-		ser.value8b(count);
-		for (auto entity : galaxies) {
-			auto& galaxy = galaxies.get<Game::Component::Galaxy>(entity);
-			if (!registry.valid(entity)) {
-				Log::warning("Skipping invalid entity %d", static_cast<int>(entity));
-				continue;
-			}
-			galaxy.version = galaxy.latest_version;
-			ser.object(galaxy);
-			Log::info("Serialized galaxy");
-		}
+		bnp::serialize<decltype(ser), Game::Component::Galaxy>(ser, registry, 1);
 	}
 
 	// systems
 	{
-		auto systems = registry.view<Game::Component::System>();
-		uint64_t count = systems.size();
-		ser.value8b(count);
-
-		std::vector<Game::Component::System::ID> system_ids;
-		std::unordered_map<Game::Component::System::ID, entt::entity> entities;
-		for (auto entity : systems) {
-			auto& system = systems.get<Game::Component::System>(entity);
-			entities.emplace(system.id, entity);
-			system_ids.push_back(system.id);
-		}
-
-		std::sort(system_ids.begin(), system_ids.end());
-
-		for (auto id : system_ids) {
-			auto entity = entities.at(id);
-			if (!registry.valid(entity)) {
-				Log::warning("Skipping invalid entity %d", static_cast<int>(entity));
-				continue;
-			}
-			Game::Component::System system = registry.get<Game::Component::System>(entity);
-			system.version = system.latest_version;
-			ser.object(system);
-			Log::info("Serialized system (id=%d,version=%d,name=%s)", system.id, system.version, system.name.c_str());
-		}
+		bnp::serialize<decltype(ser), Game::Component::System>(ser, registry, 1);
 	}
 
 	// celestials
 	{
-		auto celestials = registry.view<Game::Component::Celestial, Planet2D>();
-		uint64_t count = 0;
-		for (auto _ : celestials) count++;
-		ser.value8b(count);
-
-		std::vector<Game::Component::Celestial::ID> celestial_ids;
-		std::unordered_map<Game::Component::Celestial::ID, entt::entity> entities;
-		for (auto entity : celestials) {
-			auto& celestial = celestials.get<Game::Component::Celestial>(entity);
-			if (!registry.valid(entity)) {
-				Log::warning("Skipping invalid entity %d", static_cast<int>(entity));
-				continue;
-			}
-			entities.emplace(celestial.id, entity);
-			celestial_ids.push_back(celestial.id);
-		}
-
-		std::sort(celestial_ids.begin(), celestial_ids.end());
-
-		for (auto id : celestial_ids) {
-			auto entity = entities.at(id);
-			Game::Component::Celestial celestial = registry.get<Game::Component::Celestial>(entity);
-			Planet2D planet = registry.get<Planet2D>(entity);
-			celestial.version = celestial.latest_version;
-			ser.object(celestial);
-			ser.object(planet);
-			Log::info("Serialized celestial (id=%d,version=%d,name=%s)", celestial.id, celestial.version, celestial.name.c_str());
-		}
+		bnp::serialize<decltype(ser), Game::Component::Celestial, Planet2D>(ser, registry, 1);
 	}
 
 	ser.adapter().flush();
@@ -164,53 +89,22 @@ void UniverseEditor::load_from_file(entt::registry& registry, std::filesystem::p
 
 	// universe
 	{
-		Game::Component::Universe universe;
-		des.object(universe);
-		Log::info("Deserialized universe");
-		registry.emplace<Game::Component::Universe>(registry.create(), universe);
+		bnp::deserialize<decltype(des), Game::Component::Universe>(des, registry);
 	}
 
-	// Galaxy
+	// galaxies
 	{
-		uint64_t count;
-		des.value8b(count);
-		for (uint64_t i = 0; i < count; ++i) {
-			entt::entity entity = registry.create();
-			Game::Component::Galaxy galaxy;
-			des.object(galaxy);
-			Log::info("Deserialized galaxy");
-			registry.emplace<Game::Component::Galaxy>(entity, galaxy);
-		}
+		bnp::deserialize<decltype(des), Game::Component::Galaxy>(des, registry);
 	}
 
 	// systems
 	{
-		uint64_t count;
-		des.value8b(count);
-		for (uint64_t i = 0; i < count; ++i) {
-			entt::entity entity = registry.create();
-			Game::Component::System system;
-			des.object(system);
-			Log::info("Deserialized system (id=%d,version=%d,name=%s)", system.id, system.version, system.name.c_str());
-			registry.emplace<Game::Component::System>(entity, system);
-		}
+		bnp::deserialize<decltype(des), Game::Component::System>(des, registry);
 	}
 
 	// celestials
 	{
-		uint64_t count;
-		des.value8b(count);
-		for (uint64_t i = 0; i < count; ++i) {
-			entt::entity entity = registry.create();
-			Game::Component::Celestial celestial;
-			des.object(celestial);
-			celestial.version = celestial.latest_version;
-			registry.emplace<Game::Component::Celestial>(entity, celestial);
-			Planet2D planet;
-			des.object(planet);
-			Log::info("Deserialized celestial (id=%d,version=%d,name=%s)", celestial.id, celestial.version, celestial.name.c_str());
-			registry.emplace<Planet2D>(entity, planet);
-		}
+		bnp::deserialize<decltype(des), Game::Component::Celestial, Planet2D>(des, registry);
 	}
 }
 
