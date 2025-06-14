@@ -1,10 +1,11 @@
 #include <bnp/core/logger.hpp>
 #include <bnp/helpers/filesystem_helper.h>
+#include <bnp/serializers/registry.hpp>
 #include <bnp/game/components/ships.h>
 #include <bnp/game/ui/blueprints_editor.h>
 #include <bnp/game/serializers/ships.hpp>
-#include  <bnp/game/queries/recipes.h>
-#include  <bnp/game/queries/util.hpp>
+#include <bnp/game/queries/recipes.h>
+#include <bnp/game/queries/util.hpp>
 
 #include <imgui.h>
 #include <bitsery/bitsery.h>
@@ -423,50 +424,22 @@ void BlueprintsEditor::save_to_file(entt::registry& registry, std::filesystem::p
 
 	// ships
 	{
-		auto ship_blueprints = registry.view<Component::ShipBlueprint>();
-		uint64_t count = ship_blueprints.size();
-		ser.value8b(count);
-		for (auto entity : ship_blueprints) {
-			Component::ShipBlueprint ship_blueprint = ship_blueprints.get<Component::ShipBlueprint>(entity);
-			ship_blueprint.version = ship_blueprint.latest_version;
-			ser.object(ship_blueprint);
-		}
+		bnp::serialize<decltype(ser), Component::ShipBlueprint>(ser, registry, 1);
 	}
 
 	// segments
 	{
-		auto ship_segment_blueprints = registry.view<Component::ShipSegment>();
-		uint64_t count = ship_segment_blueprints.size();
-		ser.value8b(count);
-		for (auto entity : ship_segment_blueprints) {
-			Component::ShipSegment ship_segment = ship_segment_blueprints.get<Component::ShipSegment>(entity);
-			ship_segment.version = ship_segment.latest_version;
-			ser.object(ship_segment);
-		}
+		bnp::serialize<decltype(ser), Component::ShipSegment>(ser, registry, 1);
 	}
 
 	// engines
 	{
-		auto engine_blueprints = registry.view<Component::EngineBlueprint>();
-		uint64_t count = engine_blueprints.size();
-		ser.value8b(count);
-		for (auto entity : engine_blueprints) {
-			Component::EngineBlueprint engine = engine_blueprints.get<Component::EngineBlueprint>(entity);
-			engine.version = engine.latest_version;
-			ser.object(engine);
-		}
+		bnp::serialize<decltype(ser), Component::EngineBlueprint>(ser, registry, 1);
 	}
 
 	// fluid storage
 	{
-		auto fluid_storage_blueprints = registry.view<Component::FluidStorageBlueprint>();
-		uint64_t count = fluid_storage_blueprints.size();
-		ser.value8b(count);
-		for (auto entity : fluid_storage_blueprints) {
-			Component::FluidStorageBlueprint storage = fluid_storage_blueprints.get<Component::FluidStorageBlueprint>(entity);
-			storage.version = storage.latest_version;
-			ser.object(storage);
-		}
+		bnp::serialize<decltype(ser), Component::FluidStorageBlueprint>(ser, registry, 1);
 	}
 }
 
@@ -478,46 +451,22 @@ void BlueprintsEditor::load_from_file(entt::registry& registry, std::filesystem:
 
 	// ship blueprints
 	{
-		uint64_t count = 0;
-		des.value8b(count);
-		for (uint64_t i = 0; i < count; ++i) {
-			Component::ShipBlueprint blueprint;
-			des.object(blueprint);
-			registry.emplace<Component::ShipBlueprint>(registry.create(), blueprint);
-		}
+		bnp::deserialize<decltype(des), Component::ShipBlueprint>(des, registry);
 	}
 
 	// ship segments
 	{
-		uint64_t count = 0;
-		des.value8b(count);
-		for (uint64_t i = 0; i < count; ++i) {
-			Component::ShipSegment segment;
-			des.object(segment);
-			registry.emplace<Component::ShipSegment>(registry.create(), segment);
-		}
+		bnp::deserialize<decltype(des), Component::ShipSegment>(des, registry);
 	}
 
 	// engines
 	{
-		uint64_t count = 0;
-		des.value8b(count);
-		for (uint64_t i = 0; i < count; ++i) {
-			Component::EngineBlueprint engine;
-			des.object(engine);
-			registry.emplace<Component::EngineBlueprint>(registry.create(), engine);
-		}
+		bnp::deserialize<decltype(des), Component::EngineBlueprint>(des, registry);
 	}
 
 	// fluid storage
 	{
-		uint64_t count = 0;
-		des.value8b(count);
-		for (uint64_t i = 0; i < count; ++i) {
-			Component::FluidStorageBlueprint storage;
-			des.object(storage);
-			registry.emplace<Component::FluidStorageBlueprint>(registry.create(), storage);
-		}
+		bnp::deserialize<decltype(des), Component::FluidStorageBlueprint>(des, registry);
 	}
 }
 
