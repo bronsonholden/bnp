@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <bnp/core/logger.hpp>
+
 #include <entt/entt.hpp>
 #include <tuple>
 #include <type_traits>
