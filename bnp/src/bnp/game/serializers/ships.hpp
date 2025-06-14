@@ -20,6 +20,10 @@ void serialize(S& s, Game::Component::ShipSegment& segment) {
 	s.value4b(segment.reactor_slots);
 	s.value4b(segment.solid_storage_slots);
 	s.value4b(segment.fluid_storage_slots);
+
+	Log::info("segment %d v%d", segment.id, segment.version);
+	segment.version = segment.latest_version;
+	Log::info("segment %d v%d", segment.id, segment.version);
 }
 
 template <typename S>
@@ -29,6 +33,8 @@ void serialize(S& s, Game::Component::ShipBlueprint& blueprint) {
 	s.text1b(blueprint.name, 256);
 	s.text1b(blueprint.manufacturer, 256);
 	s.value8b(blueprint.mass);
+
+	blueprint.version = blueprint.latest_version;
 }
 
 template <typename S>
@@ -39,6 +45,8 @@ void serialize(S& s, Game::Component::EngineBlueprint& blueprint) {
 	s.value8b(blueprint.mass);
 	s.value8b(blueprint.effiency_factor);
 	s.container4b(blueprint.propulsion_recipes, 256);
+
+	blueprint.version = blueprint.latest_version;
 }
 
 template <typename S>
@@ -49,6 +57,8 @@ void serialize(S& s, Game::Component::FluidStorageBlueprint& blueprint) {
 	s.value8b(blueprint.mass);
 	s.value8b(blueprint.max_volume);
 	s.value8b(blueprint.max_pressure);
+
+	blueprint.version = blueprint.latest_version;
 }
 
 }

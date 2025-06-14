@@ -31,6 +31,8 @@ void serialize(S& s, Game::Component::ChemicalRecipe& recipe) {
 	s.value8b(recipe.efficiency);
 	s.value8b(recipe.protons_emitted);
 	s.value8b(recipe.neutrons_emitted);
+
+	recipe.version = recipe.latest_version;
 }
 
 }

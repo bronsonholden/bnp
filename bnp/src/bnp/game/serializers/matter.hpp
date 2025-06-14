@@ -22,6 +22,7 @@ void serialize(S& s, Game::Component::Chemical& chemical) {
 	s.value8b(chemical.solid_density);
 	s.value8b(chemical.liquid_density);
 	s.value8b(chemical.specific_heat_gas);
+	chemical.version = chemical.latest_version;
 }
 
 }
