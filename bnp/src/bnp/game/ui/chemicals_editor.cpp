@@ -1,4 +1,5 @@
 #include <bnp/helpers/filesystem_helper.h>
+#include <bnp/serializers/registry.hpp>
 #include <bnp/game/ui/chemicals_editor.h>
 #include <bnp/game/components/matter.h>
 #include <bnp/game/serializers/matter.hpp>
@@ -151,12 +152,8 @@ void ChemicalsEditor::save_to_file(entt::registry& registry) {
 	bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
 	std::vector<entt::entity> entities = std::move(get_chemical_entities_sorted_by_id(registry));
 
-	uint64_t count = entities.size();
-	ser.value8b(count);
-	for (auto entity : entities) {
-		auto& chemical = registry.get<Game::Component::Chemical>(entity);
-
-		ser.object(chemical);
+	{
+		bnp::serialize<decltype(ser), Component::Chemical>(ser, registry, 1);
 	}
 
 	ser.adapter().flush();
@@ -167,12 +164,8 @@ void ChemicalsEditor::load_from_file(entt::registry& registry) {
 	std::ifstream is(file_path, std::ios::binary);
 	bitsery::Deserializer<bitsery::InputStreamAdapter> des{ is };
 
-	uint64_t count = 0;
-	des.value8b(count);
-	for (uint64_t i = 0; i < count; ++i) {
-		Game::Component::Chemical chemical;
-		des.object(chemical);
-		registry.emplace<Game::Component::Chemical>(registry.create(), chemical);
+	{
+		bnp::deserialize<decltype(des), Component::Chemical>(des, registry);
 	}
 }
 
