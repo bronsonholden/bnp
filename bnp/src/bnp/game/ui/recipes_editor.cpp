@@ -244,8 +244,8 @@ void RecipesEditor::render_edit_chemical_recipe_section(entt::registry& registry
 
 	ImGui::InputDouble("Energy output (MJ/kg)", &recipe.energy);
 	ImGui::InputDouble("Efficiency", &recipe.efficiency);
-	ImGui::InputDouble("Protons emitted", &recipe.protons_emitted);
-	ImGui::InputDouble("Neutrons emitted", &recipe.neutrons_emitted);
+	ImGui::InputDouble("Protons emitted (per kg)", &recipe.protons_emitted);
+	ImGui::InputDouble("Neutrons emitted (per kg)", &recipe.neutrons_emitted);
 
 }
 
