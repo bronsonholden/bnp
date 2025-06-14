@@ -125,15 +125,20 @@ void serialize(S& s, entt::registry& registry, uint32_t version) {
 	apply_tuple([&]<typename... Mandatory>() {
 		auto view = registry.view<Mandatory...>();
 
-		uint64_t count = 0;
-		for (auto entity : view) ++count;
+		std::vector<entt::entity> entities;
+		for (auto entity : view) {
+			entities.push_back(entity);
+		}
+		std::sort(entities.begin(), entities.end());
+
+		uint64_t count = entities.size();
 
 		Log::info("Serializing %d entities", count);
 
 		s.value4b(version);
 		s.value8b(count);
 
-		for (auto entity : view) {
+		for (auto entity : entities) {
 			Log::info("Serializing entity %d", (int)entity);
 			(serialize_component<S, Components>(s, registry, entity), ...);
 		}

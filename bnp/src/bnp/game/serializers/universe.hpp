@@ -60,7 +60,10 @@ void serialize(S& s, Game::Component::Celestial& celestial) {
 	s.value8b(celestial.rotate_duration);
 	s.value8b(celestial.mass);
 	s.value8b(celestial.radius);
-	s.container(celestial.atmosphere, 256);
+	s.container(celestial.atmosphere, 256, [](S& s, auto& pair) {
+		s.value8b(pair.first);
+		s.value4b(pair.second);
+		});
 
 	celestial.version = celestial.latest_version;
 }

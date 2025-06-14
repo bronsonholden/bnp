@@ -124,6 +124,9 @@ void RecipesEditor::render_edit_chemical_recipe_section(entt::registry& registry
 				name = registry.get<Component::Chemical>(chemical_entity).name;
 			}
 
+			ImGui::Text("%d", chemical_id);
+			ImGui::SameLine();
+
 			{
 				char label[256];
 				snprintf(label, 256, "##formula:%d", i);

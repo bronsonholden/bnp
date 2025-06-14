@@ -7,8 +7,8 @@ namespace Game {
 namespace UI {
 
 void EditorTools::initialize(entt::registry& registry) {
-	universe_editor.initialize(registry);
 	chemicals_editor.initialize(registry);
+	universe_editor.initialize(registry);
 	blueprints_editor.initialize(registry);
 	recipes_editor.initialize(registry);
 }
