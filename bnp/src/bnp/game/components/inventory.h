@@ -13,7 +13,7 @@ struct Item {
 	const static uint32_t latest_version = 1;
 	typedef uint32_t ID;
 
-	uint32_t version;
+	uint32_t version = latest_version;
 	ID id;
 	std::string name;
 };

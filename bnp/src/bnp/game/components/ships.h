@@ -18,7 +18,7 @@ struct ShipBlueprint {
 	static const uint32_t latest_version = 1;
 	typedef uint32_t ID;
 
-	uint32_t version;
+	uint32_t version = latest_version;
 	ID id;
 	std::string name = "R-9 Courier";
 	std::string manufacturer = "Tulman-Droupe Stellarworks";
@@ -31,7 +31,7 @@ struct ShipSegment {
 	static const uint32_t latest_version = 1;
 	typedef uint32_t ID;
 
-	uint32_t version;
+	uint32_t version = latest_version;
 	ShipBlueprint::ID ship_blueprint_id;
 	ID id;
 	std::string name;
@@ -45,7 +45,7 @@ struct EngineBlueprint {
 	static const uint32_t latest_version = 1;
 	typedef uint32_t ID;
 
-	uint32_t version;
+	uint32_t version = latest_version;
 	ID id;
 	std::string name;
 	std::vector<ChemicalRecipe::ID> propulsion_recipes;
@@ -57,7 +57,7 @@ struct FluidStorageBlueprint {
 	static const uint32_t latest_version = 1;
 	typedef uint32_t ID;
 
-	uint32_t version;
+	uint32_t version = latest_version;
 	ID id;
 	std::string name;
 	double mass;
