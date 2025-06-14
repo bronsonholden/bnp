@@ -72,12 +72,30 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 
 	// systems
 	{
-		bnp::serialize<decltype(ser), Game::Component::System>(ser, registry, 1);
+		bnp::serialize<decltype(ser), Game::Component::System>(
+			ser,
+			registry,
+			1,
+			[](entt::registry& registry, entt::entity a, entt::entity b) {
+				auto& ca = registry.get<Game::Component::System>(a);
+				auto& cb = registry.get<Game::Component::System>(b);
+
+				return ca.id < cb.id;
+			});
 	}
 
 	// celestials
 	{
-		bnp::serialize<decltype(ser), Game::Component::Celestial, Planet2D>(ser, registry, 1);
+		bnp::serialize<decltype(ser), Game::Component::Celestial, Planet2D>(
+			ser,
+			registry,
+			1,
+			[](entt::registry& registry, entt::entity a, entt::entity b) {
+				auto& ca = registry.get<Game::Component::Celestial>(a);
+				auto& cb = registry.get<Game::Component::Celestial>(b);
+
+				return ca.id < cb.id;
+			});
 	}
 
 	ser.adapter().flush();
