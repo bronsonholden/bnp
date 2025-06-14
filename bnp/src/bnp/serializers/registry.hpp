@@ -118,31 +118,38 @@ void serialize_component(S& s, entt::registry& registry, entt::entity entity) {
 	Log::info("  Serialized %s", type_name<T>().c_str());
 }
 
+using Sorter = bool(entt::registry&, entt::entity, entt::entity);
+
 template <typename S, typename... Components>
-void serialize(S& s, entt::registry& registry, uint32_t version) {
+void serialize(S& s, entt::registry& registry, uint32_t version, Sorter* sorter = nullptr) {
 	using mandatory_components = filter_mandatory_t<Components...>;
+	std::vector<entt::entity> entities;
 
 	apply_tuple([&]<typename... Mandatory>() {
 		auto view = registry.view<Mandatory...>();
 
-		std::vector<entt::entity> entities;
 		for (auto entity : view) {
 			entities.push_back(entity);
 		}
-		std::sort(entities.begin(), entities.end());
-
-		uint64_t count = entities.size();
-
-		Log::info("Serializing %d entities", count);
-
-		s.value4b(version);
-		s.value8b(count);
-
-		for (auto entity : entities) {
-			Log::info("Serializing entity %d", (int)entity);
-			(serialize_component<S, Components>(s, registry, entity), ...);
-		}
 	}, mandatory_components{});
+
+	if (sorter != nullptr) {
+		std::sort(entities.begin(), entities.end(), [&](entt::entity a, entt::entity b) {
+			return sorter(registry, a, b);
+			});
+	}
+
+	uint64_t count = entities.size();
+
+	Log::info("Serializing %d entities", count);
+
+	s.value4b(version);
+	s.value8b(count);
+
+	for (auto entity : entities) {
+		Log::info("Serializing entity %d", (int)entity);
+		(serialize_component<S, Components>(s, registry, entity), ...);
+	}
 }
 
 template <typename S, typename T>

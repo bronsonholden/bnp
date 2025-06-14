@@ -424,22 +424,58 @@ void BlueprintsEditor::save_to_file(entt::registry& registry, std::filesystem::p
 
 	// ships
 	{
-		bnp::serialize<decltype(ser), Component::ShipBlueprint>(ser, registry, 1);
+		bnp::serialize<decltype(ser), Component::ShipBlueprint>(
+			ser,
+			registry,
+			1,
+			[](entt::registry& registry, entt::entity a, entt::entity b) {
+				auto& ca = registry.get<Component::ShipBlueprint>(a);
+				auto& cb = registry.get<Component::ShipBlueprint>(b);
+
+				return ca.id < cb.id;
+			});
 	}
 
 	// segments
 	{
-		bnp::serialize<decltype(ser), Component::ShipSegment>(ser, registry, 1);
+		bnp::serialize<decltype(ser), Component::ShipSegment>(
+			ser,
+			registry,
+			1,
+			[](entt::registry& registry, entt::entity a, entt::entity b) {
+				auto& ca = registry.get<Component::ShipSegment>(a);
+				auto& cb = registry.get<Component::ShipSegment>(b);
+
+				return ca.id < cb.id;
+			});
 	}
 
 	// engines
 	{
-		bnp::serialize<decltype(ser), Component::EngineBlueprint>(ser, registry, 1);
+		bnp::serialize<decltype(ser), Component::EngineBlueprint>(
+			ser,
+			registry,
+			1,
+			[](entt::registry& registry, entt::entity a, entt::entity b) {
+				auto& ca = registry.get<Component::EngineBlueprint>(a);
+				auto& cb = registry.get<Component::EngineBlueprint>(b);
+
+				return ca.id < cb.id;
+			});
 	}
 
 	// fluid storage
 	{
-		bnp::serialize<decltype(ser), Component::FluidStorageBlueprint>(ser, registry, 1);
+		bnp::serialize<decltype(ser), Component::FluidStorageBlueprint>(
+			ser,
+			registry,
+			1,
+			[](entt::registry& registry, entt::entity a, entt::entity b) {
+				auto& ca = registry.get<Component::FluidStorageBlueprint>(a);
+				auto& cb = registry.get<Component::FluidStorageBlueprint>(b);
+
+				return ca.id < cb.id;
+			});
 	}
 }
 
