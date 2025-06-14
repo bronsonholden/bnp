@@ -270,7 +270,6 @@ void RecipesEditor::load_from_file(entt::registry& registry, std::filesystem::pa
 	// chemical recipes
 	{
 		bnp::deserialize<decltype(des), Component::ChemicalRecipe>(des, registry);
-
 	}
 }
 
