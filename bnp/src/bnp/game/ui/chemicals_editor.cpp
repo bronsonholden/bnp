@@ -153,7 +153,16 @@ void ChemicalsEditor::save_to_file(entt::registry& registry) {
 	std::vector<entt::entity> entities = std::move(get_chemical_entities_sorted_by_id(registry));
 
 	{
-		bnp::serialize<decltype(ser), Component::Chemical>(ser, registry, 1);
+		bnp::serialize<decltype(ser), Component::Chemical>(
+			ser,
+			registry,
+			1,
+			[](entt::registry& registry, entt::entity a, entt::entity b) {
+				auto& ca = registry.get<Component::Chemical>(a);
+				auto& cb = registry.get<Component::Chemical>(b);
+
+				return ca.id < cb.id;
+			});
 	}
 
 	ser.adapter().flush();

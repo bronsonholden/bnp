@@ -257,7 +257,16 @@ void RecipesEditor::save_to_file(entt::registry& registry, std::filesystem::path
 
 	// chemical recipes
 	{
-		bnp::serialize<decltype(ser), Component::ChemicalRecipe>(ser, registry, 1);
+		bnp::serialize<decltype(ser), Component::ChemicalRecipe>(
+			ser,
+			registry,
+			1,
+			[](entt::registry& registry, entt::entity a, entt::entity b) {
+				auto& ca = registry.get<Component::ChemicalRecipe>(a);
+				auto& cb = registry.get<Component::ChemicalRecipe>(b);
+
+				return ca.id < cb.id;
+			});
 	}
 }
 
