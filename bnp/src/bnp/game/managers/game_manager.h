@@ -9,6 +9,8 @@
 #include <entt/entt.hpp>
 #include <bitsery/bitsery.h>
 #include <bitsery/adapter/stream.h>
+#include <filesystem>
+#include <fstream>
 
 namespace bnp {
 namespace Game {
@@ -26,7 +28,10 @@ private:
 	void load_core_data(entt::registry& registry, std::filesystem::path archive_path) {
 		std::filesystem::path file_path = data_dir() / archive_path;
 		std::ifstream is(file_path, std::ios::binary);
-		if (!is.is_open()) return;
+		if (!is.is_open()) {
+			Log::error("Unable to find data set file: %s", archive_path.string().c_str());
+			return;
+		}
 		bitsery::Deserializer<bitsery::InputStreamAdapter> des{ is };
 		(for_each_core_data_set<CoreDataSets>([&]<typename ...Components>() {
 			bnp::deserialize<decltype(des), Components...>(des, registry);
