@@ -135,7 +135,6 @@ void ItemsEditor::render(entt::registry& registry) {
 	}
 }
 
-
 void ItemsEditor::save_to_file(entt::registry& registry) {
 	std::filesystem::path file_path = data_dir() / "items.bin";
 	std::ofstream os(file_path, std::ios::binary);
