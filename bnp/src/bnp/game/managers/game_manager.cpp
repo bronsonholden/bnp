@@ -24,29 +24,29 @@ namespace Manager {
 
 void GameManager::initialize(entt::registry& registry) {
 	load_core_data<
-		CoreDataSet<Component::Chemical>
+		ComponentSet<Component::Chemical>
 	>(registry, "chemicals.bin");
 
 	load_core_data<
-		CoreDataSet<Component::Universe>,
-		CoreDataSet<Component::Galaxy>,
-		CoreDataSet<Component::System>,
-		CoreDataSet<Component::Celestial, Planet2D>
+		ComponentSet<Component::Universe>,
+		ComponentSet<Component::Galaxy>,
+		ComponentSet<Component::System>,
+		ComponentSet<Component::Celestial, Planet2D>
 	>(registry, "universe.bin");
 
 	load_core_data<
-		CoreDataSet<Component::ShipBlueprint>,
-		CoreDataSet<Component::ShipSegment>,
-		CoreDataSet<Component::EngineBlueprint>,
-		CoreDataSet<Component::FluidStorageBlueprint>
+		ComponentSet<Component::ShipBlueprint>,
+		ComponentSet<Component::ShipSegment>,
+		ComponentSet<Component::EngineBlueprint>,
+		ComponentSet<Component::FluidStorageBlueprint>
 	>(registry, "blueprints.bin");
 
 	load_core_data<
-		CoreDataSet<Component::Item>
+		ComponentSet<Component::Item>
 	>(registry, "items.bin");
 
 	load_core_data<
-		CoreDataSet<Component::ChemicalRecipe>
+		ComponentSet<Component::ChemicalRecipe>
 	>(registry, "recipes.bin");
 }
 

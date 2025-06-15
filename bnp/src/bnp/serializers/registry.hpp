@@ -17,6 +17,7 @@
 #include <utility>
 #include <string>
 
+// Generate type name strings for logging purposes.
 template <typename T>
 constexpr std::string type_name() {
 #if defined(__clang__)
@@ -35,7 +36,33 @@ constexpr std::string type_name() {
 
 namespace bnp {
 
-// This struct marks the component as optional. It will be serialized if present
+// A component set defines a set of entities within the registry to
+// be marshaled. Multiple sets of entities can be marshaled by specifying
+// multiple sets and using `for_each_component_set`.
+template <typename ...Components>
+struct ComponentSet {
+};
+
+template <typename ComponentSet>
+struct unpack_component_set;
+
+template <typename... Components>
+struct unpack_component_set<ComponentSet<Components...>> {
+	template <typename F>
+	static void apply(F&& f) {
+		f.template operator() < Components... > ();
+	}
+};
+
+template <typename... ComponentSets, typename Fn>
+void for_each_component_set(Fn&& fn) {
+	(unpack_component_set<ComponentSets>::apply(fn), ...);
+}
+
+// This struct marks the component as optional. It will be marshaled if present.
+// When serializing, optional components are not used when generating the registry
+// view to obtain the set of entities. When deserializing, the optional component
+// will be emplaced only if it was serialized.
 template <typename T>
 struct Optional {
 	using type = T;
@@ -93,6 +120,7 @@ void apply_tuple(F&& f, Tuple&& t) {
 	apply_tuple_impl(std::forward<F>(f), std::forward<Tuple>(t), std::make_index_sequence<N>{});
 }
 
+// Marshaling implementation functions.
 template <typename S, typename T>
 void serialize_component(S& s, entt::registry& registry, entt::entity entity) {
 	using ActualT = typename unwrap_optional<T>::type;
