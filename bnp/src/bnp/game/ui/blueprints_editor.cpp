@@ -21,7 +21,7 @@ void BlueprintsEditor::initialize(entt::registry& registry) {
 
 void BlueprintsEditor::render(entt::registry& registry) {
 	if (ImGui::Button("Save")) {
-		save_to_file(registry, data_dir() / "blueprints.bin");
+		save_to_file(registry);
 	}
 
 	ImGui::BeginTabBar("Blueprint Types");
@@ -414,7 +414,7 @@ void BlueprintsEditor::render_edit_fluid_storage_blueprint_section(entt::registr
 	ImGui::InputDouble("Max pressure (MPa)", &blueprint.max_pressure);
 }
 
-void BlueprintsEditor::save_to_file(entt::registry& registry, std::filesystem::path file_path) {
+void BlueprintsEditor::save_to_file(entt::registry& registry) {
 	save_component_set <
 		// ship blueprints
 		SortedComponentSet <

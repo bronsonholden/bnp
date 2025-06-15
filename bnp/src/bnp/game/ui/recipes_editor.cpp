@@ -10,7 +10,6 @@
 #include <bitsery/bitsery.h>
 #include <bitsery/traits/vector.h>
 #include <bitsery/adapter/stream.h>
-#include <fstream>
 
 namespace bnp {
 namespace Game {
@@ -21,7 +20,7 @@ void RecipesEditor::initialize(entt::registry& registry) {
 
 void RecipesEditor::render(entt::registry& registry) {
 	if (ImGui::Button("Save")) {
-		save_to_file(registry, data_dir() / "recipes.bin");
+		save_to_file(registry);
 	}
 
 	ImGui::BeginTabBar("Recipe Types");
@@ -247,7 +246,7 @@ void RecipesEditor::render_edit_chemical_recipe_section(entt::registry& registry
 
 }
 
-void RecipesEditor::save_to_file(entt::registry& registry, std::filesystem::path file_path) {
+void RecipesEditor::save_to_file(entt::registry& registry) {
 	save_component_set <
 		// chemicals
 		SortedComponentSet <
