@@ -23,29 +23,29 @@ namespace Game {
 namespace Manager {
 
 void GameManager::initialize(entt::registry& registry) {
-	load_core_data<
+	load_component_set<
 		ComponentSet<Component::Chemical>
 	>(registry, "chemicals.bin");
 
-	load_core_data<
+	load_component_set<
 		ComponentSet<Component::Universe>,
 		ComponentSet<Component::Galaxy>,
 		ComponentSet<Component::System>,
 		ComponentSet<Component::Celestial, Planet2D>
 	>(registry, "universe.bin");
 
-	load_core_data<
+	load_component_set<
 		ComponentSet<Component::ShipBlueprint>,
 		ComponentSet<Component::ShipSegment>,
 		ComponentSet<Component::EngineBlueprint>,
 		ComponentSet<Component::FluidStorageBlueprint>
 	>(registry, "blueprints.bin");
 
-	load_core_data<
+	load_component_set<
 		ComponentSet<Component::Item>
 	>(registry, "items.bin");
 
-	load_core_data<
+	load_component_set<
 		ComponentSet<Component::ChemicalRecipe>
 	>(registry, "recipes.bin");
 }

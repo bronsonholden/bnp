@@ -2,14 +2,7 @@
 
 #pragma once
 
-#include <bnp/helpers/filesystem_helper.h>
-#include <bnp/serializers/registry.hpp>
-
-#include <entt/entt.hpp>
-#include <bitsery/bitsery.h>
-#include <bitsery/adapter/stream.h>
-#include <filesystem>
-#include <fstream>
+#include <bnp/marshaling.hpp>
 
 namespace bnp {
 namespace Game {
@@ -21,24 +14,6 @@ public:
 	GameManager() = default;
 
 	void initialize(entt::registry& registry);
-
-private:
-	template <typename ...ComponentSets>
-	void load_core_data(entt::registry& registry, std::filesystem::path archive_path) {
-		std::filesystem::path file_path = data_dir() / archive_path;
-		std::ifstream is(file_path, std::ios::binary);
-
-		if (!is.is_open()) {
-			Log::error("Unable to find data set file: %s", archive_path.string().c_str());
-			return;
-		}
-
-		bitsery::Deserializer<bitsery::InputStreamAdapter> des{ is };
-
-		(for_each_component_set<ComponentSets>([&]<typename ...Components>() {
-			bnp::deserialize<decltype(des), Components...>(des, registry);
-		}), ...);
-	}
 };
 
 }
