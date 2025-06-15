@@ -18,7 +18,6 @@ namespace Game {
 namespace UI {
 
 void BlueprintsEditor::initialize(entt::registry& registry) {
-	load_from_file(registry, data_dir() / "blueprints.bin");
 }
 
 void BlueprintsEditor::render(entt::registry& registry) {
@@ -476,33 +475,6 @@ void BlueprintsEditor::save_to_file(entt::registry& registry, std::filesystem::p
 
 				return ca.id < cb.id;
 			});
-	}
-}
-
-void BlueprintsEditor::load_from_file(entt::registry& registry, std::filesystem::path file_path) {
-	std::ifstream is(file_path, std::ios::binary);
-	bitsery::Deserializer<bitsery::InputStreamAdapter> des{ is };
-
-	if (!is.is_open()) return;
-
-	// ship blueprints
-	{
-		bnp::deserialize<decltype(des), Component::ShipBlueprint>(des, registry);
-	}
-
-	// ship segments
-	{
-		bnp::deserialize<decltype(des), Component::ShipSegment>(des, registry);
-	}
-
-	// engines
-	{
-		bnp::deserialize<decltype(des), Component::EngineBlueprint>(des, registry);
-	}
-
-	// fluid storage
-	{
-		bnp::deserialize<decltype(des), Component::FluidStorageBlueprint>(des, registry);
 	}
 }
 

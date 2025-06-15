@@ -15,7 +15,6 @@ namespace Game {
 namespace UI {
 
 void ChemicalsEditor::initialize(entt::registry& registry) {
-	load_from_file(registry);
 }
 
 void ChemicalsEditor::render(entt::registry& registry) {
@@ -166,16 +165,6 @@ void ChemicalsEditor::save_to_file(entt::registry& registry) {
 	}
 
 	ser.adapter().flush();
-}
-
-void ChemicalsEditor::load_from_file(entt::registry& registry) {
-	std::filesystem::path file_path = data_dir() / "chemicals.bin";
-	std::ifstream is(file_path, std::ios::binary);
-	bitsery::Deserializer<bitsery::InputStreamAdapter> des{ is };
-
-	{
-		bnp::deserialize<decltype(des), Component::Chemical>(des, registry);
-	}
 }
 
 std::vector<entt::entity> ChemicalsEditor::get_chemical_entities_sorted_by_id(entt::registry& registry) {

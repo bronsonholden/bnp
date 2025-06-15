@@ -17,7 +17,6 @@ public:
 	void render(entt::registry& registry);
 
 	void save_to_file(entt::registry& registry, std::filesystem::path file_path);
-	void load_from_file(entt::registry& registry, std::filesystem::path file_path);
 
 private:
 	void render_system_editor(entt::registry& registry, Game::Component::System::ID system_id);

@@ -18,7 +18,6 @@ namespace Game {
 namespace UI {
 
 void RecipesEditor::initialize(entt::registry& registry) {
-	load_from_file(registry, data_dir() / "recipes.bin");
 }
 
 void RecipesEditor::render(entt::registry& registry) {
@@ -267,18 +266,6 @@ void RecipesEditor::save_to_file(entt::registry& registry, std::filesystem::path
 
 				return ca.id < cb.id;
 			});
-	}
-}
-
-void RecipesEditor::load_from_file(entt::registry& registry, std::filesystem::path file_path) {
-	std::ifstream is(file_path, std::ios::binary);
-	bitsery::Deserializer<bitsery::InputStreamAdapter> des{ is };
-
-	if (!is.is_open()) return;
-
-	// chemical recipes
-	{
-		bnp::deserialize<decltype(des), Component::ChemicalRecipe>(des, registry);
 	}
 }
 

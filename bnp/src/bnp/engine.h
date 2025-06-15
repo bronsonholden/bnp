@@ -29,6 +29,7 @@
 #include <bnp/ui/render_manager_inspector.h>
 #include <bnp/game/ui/editor_tools.h>
 
+#include <bnp/game/managers/game_manager.h>
 #include <bnp/game/managers/navigation_manager.h>
 #include <bnp/game/managers/universe_manager.h>
 
@@ -68,6 +69,7 @@ protected:
 	ControllerManager controller_manager;
 	UIManager ui_manager;
 
+	Game::Manager::GameManager game_manager;
 	Game::Manager::NavigationManager navigation_manager;
 	Game::Manager::UniverseManager universe_manager;
 

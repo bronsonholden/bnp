@@ -24,10 +24,7 @@ namespace Game {
 namespace UI {
 
 void UniverseEditor::initialize(entt::registry& registry) {
-	if (!registry.view<Game::Component::Galaxy>().size()) {
-		load_from_file(registry, data_dir() / "universe.bin");
-		Game::Manager::NavigationManager().show_galaxy_map(registry);
-	}
+	Game::Manager::NavigationManager().show_galaxy_map(registry);
 }
 
 void UniverseEditor::render(entt::registry& registry) {
@@ -99,31 +96,6 @@ void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::pat
 	}
 
 	ser.adapter().flush();
-}
-
-void UniverseEditor::load_from_file(entt::registry& registry, std::filesystem::path file_path) {
-	std::ifstream is(file_path, std::ios::binary);
-	bitsery::Deserializer<bitsery::InputStreamAdapter> des{ is };
-
-	// universe
-	{
-		bnp::deserialize<decltype(des), Game::Component::Universe>(des, registry);
-	}
-
-	// galaxies
-	{
-		bnp::deserialize<decltype(des), Game::Component::Galaxy>(des, registry);
-	}
-
-	// systems
-	{
-		bnp::deserialize<decltype(des), Game::Component::System>(des, registry);
-	}
-
-	// celestials
-	{
-		bnp::deserialize<decltype(des), Game::Component::Celestial, Planet2D>(des, registry);
-	}
 }
 
 void UniverseEditor::render_system_editor(entt::registry& registry, Game::Component::System::ID system_id) {

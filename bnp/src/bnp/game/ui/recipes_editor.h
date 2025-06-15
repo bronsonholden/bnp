@@ -19,7 +19,6 @@ private:
 	void render_chemical_recipes_section(entt::registry& registry);
 	void render_edit_chemical_recipe_section(entt::registry& registry);
 	void save_to_file(entt::registry& registry, std::filesystem::path file_path);
-	void load_from_file(entt::registry& registry, std::filesystem::path file_path);
 };
 
 }

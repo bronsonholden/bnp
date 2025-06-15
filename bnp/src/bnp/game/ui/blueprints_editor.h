@@ -25,7 +25,6 @@ private:
 	void render_edit_engine_blueprint_section(entt::registry& registry);
 	void render_edit_fluid_storage_blueprint_section(entt::registry& registry);
 	void save_to_file(entt::registry& registry, std::filesystem::path file_path);
-	void load_from_file(entt::registry& registry, std::filesystem::path file_path);
 };
 
 }
