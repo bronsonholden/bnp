@@ -117,15 +117,11 @@ void Engine::run() {
 	ImGui_ImplSDL2_InitForOpenGL(window.get_sdl_window(), window.get_gl_context());
 	ImGui_ImplOpenGL3_Init();
 
-	// game-specific code, need to move
-	//Game::Prefab::Galaxy::model(registry);
-	//navigation_manager.show_galaxy_map(registry);
-
 	// todo: move to a `Game` class or something that can wrap up all the
 	// game-specific stuff
 	game_manager.initialize(registry);
-
 	g_editor_tools.initialize(registry);
+	//navigation_manager.show_galaxy_map(registry);
 
 	while (window.open) {
 		SDL_Event event;
