@@ -2,6 +2,7 @@
 #include <bnp/game/ui/items_editor.h>
 #include <bnp/game/components/inventory.h>
 #include <bnp/game/components/matter.h>
+#include <bnp/game/queries/inventory.h>
 #include <bnp/game/serializers/inventory.hpp>
 
 #include <imgui.h>
@@ -95,7 +96,7 @@ void ItemsEditor::render(entt::registry& registry) {
 		}
 	}
 	else {
-		std::vector<entt::entity> entities = std::move(get_item_entities_sorted_by_id(registry));
+		std::vector<entt::entity> entities = std::move(Queries::get_item_entities_sorted_by_id(registry));
 
 		if (entities.size() && ImGui::BeginTable("ItemTable", 3, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
 			ImGui::TableSetupColumn("ID");
@@ -147,23 +148,6 @@ void ItemsEditor::save_to_file(entt::registry& registry) {
 		>
 		> (registry, "items.bin");
 
-}
-
-std::vector<entt::entity> ItemsEditor::get_item_entities_sorted_by_id(entt::registry& registry) {
-	auto items = registry.view<Game::Component::Item>();
-	std::vector<entt::entity> entities;
-
-	for (auto entity : items) {
-		entities.push_back(entity);
-	}
-
-	std::sort(entities.begin(), entities.end(), [&registry](entt::entity a, entt::entity b) {
-		auto& item_a = registry.get<Game::Component::Item>(a);
-		auto& item_b = registry.get<Game::Component::Item>(b);
-		return item_a.id < item_b.id;
-		});
-
-	return entities;
 }
 
 }
