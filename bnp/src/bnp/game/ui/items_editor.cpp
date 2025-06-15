@@ -1,4 +1,5 @@
 #include <bnp/helpers/filesystem_helper.h>
+#include <bnp/serializers/registry.hpp>
 #include <bnp/game/ui/items_editor.h>
 #include <bnp/game/components/inventory.h>
 #include <bnp/game/components/matter.h>
@@ -15,11 +16,6 @@ namespace Game {
 namespace UI {
 
 void ItemsEditor::render(entt::registry& registry) {
-	if (!loaded) {
-		load_from_file(registry);
-		loaded = true;
-	}
-
 	if (ImGui::Button("New item")) {
 		// todo: get next ID from `ItemIndex`?
 		Game::Component::Item::ID next_id = 1;
@@ -144,30 +140,21 @@ void ItemsEditor::save_to_file(entt::registry& registry) {
 	std::filesystem::path file_path = data_dir() / "items.bin";
 	std::ofstream os(file_path, std::ios::binary);
 	bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
-	std::vector<entt::entity> entities = std::move(get_item_entities_sorted_by_id(registry));
 
-	uint64_t count = entities.size();
-	ser.value8b(count);
-	for (auto entity : entities) {
-		auto& item = registry.get<Game::Component::Item>(entity);
+	if (!os.is_open()) return;
 
-		ser.object(item);
-	}
+	// chemical recipes
+	{
+		bnp::serialize<decltype(ser), Component::Item>(
+			ser,
+			registry,
+			1,
+			[](entt::registry& registry, entt::entity a, entt::entity b) {
+				auto& ca = registry.get<Component::Item>(a);
+				auto& cb = registry.get<Component::Item>(b);
 
-	ser.adapter().flush();
-}
-
-void ItemsEditor::load_from_file(entt::registry& registry) {
-	std::filesystem::path file_path = data_dir() / "items.bin";
-	std::ifstream is(file_path, std::ios::binary);
-	bitsery::Deserializer<bitsery::InputStreamAdapter> des{ is };
-
-	uint64_t count = 0;
-	des.value8b(count);
-	for (uint64_t i = 0; i < count; ++i) {
-		Game::Component::Item item;
-		des.object(item);
-		registry.emplace<Game::Component::Item>(registry.create(), item);
+				return ca.id < cb.id;
+			});
 	}
 }
 
