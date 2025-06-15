@@ -1,6 +1,5 @@
 #include <bnp/core/logger.hpp>
-#include <bnp/helpers/filesystem_helper.h>
-#include <bnp/serializers/registry.hpp>
+#include <bnp/marshaling.hpp>
 #include <bnp/game/components/ships.h>
 #include <bnp/game/ui/blueprints_editor.h>
 #include <bnp/game/serializers/ships.hpp>
@@ -416,66 +415,50 @@ void BlueprintsEditor::render_edit_fluid_storage_blueprint_section(entt::registr
 }
 
 void BlueprintsEditor::save_to_file(entt::registry& registry, std::filesystem::path file_path) {
-	std::ofstream os(file_path, std::ios::binary);
-	bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
+	save_component_set <
+		// ship blueprints
+		SortedComponentSet <
+		+[](entt::registry& registry, entt::entity a, entt::entity b) {
+		auto& ca = registry.get<Component::ShipBlueprint>(a);
+		auto& cb = registry.get<Component::ShipBlueprint>(b);
+		return ca.id < cb.id;
+		},
+		Component::ShipBlueprint
+		> ,
 
-	if (!os.is_open()) return;
+		// ship segments
+		SortedComponentSet <
+		+[](entt::registry& registry, entt::entity a, entt::entity b) {
+		auto& ca = registry.get<Component::ShipSegment>(a);
+		auto& cb = registry.get<Component::ShipSegment>(b);
 
-	// ships
-	{
-		bnp::serialize<decltype(ser), Component::ShipBlueprint>(
-			ser,
-			registry,
-			1,
-			[](entt::registry& registry, entt::entity a, entt::entity b) {
-				auto& ca = registry.get<Component::ShipBlueprint>(a);
-				auto& cb = registry.get<Component::ShipBlueprint>(b);
+		return ca.id < cb.id;
+		},
+		Component::ShipSegment
+		> ,
 
-				return ca.id < cb.id;
-			});
-	}
+		// engine blueprints
+		SortedComponentSet <
+		+[](entt::registry& registry, entt::entity a, entt::entity b) {
+		auto& ca = registry.get<Component::EngineBlueprint>(a);
+		auto& cb = registry.get<Component::EngineBlueprint>(b);
 
-	// segments
-	{
-		bnp::serialize<decltype(ser), Component::ShipSegment>(
-			ser,
-			registry,
-			1,
-			[](entt::registry& registry, entt::entity a, entt::entity b) {
-				auto& ca = registry.get<Component::ShipSegment>(a);
-				auto& cb = registry.get<Component::ShipSegment>(b);
+		return ca.id < cb.id;
+		},
+		Component::EngineBlueprint
+		> ,
 
-				return ca.id < cb.id;
-			});
-	}
+		// fluid storage blueprints
+		SortedComponentSet <
+		+[](entt::registry& registry, entt::entity a, entt::entity b) {
+		auto& ca = registry.get<Component::FluidStorageBlueprint>(a);
+		auto& cb = registry.get<Component::FluidStorageBlueprint>(b);
 
-	// engines
-	{
-		bnp::serialize<decltype(ser), Component::EngineBlueprint>(
-			ser,
-			registry,
-			1,
-			[](entt::registry& registry, entt::entity a, entt::entity b) {
-				auto& ca = registry.get<Component::EngineBlueprint>(a);
-				auto& cb = registry.get<Component::EngineBlueprint>(b);
-
-				return ca.id < cb.id;
-			});
-	}
-
-	// fluid storage
-	{
-		bnp::serialize<decltype(ser), Component::FluidStorageBlueprint>(
-			ser,
-			registry,
-			1,
-			[](entt::registry& registry, entt::entity a, entt::entity b) {
-				auto& ca = registry.get<Component::FluidStorageBlueprint>(a);
-				auto& cb = registry.get<Component::FluidStorageBlueprint>(b);
-
-				return ca.id < cb.id;
-			});
-	}
+		return ca.id < cb.id;
+		},
+		Component::FluidStorageBlueprint
+		>
+		> (registry, "blueprints.bin");
 }
 
 }

@@ -11,7 +11,7 @@
 
 namespace bnp {
 
-template <typename ...ComponentSets>
+template <typename... ComponentSets>
 void save_component_set(entt::registry& registry, std::filesystem::path archive_path) {
 	std::filesystem::path file_path = data_dir() / archive_path;
 	std::ofstream os(file_path, std::ios::binary);
@@ -23,9 +23,12 @@ void save_component_set(entt::registry& registry, std::filesystem::path archive_
 
 	bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
 
-	(for_each_component_set<ComponentSets>([&]<typename ...Components>() {
-		bnp::serialize<decltype(ser), Components...>(ser, registry);
-	}), ...);
+	(..., (
+		unpack_component_set<ComponentSets>::apply([&]<typename... Components>() {
+		constexpr bnp::Sorter* sorter = get_sorter_for_set<ComponentSets>();
+		bnp::serialize<decltype(ser), Components...>(ser, registry, 1, sorter);
+	})
+		));
 }
 
 template <typename ...ComponentSets>

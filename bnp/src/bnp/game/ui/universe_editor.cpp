@@ -1,8 +1,7 @@
 #include <bnp/core/logger.hpp>
 #include <bnp/components/state.h>
 #include <bnp/components/world.h>
-#include <bnp/helpers/filesystem_helper.h>
-#include <bnp/serializers/registry.hpp>
+#include <bnp/marshaling.hpp>
 #include <bnp/serializers/world.hpp>
 #include <bnp/game/ui/universe_editor.h>
 #include <bnp/game/serializers/universe.hpp>
@@ -54,48 +53,35 @@ void UniverseEditor::render(entt::registry& registry) {
 }
 
 void UniverseEditor::save_to_file(entt::registry& registry, std::filesystem::path file_path) {
-	std::ofstream os(file_path, std::ios::binary);
-	bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
+	save_component_set <
+		// universe
+		ComponentSet<Component::Universe>,
+		// galaxies
+		ComponentSet<Component::Galaxy>,
 
-	// universe
-	{
-		bnp::serialize<decltype(ser), Game::Component::Universe>(ser, registry, 1);
-	}
+		// systems
+		SortedComponentSet <
+		+[](entt::registry& registry, entt::entity a, entt::entity b) {
+		auto& ca = registry.get<Game::Component::System>(a);
+		auto& cb = registry.get<Game::Component::System>(b);
 
-	// galaxies
-	{
-		bnp::serialize<decltype(ser), Game::Component::Galaxy>(ser, registry, 1);
-	}
+		return ca.id < cb.id;
+		},
+		Component::System
+		> ,
 
-	// systems
-	{
-		bnp::serialize<decltype(ser), Game::Component::System>(
-			ser,
-			registry,
-			1,
-			[](entt::registry& registry, entt::entity a, entt::entity b) {
-				auto& ca = registry.get<Game::Component::System>(a);
-				auto& cb = registry.get<Game::Component::System>(b);
+		// celestials
+		SortedComponentSet <
+		+[](entt::registry& registry, entt::entity a, entt::entity b) {
+		auto& ca = registry.get<Game::Component::Celestial>(a);
+		auto& cb = registry.get<Game::Component::Celestial>(b);
 
-				return ca.id < cb.id;
-			});
-	}
-
-	// celestials
-	{
-		bnp::serialize<decltype(ser), Game::Component::Celestial, Planet2D>(
-			ser,
-			registry,
-			1,
-			[](entt::registry& registry, entt::entity a, entt::entity b) {
-				auto& ca = registry.get<Game::Component::Celestial>(a);
-				auto& cb = registry.get<Game::Component::Celestial>(b);
-
-				return ca.id < cb.id;
-			});
-	}
-
-	ser.adapter().flush();
+		return ca.id < cb.id;
+		},
+		Component::Celestial,
+		Planet2D
+		>
+		> (registry, "universe.bin");
 }
 
 void UniverseEditor::render_system_editor(entt::registry& registry, Game::Component::System::ID system_id) {

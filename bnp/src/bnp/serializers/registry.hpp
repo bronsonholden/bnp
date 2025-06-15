@@ -36,11 +36,24 @@ constexpr std::string type_name() {
 
 namespace bnp {
 
+using Sorter = bool(entt::registry&, entt::entity, entt::entity);
+
 // A component set defines a set of entities within the registry to
 // be marshaled. Multiple sets of entities can be marshaled by specifying
 // multiple sets and using `for_each_component_set`.
 template <typename ...Components>
 struct ComponentSet {
+	using components = std::tuple<Components...>;
+	static constexpr Sorter* sorter = nullptr;
+};
+
+// A sorted component set passes a sorting function to be called upon
+// the corresponding set of entities in the registry. Entities are serialized
+// in sorted order.
+template <Sorter* fn, typename... Components>
+struct SortedComponentSet {
+	using components = std::tuple<Components...>;
+	static constexpr Sorter* sorter = fn;
 };
 
 template <typename ComponentSet>
@@ -53,6 +66,19 @@ struct unpack_component_set<ComponentSet<Components...>> {
 		f.template operator() < Components... > ();
 	}
 };
+
+template <bnp::Sorter* SortFn, typename... Components>
+struct unpack_component_set<SortedComponentSet<SortFn, Components...>> {
+	template <typename F>
+	static void apply(F&& f) {
+		f.template operator() < Components... > ();
+	}
+};
+
+template <typename Set>
+constexpr Sorter* get_sorter_for_set() {
+	return Set::sorter;
+}
 
 template <typename... ComponentSets, typename Fn>
 void for_each_component_set(Fn&& fn) {
@@ -145,8 +171,6 @@ void serialize_component(S& s, entt::registry& registry, entt::entity entity) {
 	}
 	Log::info("  Serialized %s", type_name<T>().c_str());
 }
-
-using Sorter = bool(entt::registry&, entt::entity, entt::entity);
 
 template <typename S, typename... Components>
 void serialize(S& s, entt::registry& registry, uint32_t version, Sorter* sorter = nullptr) {

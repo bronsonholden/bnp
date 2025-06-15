@@ -1,6 +1,5 @@
 #include <bnp/core/logger.hpp>
-#include <bnp/helpers/filesystem_helper.h>
-#include <bnp/serializers/registry.hpp>
+#include <bnp/marshaling.hpp>
 #include <bnp/game/ui/recipes_editor.h>
 #include <bnp/game/components/recipes.h>
 #include <bnp/game/serializers/recipes.hpp>
@@ -249,24 +248,17 @@ void RecipesEditor::render_edit_chemical_recipe_section(entt::registry& registry
 }
 
 void RecipesEditor::save_to_file(entt::registry& registry, std::filesystem::path file_path) {
-	std::ofstream os(file_path, std::ios::binary);
-	bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
-
-	if (!os.is_open()) return;
-
-	// chemical recipes
-	{
-		bnp::serialize<decltype(ser), Component::ChemicalRecipe>(
-			ser,
-			registry,
-			1,
-			[](entt::registry& registry, entt::entity a, entt::entity b) {
-				auto& ca = registry.get<Component::ChemicalRecipe>(a);
-				auto& cb = registry.get<Component::ChemicalRecipe>(b);
-
-				return ca.id < cb.id;
-			});
-	}
+	save_component_set <
+		// chemicals
+		SortedComponentSet <
+		+[](entt::registry& registry, entt::entity a, entt::entity b) {
+		auto& ca = registry.get<Component::ChemicalRecipe>(a);
+		auto& cb = registry.get<Component::ChemicalRecipe>(b);
+		return ca.id < cb.id;
+		},
+		Component::ChemicalRecipe
+		>
+		> (registry, "chemicals.bin");
 }
 
 }

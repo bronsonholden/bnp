@@ -1,5 +1,4 @@
-#include <bnp/helpers/filesystem_helper.h>
-#include <bnp/serializers/registry.hpp>
+#include <bnp/marshaling.hpp>
 #include <bnp/game/ui/chemicals_editor.h>
 #include <bnp/game/components/matter.h>
 #include <bnp/game/serializers/matter.hpp>
@@ -146,25 +145,17 @@ void ChemicalsEditor::render(entt::registry& registry) {
 }
 
 void ChemicalsEditor::save_to_file(entt::registry& registry) {
-	std::filesystem::path file_path = data_dir() / "chemicals.bin";
-	std::ofstream os(file_path, std::ios::binary);
-	bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
-	std::vector<entt::entity> entities = std::move(get_chemical_entities_sorted_by_id(registry));
-
-	{
-		bnp::serialize<decltype(ser), Component::Chemical>(
-			ser,
-			registry,
-			1,
-			[](entt::registry& registry, entt::entity a, entt::entity b) {
-				auto& ca = registry.get<Component::Chemical>(a);
-				auto& cb = registry.get<Component::Chemical>(b);
-
-				return ca.id < cb.id;
-			});
-	}
-
-	ser.adapter().flush();
+	save_component_set <
+		// items
+		SortedComponentSet <
+		+[](entt::registry& registry, entt::entity a, entt::entity b) {
+		auto& ca = registry.get<Component::Chemical>(a);
+		auto& cb = registry.get<Component::Chemical>(b);
+		return ca.id < cb.id;
+		},
+		Component::Chemical
+		>
+		> (registry, "chemicals.bin");
 }
 
 std::vector<entt::entity> ChemicalsEditor::get_chemical_entities_sorted_by_id(entt::registry& registry) {

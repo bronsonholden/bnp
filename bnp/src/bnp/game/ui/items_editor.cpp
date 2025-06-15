@@ -1,5 +1,4 @@
-#include <bnp/helpers/filesystem_helper.h>
-#include <bnp/serializers/registry.hpp>
+#include <bnp/marshaling.hpp>
 #include <bnp/game/ui/items_editor.h>
 #include <bnp/game/components/inventory.h>
 #include <bnp/game/components/matter.h>
@@ -136,25 +135,18 @@ void ItemsEditor::render(entt::registry& registry) {
 }
 
 void ItemsEditor::save_to_file(entt::registry& registry) {
-	std::filesystem::path file_path = data_dir() / "items.bin";
-	std::ofstream os(file_path, std::ios::binary);
-	bitsery::Serializer<bitsery::OutputStreamAdapter> ser{ os };
+	save_component_set <
+		// items
+		SortedComponentSet <
+		+[](entt::registry& registry, entt::entity a, entt::entity b) {
+		auto& ca = registry.get<Component::Item>(a);
+		auto& cb = registry.get<Component::Item>(b);
+		return ca.id < cb.id;
+		},
+		Component::Item
+		>
+		> (registry, "items.bin");
 
-	if (!os.is_open()) return;
-
-	// chemical recipes
-	{
-		bnp::serialize<decltype(ser), Component::Item>(
-			ser,
-			registry,
-			1,
-			[](entt::registry& registry, entt::entity a, entt::entity b) {
-				auto& ca = registry.get<Component::Item>(a);
-				auto& cb = registry.get<Component::Item>(b);
-
-				return ca.id < cb.id;
-			});
-	}
 }
 
 std::vector<entt::entity> ItemsEditor::get_item_entities_sorted_by_id(entt::registry& registry) {
