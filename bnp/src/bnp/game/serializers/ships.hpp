@@ -21,9 +21,7 @@ void serialize(S& s, Game::Component::ShipSegment& segment) {
 	s.value4b(segment.solid_storage_slots);
 	s.value4b(segment.fluid_storage_slots);
 
-	Log::info("segment %d v%d", segment.id, segment.version);
 	segment.version = segment.latest_version;
-	Log::info("segment %d v%d", segment.id, segment.version);
 }
 
 template <typename S>
