@@ -13,8 +13,7 @@ namespace bnp {
 
 template <typename... ComponentSets>
 void save_component_set(entt::registry& registry, std::filesystem::path archive_path) {
-	std::filesystem::path file_path = data_dir() / archive_path;
-	std::ofstream os(file_path, std::ios::binary);
+	std::ofstream os(archive_path, std::ios::binary);
 
 	if (!os.is_open()) {
 		Log::error("Unable to open data set file: %s", archive_path.string().c_str());
@@ -32,8 +31,7 @@ void save_component_set(entt::registry& registry, std::filesystem::path archive_
 
 template <typename ...ComponentSets>
 void load_component_set(entt::registry& registry, std::filesystem::path archive_path) {
-	std::filesystem::path file_path = data_dir() / archive_path;
-	std::ifstream is(file_path, std::ios::binary);
+	std::ifstream is(archive_path, std::ios::binary);
 
 	if (!is.is_open()) {
 		Log::error("Unable to open data set file: %s", archive_path.string().c_str());
