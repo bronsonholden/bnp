@@ -23,6 +23,10 @@ namespace Game {
 namespace Manager {
 
 void GameManager::initialize(entt::registry& registry) {
+	load_static_data(registry);
+}
+
+void GameManager::load_static_data(entt::registry& registry) {
 	load_component_set<
 		ComponentSet<Component::Chemical>
 	>(registry, data_dir() / "chemicals.bin");
@@ -48,6 +52,21 @@ void GameManager::initialize(entt::registry& registry) {
 	load_component_set<
 		ComponentSet<Component::ChemicalRecipe>
 	>(registry, data_dir() / "recipes.bin");
+}
+
+void GameManager::create_save_data(entt::registry& registry) {
+	// figure out file name
+	// serialize
+}
+
+void GameManager::load_save_data(entt::registry& registry) {
+	// if already loaded, call `unload_save_data`
+	// deserialize
+}
+
+void GameManager::unload_save_data(entt::registry& registry) {
+	// set loaded=false
+	// destroy all entities with `SaveData` component
 }
 
 }
