@@ -53,7 +53,7 @@ void UniverseEditor::render(entt::registry& registry) {
 }
 
 void UniverseEditor::save_to_file(entt::registry& registry) {
-	save_component_set <
+	Marshaling::save_component_set <
 		// universe
 		ComponentSet<Component::Universe>,
 		// galaxies

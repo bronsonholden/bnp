@@ -415,7 +415,7 @@ void BlueprintsEditor::render_edit_fluid_storage_blueprint_section(entt::registr
 }
 
 void BlueprintsEditor::save_to_file(entt::registry& registry) {
-	save_component_set <
+	Marshaling::save_component_set <
 		// ship blueprints
 		SortedComponentSet <
 		+[](entt::registry& registry, entt::entity a, entt::entity b) {

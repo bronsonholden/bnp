@@ -10,6 +10,7 @@
 #include <filesystem>
 
 namespace bnp {
+namespace Marshaling {
 
 template <typename... ComponentSets>
 void save_component_set(entt::registry& registry, std::filesystem::path archive_path) {
@@ -45,4 +46,5 @@ void load_component_set(entt::registry& registry, std::filesystem::path archive_
 	}), ...);
 }
 
+}
 }

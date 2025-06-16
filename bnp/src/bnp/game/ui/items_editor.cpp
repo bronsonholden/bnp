@@ -136,7 +136,7 @@ void ItemsEditor::render(entt::registry& registry) {
 }
 
 void ItemsEditor::save_to_file(entt::registry& registry) {
-	save_component_set <
+	Marshaling::save_component_set <
 		// items
 		SortedComponentSet <
 		+[](entt::registry& registry, entt::entity a, entt::entity b) {
