@@ -1,5 +1,7 @@
 #pragma once
 
+#include <bnp/components/reflection.h>
+
 #include <string>
 
 namespace bnp {
@@ -11,6 +13,14 @@ struct Faction {
 
 	ID id;
 	std::string name;
+
+	REGISTER_COMPONENT_FIELDS(
+		std::make_pair("name", &Faction::name)
+	);
+
+	REGISTER_COMPONENT_TABLE_HEADER_FIELDS(
+		std::make_pair("ID", &Faction::id)
+	);
 };
 
 }

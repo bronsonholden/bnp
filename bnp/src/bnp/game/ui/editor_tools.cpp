@@ -47,6 +47,11 @@ void EditorTools::render(entt::registry& registry) {
 			ImGui::EndTabItem();
 		}
 
+		if (ImGui::BeginTabItem("Faction editor")) {
+			faction_editor.render(registry);
+			ImGui::EndTabItem();
+		}
+
 		ImGui::EndTabBar();
 	}
 

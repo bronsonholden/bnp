@@ -1,6 +1,7 @@
 #pragma once
 
 #include <bnp/core/logger.hpp>
+#include <bnp/components/reflection.h>
 
 #include <entt/entt.hpp>
 #include <imgui.h>
@@ -121,6 +122,9 @@ private:
 		}
 		else if constexpr (std::is_same_v<FieldType, float>) {
 			ImGui::Text("%.5f", (c.*field));
+		}
+		else if constexpr (Reflection::is_effectively_uint32<FieldType>) {
+			ImGui::Text("%u", (c.*field));
 		}
 		else {
 			ImGui::TextColored(ImVec4(1, 1, 0.2, 1), "!!");
