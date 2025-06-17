@@ -27,6 +27,10 @@ public:
 			}
 		}
 		else {
+			if (ImGui::Button("New entity")) {
+				registry.emplace<Component>(registry.create(), Component());
+			}
+
 			auto fields = Component::reflect_table_header_fields();
 			auto view = registry.view<Component>();
 
