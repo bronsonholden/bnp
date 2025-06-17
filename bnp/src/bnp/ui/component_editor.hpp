@@ -1,10 +1,15 @@
+// Generic component editor, useful for static data which is represented
+// by a single component.
+
 #pragma once
 
 #include <bnp/core/logger.hpp>
 #include <bnp/components/reflection.h>
+#include <bnp/game/queries/util.hpp>
 
 #include <entt/entt.hpp>
 #include <imgui.h>
+#include <string>
 
 namespace bnp {
 namespace Game {
@@ -29,7 +34,10 @@ public:
 		}
 		else {
 			if (ImGui::Button("New entity")) {
-				registry.emplace<Component>(registry.create(), Component());
+				typename Component::ID next_id = Queries::get_next_id<Component>(registry);
+				registry.emplace<Component>(registry.create(), Component{
+					.id = next_id
+					});
 			}
 
 			auto fields = Component::reflect_table_header_fields();
@@ -96,6 +104,13 @@ private:
 		else if constexpr (std::is_same_v<FieldType, float>) {
 			ImGui::InputFloat(name, &(c.*field));
 		}
+		else if constexpr (std::is_same_v<FieldType, std::string>) {
+			char value[256];
+			snprintf(value, 256, "%s", (c.*field).c_str());
+			if (ImGui::InputText(name, value, 256)) {
+				(c.*field) = value;
+			}
+		}
 		else {
 			ImGui::TextColored(ImVec4(1, 1, 0.2, 1), "Unable to auto-generate input for %s, unrecognized type", name);
 		}
@@ -125,6 +140,9 @@ private:
 		}
 		else if constexpr (Reflection::is_effectively_uint32<FieldType>) {
 			ImGui::Text("%u", (c.*field));
+		}
+		else if constexpr (std::is_same_v<FieldType, std::string>) {
+			ImGui::Text("%s", (c.*field).c_str());
 		}
 		else {
 			ImGui::TextColored(ImVec4(1, 1, 0.2, 1), "!!");
