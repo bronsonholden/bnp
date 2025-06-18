@@ -38,6 +38,7 @@ void serialize(S& s, Game::Component::ShipBlueprint& blueprint) {
 template <typename S>
 void serialize(S& s, Game::Component::EngineBlueprint& blueprint) {
 	s.value4b(blueprint.version);
+	s.value4b(blueprint.manufacturer_id);
 	s.value4b(blueprint.id);
 	s.text1b(blueprint.name, 256);
 	s.value8b(blueprint.mass);
@@ -50,6 +51,7 @@ void serialize(S& s, Game::Component::EngineBlueprint& blueprint) {
 template <typename S>
 void serialize(S& s, Game::Component::FluidStorageBlueprint& blueprint) {
 	s.value4b(blueprint.version);
+	s.value4b(blueprint.manufacturer_id);
 	s.value4b(blueprint.id);
 	s.text1b(blueprint.name, 256);
 	s.value8b(blueprint.mass);

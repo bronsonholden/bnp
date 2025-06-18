@@ -135,13 +135,16 @@ void BlueprintsEditor::render_engine_blueprints_section(entt::registry& registry
 
 	auto blueprints = registry.view<Component::EngineBlueprint>();
 
-	if (ImGui::BeginTable("EngineBlueprints", 3, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
+	if (ImGui::BeginTable("EngineBlueprints", 4, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
 		ImGui::TableSetupColumn("ID");
+		ImGui::TableSetupColumn("Manufacturer");
 		ImGui::TableSetupColumn("Name");
 		ImGui::TableSetupColumn("Actions");
 
 		ImGui::TableNextColumn();
 		ImGui::Text("ID");
+		ImGui::TableNextColumn();
+		ImGui::Text("Manufacturer");
 		ImGui::TableNextColumn();
 		ImGui::Text("Name");
 		ImGui::TableNextColumn();
@@ -152,6 +155,9 @@ void BlueprintsEditor::render_engine_blueprints_section(entt::registry& registry
 
 			ImGui::TableNextColumn();
 			ImGui::Text("%d", blueprint.id);
+
+			ImGui::TableNextColumn();
+			ImGui::Text("%d", blueprint.manufacturer_id);
 
 			ImGui::TableNextColumn();
 			ImGui::Text("%s", blueprint.name.c_str());
@@ -188,15 +194,18 @@ void BlueprintsEditor::render_fluid_storage_blueprints_section(entt::registry& r
 
 	auto blueprints = registry.view<Component::FluidStorageBlueprint>();
 
-	if (ImGui::BeginTable("FluidStorageBlueprints", 5, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
+	if (ImGui::BeginTable("FluidStorageBlueprints", 6, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
 		ImGui::TableSetupColumn("ID");
 		ImGui::TableSetupColumn("Name");
+		ImGui::TableSetupColumn("Manufacturer");
 		ImGui::TableSetupColumn("MaxVolume");
 		ImGui::TableSetupColumn("MaxPressure");
 		ImGui::TableSetupColumn("Actions");
 
 		ImGui::TableNextColumn();
 		ImGui::Text("ID");
+		ImGui::TableNextColumn();
+		ImGui::Text("Manufacturer");
 		ImGui::TableNextColumn();
 		ImGui::Text("Name");
 		ImGui::TableNextColumn();
@@ -211,6 +220,9 @@ void BlueprintsEditor::render_fluid_storage_blueprints_section(entt::registry& r
 
 			ImGui::TableNextColumn();
 			ImGui::Text("%d", blueprint.id);
+
+			ImGui::TableNextColumn();
+			ImGui::Text("%d", blueprint.manufacturer_id);
 
 			ImGui::TableNextColumn();
 			ImGui::Text("%s", blueprint.name.c_str());

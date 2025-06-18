@@ -46,7 +46,7 @@ struct EngineBlueprint {
 	typedef uint32_t ID;
 
 	uint32_t version = latest_version;
-	Faction::ID manufacturer_id;
+	Faction::ID manufacturer_id = 0;
 	ID id;
 	std::string name;
 	std::vector<ChemicalRecipe::ID> propulsion_recipes;
@@ -59,7 +59,7 @@ struct FluidStorageBlueprint {
 	typedef uint32_t ID;
 
 	uint32_t version = latest_version;
-	Faction::ID manufacturer_id;
+	Faction::ID manufacturer_id = 0;
 	ID id;
 	std::string name;
 	double mass;
