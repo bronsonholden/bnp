@@ -1,6 +1,5 @@
 #pragma once
 
-#include <bnp/components/reflection.h>
 #include <bnp/game/components/recipes.h>
 #include <bnp/game/components/factions.h>
 
@@ -26,17 +25,6 @@ struct ShipBlueprint {
 
 	// mass of just the ship with no modules
 	double mass;
-
-	REGISTER_COMPONENT_FIELDS(
-		std::make_pair("Name", &ShipBlueprint::name),
-		std::make_pair("Manufacturer ID", &ShipBlueprint::manufacturer_id)
-	);
-
-	REGISTER_COMPONENT_TABLE_HEADER_FIELDS(
-		std::make_pair("ID", &ShipBlueprint::id),
-		std::make_pair("Manufacturer ID", &ShipBlueprint::manufacturer_id),
-		std::make_pair("Name", &ShipBlueprint::name)
-	);
 };
 
 struct ShipSegment {
