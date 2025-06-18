@@ -15,14 +15,13 @@ namespace Component {
 //////////////////////////////////////////////////////////////////////////
 
 struct ShipBlueprint {
-	static const uint32_t latest_version = 1;
+	static const uint32_t latest_version = 2;
 	typedef uint32_t ID;
 
 	uint32_t version = latest_version;
-	Faction::ID manufacturer_id;
+	Faction::ID manufacturer_id = 0;
 	ID id;
-	std::string name = "R-9 Courier";
-	std::string manufacturer = "Tulman-Droupe Stellarworks";
+	std::string name = "<New ship blueprint>";
 
 	// mass of just the ship with no modules
 	double mass;

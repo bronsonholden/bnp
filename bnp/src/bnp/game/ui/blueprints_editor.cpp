@@ -65,16 +65,16 @@ void BlueprintsEditor::render_ship_blueprints_section(entt::registry& registry) 
 
 	if (ship_blueprints.size() && ImGui::BeginTable("Ship blueprints", 4, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
 		ImGui::TableSetupColumn("ID");
+		ImGui::TableSetupColumn("Manufacturer ID");
 		ImGui::TableSetupColumn("Name");
-		ImGui::TableSetupColumn("Manufacturer");
 		ImGui::TableSetupColumn("Actions");
 
 		ImGui::TableNextColumn();
 		ImGui::Text("ID");
 		ImGui::TableNextColumn();
-		ImGui::Text("Name");
+		ImGui::Text("Manufacturer ID");
 		ImGui::TableNextColumn();
-		ImGui::Text("Manufacturer");
+		ImGui::Text("Name");
 		ImGui::TableNextColumn();
 		ImGui::Text("Actions");
 
@@ -85,10 +85,10 @@ void BlueprintsEditor::render_ship_blueprints_section(entt::registry& registry) 
 			ImGui::Text("%d", blueprint.id);
 
 			ImGui::TableNextColumn();
-			ImGui::Text("%s", blueprint.name.c_str());
+			ImGui::Text("%d", blueprint.manufacturer_id);
 
 			ImGui::TableNextColumn();
-			ImGui::Text("%s", blueprint.manufacturer.c_str());
+			ImGui::Text("%s", blueprint.name.c_str());
 
 			ImGui::TableNextColumn();
 			{
@@ -243,19 +243,13 @@ void BlueprintsEditor::render_edit_ship_blueprint_section(entt::registry& regist
 		return;
 	}
 
+	ImGui::Text("Manufacturer ID select here");
+
 	{
 		char name[256];
 		snprintf(name, 256, "%s", blueprint.name.c_str());
 		if (ImGui::InputText("Name", name, 256)) {
 			blueprint.name = name;
-		}
-	}
-
-	{
-		char manufacturer[256];
-		snprintf(manufacturer, 256, "%s", blueprint.manufacturer.c_str());
-		if (ImGui::InputText("Manufacturer", manufacturer, 256)) {
-			blueprint.manufacturer = manufacturer;
 		}
 	}
 

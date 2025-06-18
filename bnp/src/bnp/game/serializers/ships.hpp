@@ -27,9 +27,9 @@ void serialize(S& s, Game::Component::ShipSegment& segment) {
 template <typename S>
 void serialize(S& s, Game::Component::ShipBlueprint& blueprint) {
 	s.value4b(blueprint.version);
+	s.value4b(blueprint.manufacturer_id);
 	s.value4b(blueprint.id);
 	s.text1b(blueprint.name, 256);
-	s.text1b(blueprint.manufacturer, 256);
 	s.value8b(blueprint.mass);
 
 	blueprint.version = blueprint.latest_version;
