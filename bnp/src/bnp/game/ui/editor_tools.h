@@ -1,6 +1,5 @@
 #pragma once
 
-#include <bnp/ui/component_editor.hpp>
 #include <bnp/game/ui/universe_editor.h>
 #include <bnp/game/ui/navigation_control.h>
 #include <bnp/game/ui/items_editor.h>
@@ -8,6 +7,10 @@
 #include <bnp/game/ui/blueprints_editor.h>
 #include <bnp/game/ui/recipes_editor.h>
 #include <bnp/game/components/factions.h>
+
+// for generic component editors
+#include <bnp/game/serializers/factions.hpp>
+#include <bnp/ui/component_editor.hpp>
 
 #include <entt/entt.hpp>
 
@@ -17,7 +20,7 @@ namespace UI {
 
 class EditorTools {
 public:
-	EditorTools() = default;
+	EditorTools();
 
 	void initialize(entt::registry& registry);
 	void render(entt::registry& registry);

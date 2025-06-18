@@ -1,3 +1,4 @@
+#include <bnp/helpers/filesystem_helper.h>
 #include <bnp/game/ui/editor_tools.h>
 
 #include <imgui.h>
@@ -5,6 +6,11 @@
 namespace bnp {
 namespace Game {
 namespace UI {
+
+EditorTools::EditorTools()
+	: faction_editor(data_dir() / "factions.bin")
+{
+}
 
 void EditorTools::initialize(entt::registry& registry) {
 	chemicals_editor.initialize(registry);

@@ -4,10 +4,12 @@
 #include <bnp/game/managers/game_manager.h>
 #include <bnp/game/components/matter.h>
 #include <bnp/game/components/recipes.h>
+#include <bnp/game/components/factions.h>
 #include <bnp/game/components/ships.h>
 #include <bnp/game/components/universe.h>
 #include <bnp/game/components/inventory.h>
 #include <bnp/game/serializers/matter.hpp>
+#include <bnp/game/serializers/factions.hpp>
 #include <bnp/game/serializers/recipes.hpp>
 #include <bnp/game/serializers/ships.hpp>
 #include <bnp/game/serializers/universe.hpp>
@@ -27,6 +29,10 @@ void GameManager::initialize(entt::registry& registry) {
 }
 
 void GameManager::load_static_data(entt::registry& registry) {
+	Marshaling::load_component_set<
+		ComponentSet<Component::Faction>
+	>(registry, data_dir() / "factions.bin");
+
 	Marshaling::load_component_set<
 		ComponentSet<Component::Chemical>
 	>(registry, data_dir() / "chemicals.bin");

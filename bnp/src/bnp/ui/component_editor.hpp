@@ -6,10 +6,12 @@
 #include <bnp/core/logger.hpp>
 #include <bnp/components/reflection.h>
 #include <bnp/game/queries/util.hpp>
+#include <bnp/marshaling.hpp>
 
 #include <entt/entt.hpp>
 #include <imgui.h>
 #include <string>
+#include <filesystem>
 
 namespace bnp {
 namespace Game {
@@ -18,7 +20,25 @@ namespace UI {
 template <typename Component>
 class ComponentEditor {
 public:
+	ComponentEditor(std::filesystem::path _archive_path)
+		: archive_path(_archive_path)
+	{
+	}
+
 	void render(entt::registry& registry) {
+		if (ImGui::Button("Save")) {
+			Marshaling::save_component_set <
+				SortedComponentSet <
+				+[](entt::registry& registry, entt::entity a, entt::entity b) {
+				auto& ca = registry.get<Component>(a);
+				auto& cb = registry.get<Component>(b);
+				return ca.id < cb.id;
+				},
+				Component
+				>
+				> (registry, archive_path);
+		}
+
 		if (editing != entt::null) {
 			auto& component = registry.get<Component>(editing);
 			auto fields = Component::reflect_edit_fields();
@@ -91,6 +111,7 @@ public:
 	}
 
 private:
+	std::filesystem::path archive_path;
 	entt::entity editing = entt::null;
 
 	template <typename FieldType>
