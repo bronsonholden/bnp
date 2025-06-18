@@ -155,7 +155,7 @@ void ChemicalsEditor::save_to_file(entt::registry& registry) {
 		},
 		Component::Chemical
 		>
-		> (registry, "chemicals.bin");
+		> (registry, data_dir() / "chemicals.bin");
 }
 
 std::vector<entt::entity> ChemicalsEditor::get_chemical_entities_sorted_by_id(entt::registry& registry) {

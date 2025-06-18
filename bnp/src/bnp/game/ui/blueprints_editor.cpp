@@ -458,7 +458,7 @@ void BlueprintsEditor::save_to_file(entt::registry& registry) {
 		},
 		Component::FluidStorageBlueprint
 		>
-		> (registry, "blueprints.bin");
+		> (registry, data_dir() / "blueprints.bin");
 }
 
 }

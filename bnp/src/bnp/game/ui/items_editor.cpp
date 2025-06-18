@@ -146,7 +146,7 @@ void ItemsEditor::save_to_file(entt::registry& registry) {
 		},
 		Component::Item
 		>
-		> (registry, "items.bin");
+		> (registry, data_dir() / "items.bin");
 
 }
 

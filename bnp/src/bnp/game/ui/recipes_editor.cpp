@@ -257,7 +257,7 @@ void RecipesEditor::save_to_file(entt::registry& registry) {
 		},
 		Component::ChemicalRecipe
 		>
-		> (registry, "chemicals.bin");
+		> (registry, data_dir() / "chemicals.bin");
 }
 
 }

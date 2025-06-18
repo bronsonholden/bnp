@@ -81,7 +81,7 @@ void UniverseEditor::save_to_file(entt::registry& registry) {
 		Component::Celestial,
 		Planet2D
 		>
-		> (registry, "universe.bin");
+		> (registry, data_dir() / "universe.bin");
 }
 
 void UniverseEditor::render_system_editor(entt::registry& registry, Game::Component::System::ID system_id) {
