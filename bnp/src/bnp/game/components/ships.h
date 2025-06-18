@@ -78,7 +78,6 @@ struct Ship {
 	typedef uint32_t ID;
 
 	ID id;
-	Faction::ID manufacturer_id;
 	ShipBlueprint::ID ship_blueprint_id;
 	Faction::ID faction_id;
 };
