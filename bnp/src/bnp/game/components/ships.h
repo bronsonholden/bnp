@@ -19,6 +19,7 @@ struct ShipBlueprint {
 	typedef uint32_t ID;
 
 	uint32_t version = latest_version;
+	Faction::ID manufacturer_id;
 	ID id;
 	std::string name = "R-9 Courier";
 	std::string manufacturer = "Tulman-Droupe Stellarworks";
@@ -46,6 +47,7 @@ struct EngineBlueprint {
 	typedef uint32_t ID;
 
 	uint32_t version = latest_version;
+	Faction::ID manufacturer_id;
 	ID id;
 	std::string name;
 	std::vector<ChemicalRecipe::ID> propulsion_recipes;
@@ -58,6 +60,7 @@ struct FluidStorageBlueprint {
 	typedef uint32_t ID;
 
 	uint32_t version = latest_version;
+	Faction::ID manufacturer_id;
 	ID id;
 	std::string name;
 	double mass;
@@ -75,6 +78,7 @@ struct Ship {
 	typedef uint32_t ID;
 
 	ID id;
+	Faction::ID manufacturer_id;
 	ShipBlueprint::ID ship_blueprint_id;
 	Faction::ID faction_id;
 };
