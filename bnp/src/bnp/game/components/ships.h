@@ -1,5 +1,6 @@
 #pragma once
 
+#include <bnp/components/reflection.h>
 #include <bnp/game/components/recipes.h>
 #include <bnp/game/components/factions.h>
 
@@ -19,12 +20,23 @@ struct ShipBlueprint {
 	typedef uint32_t ID;
 
 	uint32_t version = latest_version;
-	Faction::ID manufacturer_id = 0;
 	ID id;
+	Faction::ID manufacturer_id = 0;
 	std::string name = "<New ship blueprint>";
 
 	// mass of just the ship with no modules
 	double mass;
+
+	REGISTER_COMPONENT_FIELDS(
+		std::make_pair("Name", &ShipBlueprint::name),
+		std::make_pair("Manufacturer ID", &ShipBlueprint::manufacturer_id)
+	);
+
+	REGISTER_COMPONENT_TABLE_HEADER_FIELDS(
+		std::make_pair("ID", &ShipBlueprint::id),
+		std::make_pair("Manufacturer ID", &ShipBlueprint::manufacturer_id),
+		std::make_pair("Name", &ShipBlueprint::name)
+	);
 };
 
 struct ShipSegment {
@@ -46,8 +58,8 @@ struct EngineBlueprint {
 	typedef uint32_t ID;
 
 	uint32_t version = latest_version;
-	Faction::ID manufacturer_id = 0;
 	ID id;
+	Faction::ID manufacturer_id = 0;
 	std::string name;
 	std::vector<ChemicalRecipe::ID> propulsion_recipes;
 	double mass;
@@ -59,8 +71,8 @@ struct FluidStorageBlueprint {
 	typedef uint32_t ID;
 
 	uint32_t version = latest_version;
-	Faction::ID manufacturer_id = 0;
 	ID id;
+	Faction::ID manufacturer_id = 0;
 	std::string name;
 	double mass;
 	double max_volume; // m^3
