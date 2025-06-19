@@ -262,7 +262,7 @@ vec3 subtle_detail_color(vec3 sphere_coord, float dist_from_center) {
     return vec3(0);
 }
 
-vec3 detail_color(vec3 sphere_coord, float dist_from_center, float seed_mult = 1.0) {
+vec3 detail_color(vec3 sphere_coord, float dist_from_center, float seed_mult) {
     float noise_radius = 9.0;
     float rotationAngle = 0;
     mat3 rotationMatrix = rotateAroundAxis(vec3(0, 0, 1), rotationAngle);
@@ -286,7 +286,7 @@ vec3 detail_color(vec3 sphere_coord, float dist_from_center, float seed_mult = 1
     return vec3(0);
 }
 
-float negative_detail(vec3 sphere_coord, float dist_from_center, float seed_mult = 1.0) {
+float negative_detail(vec3 sphere_coord, float dist_from_center, float seed_mult) {
     float noise_radius = 2.0;
     float rotationAngle = 0;
     mat3 rotationMatrix = rotateAroundAxis(vec3(0, 0, 1), rotationAngle);
@@ -346,7 +346,7 @@ void main() {
 
     vec3 color = surface_color;
 
-    color = mix(color, detail_color(rotated_coord, dist), 0.5);
+    color = mix(color, detail_color(rotated_coord, dist, 1.0), 0.5);
     color = mix(color, subtle_detail_color(rotated_coord, dist), 0.5);
 
     for (int i = 0; i < 7; ++i) {
@@ -355,7 +355,7 @@ void main() {
 
     vec3 negative_color = vec3(0);
 
-    negative_color += negative_detail(rotated_coord, dist);
+    negative_color += negative_detail(rotated_coord, dist, 1.0);
     negative_color += negative_detail(rotated_coord, dist, 2.0);
     negative_color = clamp(negative_color, 0.0, 1.0);
 
