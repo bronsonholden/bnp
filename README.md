@@ -11,3 +11,5 @@ of worlds, Earth-like or otherwise; a generic and flexible marshaling interface 
 mind-twisting metaprogramming); and a Lua script interface.
 
 Game engines, like all software, are perpetually WIP, and this one may be so for a long while.
+
+<video src="https://github.com/bronsonholden/bnp/raw/refs/heads/master/sample.mp4"></video>
