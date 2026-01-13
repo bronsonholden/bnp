@@ -12,4 +12,4 @@ mind-twisting metaprogramming); and a Lua script interface.
 
 Game engines, like all software, are perpetually WIP, and this one may be so for a long while.
 
-<video src="https://github.com/bronsonholden/bnp/raw/refs/heads/master/sample.mp4"></video>
+![sample](https://github.com/user-attachments/assets/49f8f528-1c5d-4259-b950-8c39acba1355)
